@@ -1,3 +1,5 @@
+package lab1;
+
 /**
  * This class represents a person The person has a first name, last name and an year of birth.
  */

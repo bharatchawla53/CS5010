@@ -1,3 +1,5 @@
+package lab1;
+
 /**
  * This interface represents a set of operations on any newtonian particle. A newtonian particle is
  * a particle that obeys Newton's laws of motion.
