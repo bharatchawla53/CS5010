@@ -6,7 +6,19 @@ package vehicle;
 
 public class RegularManualTransmission implements ManualTransmission {
 
-  public RegularManualTransmission() {
+  /**
+   * @param l1 low speed for gear 1.
+   * @param h1 high speed for gear 1.
+   * @param l2 low speed for gear 2.
+   * @param h2 high speed for gear 2.
+   * @param l3 low speed for gear 3.
+   * @param h3 high speed for gear 3.
+   * @param l4 low speed for gear 4.
+   * @param h4 high speed for gear 4.
+   * @param l5 low speed for gear 5.
+   * @param h5 high speed for gear 5.
+   */
+  public RegularManualTransmission(int l1, int h1, int l2, int h2, int l3, int h3, int l4, int h4, int l5, int h5) throws IllegalArgumentException {
 
   }
 
