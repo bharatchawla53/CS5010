@@ -3,7 +3,9 @@ package vehicle;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class RegularManualTransmissionTest {
 
@@ -19,12 +21,17 @@ public class RegularManualTransmissionTest {
     assertTrue(45 <= 80);
   }
 
-  @Ignore // TODO after impl
   @Test(expected = IllegalArgumentException.class)
   public void testRegularManualTransmissionConstructorCreationWhereLxIsNotLessThanOrEqualToHx() {
-    RegularManualTransmission rmt = new
-            RegularManualTransmission(0, 10, 30, 25, 15, 45, 30, 65, 45, 80);
-
+    try {
+      RegularManualTransmission rmt = new
+              RegularManualTransmission(0, 10, 30, 25, 15, 45, 30, 65, 45, 80);
+    } catch (IllegalArgumentException iae) {
+      String message = "For each gear x, lx cannot be greater than hx";
+      assertEquals(message, iae.getMessage());
+      throw iae;
+    }
+    fail("For each gear x, lx cannot be greater than hx exception didn't throw");
   }
 
   @Test
@@ -38,11 +45,17 @@ public class RegularManualTransmissionTest {
     assertTrue(30 < 45);
   }
 
-  @Ignore // TODO after impl
   @Test(expected = IllegalArgumentException.class)
   public void testRegularManualTransmissionConstructorCreationWhereLxIsNotLessThanOfNextLx() {
-    RegularManualTransmission rmt = new
-            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+    try {
+      RegularManualTransmission rmt = new
+              RegularManualTransmission(0, 10, 20, 25, 15, 45, 30, 65, 45, 80);
+    } catch (IllegalArgumentException iae) {
+      String message = "The lower speed of x should be less than x+1";
+      assertEquals(message, iae.getMessage());
+      throw iae;
+    }
+    fail("The lower speed of x should be less than x+1 exception didn't throw");
   }
 
   @Test
@@ -57,12 +70,17 @@ public class RegularManualTransmissionTest {
 
   }
 
-  @Ignore  // TODO after impl
   @Test(expected = IllegalArgumentException.class)
   public void testRegularManualTransmissionConstructorCreationWhereAdjacentGearDoesNotOverlap() {
-    RegularManualTransmission rmt = new
-            RegularManualTransmission(0, 10, 12, 25, 28, 45, 46, 65, 45, 80);
-
+    try {
+      RegularManualTransmission rmt = new
+              RegularManualTransmission(0, 10, 12, 25, 28, 45, 30, 65, 45, 80);
+    } catch (IllegalArgumentException iae) {
+      String message = "Adjacent gear ranges cannot be overlapping";
+      assertEquals(message, iae.getMessage());
+      throw iae;
+    }
+    fail("Adjacent gear ranges cannot be overlapping exception didn't throw");
   }
 
 }

@@ -6,6 +6,18 @@ package vehicle;
 
 public class RegularManualTransmission implements ManualTransmission {
 
+  private int l1;
+  private int h1;
+  private int l2;
+  private int h2;
+  private int l3;
+  private int h3;
+  private int l4;
+  private int h4;
+  private int l5;
+  private int h5;
+  private ManualTransmission manualTransmission;
+
   /**
    * @param l1 low speed for gear 1.
    * @param h1 high speed for gear 1.
@@ -18,7 +30,27 @@ public class RegularManualTransmission implements ManualTransmission {
    * @param l5 low speed for gear 5.
    * @param h5 high speed for gear 5.
    */
-  public RegularManualTransmission(int l1, int h1, int l2, int h2, int l3, int h3, int l4, int h4, int l5, int h5) throws IllegalArgumentException {
+  public RegularManualTransmission(int l1, int h1, int l2, int h2, int l3, int h3, int l4, int h4, int l5, int h5)
+          throws IllegalArgumentException {
+
+    if (!(l1 <= h1 && l2 <= h2 && l3 <= h3 && l4 <= h4 && l5 <= h5)) {
+      throw new IllegalArgumentException("For each gear x, lx cannot be greater than hx");
+    } else if (!(l1 < l2 && l2 < l3 && l3 < l4 && l4 < l5)) {
+      throw new IllegalArgumentException("The lower speed of x should be less than x+1");
+    } else if (l2 > h1 || l3 > h2 || l4 > h3 || l5 > h4) {
+      throw new IllegalArgumentException("Adjacent gear ranges cannot be overlapping");
+    }
+
+    this.l1 = l1;
+    this.h1 = h1;
+    this.l2 = l2;
+    this.h2 = h2;
+    this.l3 = l3;
+    this.h3 = h3;
+    this.l4 = l4;
+    this.h4 = h4;
+    this.l5 = l5;
+    this.h5 = h5;
 
   }
 
