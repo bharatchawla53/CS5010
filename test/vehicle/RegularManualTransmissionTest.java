@@ -1,6 +1,5 @@
 package vehicle;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -81,6 +80,16 @@ public class RegularManualTransmissionTest {
       throw iae;
     }
     fail("Adjacent gear ranges cannot be overlapping exception didn't throw");
+  }
+
+  @Test
+  public void testGetters() {
+    ManualTransmission mt;
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+
+
   }
 
 }

@@ -6,17 +6,20 @@ package vehicle;
 
 public class RegularManualTransmission implements ManualTransmission {
 
-  private int l1;
-  private int h1;
-  private int l2;
-  private int h2;
-  private int l3;
-  private int h3;
-  private int l4;
-  private int h4;
-  private int l5;
-  private int h5;
+  private final int l1;
+  private final int h1;
+  private final int l2;
+  private final int h2;
+  private final int l3;
+  private final int h3;
+  private final int l4;
+  private final int h4;
+  private final int l5;
+  private final int h5;
   private ManualTransmission manualTransmission;
+  private String status;
+  private int speed;
+  private int gear;
 
   /**
    * @param l1 low speed for gear 1.
