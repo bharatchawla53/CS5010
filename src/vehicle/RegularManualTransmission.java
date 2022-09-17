@@ -107,11 +107,48 @@ public class RegularManualTransmission implements ManualTransmission {
 
   @Override
   public ManualTransmission decreaseSpeed() {
-    /*if (isDecreaseOfSpeedAllowed()) {
-      this.speed = speed - 1;
-    }*/
+    String message = null;
+    int updatedSpeed = 0;
 
-    return null;
+    for (int i = 0; i < speedRanges.length - 1; i+=2) {
+      // checks if its in range between low and high
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]) {
+        int newSpeed = currentSpeed - 1;
+
+        // TODO clarify logic for checking decreasing values
+        if (i - 2 > 0) {
+          if (newSpeed >= speedRanges[i-2] && newSpeed <= speedRanges[i-1]) {
+            //check if it overlaps with next one and  new speed is next range,
+            // we need to let them know to change gear
+            message = "OK: you may decrease the gear.";
+            updatedSpeed = newSpeed;
+          } else if (newSpeed <= speedRanges[i-1]) {
+            // case need to increase the gear first
+            message = "Cannot decrease speed, decrease gear first.";
+            updatedSpeed = currentSpeed;
+          } else {
+            message = "OK: everything is OK.";
+            updatedSpeed = newSpeed;
+          }
+        } else if (newSpeed < speedRanges[0]){
+          // special case ??
+          // reached first gear
+          message = "Cannot decrease speed. Reached minimum speed.";
+          updatedSpeed = currentSpeed;
+        } else {
+          message = "OK: everything is OK.";
+          updatedSpeed = newSpeed;
+        }
+        break;
+      } else if (currentSpeed < speedRanges[0]) {
+        // reached first gear
+        message = "Cannot decrease speed. Reached minimum speed.";
+        updatedSpeed = currentSpeed;
+        break;
+      }
+    }
+
+    return new RegularManualTransmission(message, updatedSpeed, currentGear, speedRanges);
   }
 
   @Override
@@ -140,67 +177,4 @@ public class RegularManualTransmission implements ManualTransmission {
 
   }
 
-/*  private boolean isIncreaseOfSpeedAllowed() {
-    if ((speed > l1 && speed < h1) && (speed + 1 < h1)) {
-      return true;
-    } else if ((speed > l2 && speed < h2) && (speed + 1 < h2)) {
-      return true;
-    } else if ((speed > l3 && speed < h3) && (speed + 1 < h3)) {
-      return true;
-    } else if ((speed > l4 && speed < h4) && (speed + 1 < h4)) {
-      return true;
-    } else if ((speed > l5 && speed < h5) && (speed + 1 < h5)) {
-      return true;
-    }
-    return false;
-  }*/
-
-/*  private boolean isDecreaseOfSpeedAllowed() {
-    if ((speed > l1 && speed < h1) && (speed - 1 > l1)) {
-      return true;
-    } else if ((speed > l2 && speed < h2) && (speed - 1 > l2)) {
-      return true;
-    } else if ((speed > l3 && speed < h3) && (speed - 1 > l3)) {
-      return true;
-    } else if ((speed > l4 && speed < h4) && (speed - 1 > l4)) {
-      return true;
-    } else if ((speed > l5 && speed < h5) && (speed - 1 > l5)) {
-      return true;
-    }
-    return false;
-  }*/
-
-/*  private boolean isIncreaseOfGearAllowed() {
-    // check for overlapping
-    if ((speed > l1 && speed < h1) && (l2 > l1 && l2 < h1)) {
-      return true;
-    } else if ((speed > l2 && speed < h2) && (l3 > l2 && l3 < h2)) {
-      return true;
-    } else if ((speed > l3 && speed < h3) && (l4 > l3 && l4 < h3)) {
-      return true;
-    } else if ((speed > l4 && speed < h4) && (l5 > l4 && l5 < h4)) {
-      return true;
-    } else if (speed > l5 && speed < h5) {
-      return true;
-    }
-    return false;
-  }
-
-  private boolean isDecreasedOfGearAllowed() {
-    // check for overlapping
-    if (speed > l1 && speed < h1) {
-      return true;
-    } else if (speed > l2 && speed < h2) {
-      return true;
-    } else if (speed > l3 && speed < h3) {
-      return true;
-    } else if (speed > l4 && speed < h4) {
-      return true;
-    } else if (speed > l5 && speed < h5) {
-      return true;
-    }
-    return false;
-  }*/
-
-  // implement maybe compareTo method ??
 }

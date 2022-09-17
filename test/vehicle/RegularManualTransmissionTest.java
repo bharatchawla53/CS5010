@@ -144,4 +144,77 @@ public class RegularManualTransmissionTest {
     assertEquals("Cannot increase speed. Reached maximum speed.", mt.getStatus());
   }
 
+  @Test
+  public void testDecreaseSpeedEverythingIsOk() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 4; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.decreaseSpeed();
+
+    assertEquals(GEAR_1.getGearValue(), mt.getGear());
+    assertEquals(4, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
+
+  @Test
+  // TODO
+  public void testDecreaseSpeedMayDecreaseTheGear() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 4; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.decreaseSpeed();
+
+    assertEquals(GEAR_1.getGearValue(), mt.getGear());
+    assertEquals(4, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
+
+  @Test
+  // TODO
+  public void testDecreaseSpeedDecreaseTheGearFirst() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 4; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.decreaseSpeed();
+
+    assertEquals(GEAR_1.getGearValue(), mt.getGear());
+    assertEquals(4, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
+
+  @Test
+  // TODO
+  public void testDecreaseSpeedReachedMinSpeed() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 4; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.decreaseSpeed();
+
+    assertEquals(GEAR_1.getGearValue(), mt.getGear());
+    assertEquals(4, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
+
+
+
 }
