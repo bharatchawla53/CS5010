@@ -6,20 +6,10 @@ package vehicle;
 
 public class RegularManualTransmission implements ManualTransmission {
 
-  private final int l1;
-  private final int h1;
-  private final int l2;
-  private final int h2;
-  private final int l3;
-  private final int h3;
-  private final int l4;
-  private final int h4;
-  private final int l5;
-  private final int h5;
-  private ManualTransmission manualTransmission;
-  private String status;
-  private int speed;
-  private int gear;
+  private final int[] speedRanges;
+  private String currentStatus;
+  private int currentSpeed;
+  private int currentGear;
 
   /**
    * @param l1 low speed for gear 1.
@@ -44,51 +34,173 @@ public class RegularManualTransmission implements ManualTransmission {
       throw new IllegalArgumentException("Adjacent gear ranges cannot be overlapping");
     }
 
-    this.l1 = l1;
-    this.h1 = h1;
-    this.l2 = l2;
-    this.h2 = h2;
-    this.l3 = l3;
-    this.h3 = h3;
-    this.l4 = l4;
-    this.h4 = h4;
-    this.l5 = l5;
-    this.h5 = h5;
+    this.speedRanges = new int[]{l1, h1, l2, h2, l3, h3, l4, h4, l5, h5};
+    // Initialize initial values for status, gear, and speed.
+    this.currentGear = GearEnum.GEAR_1.getGearValue();
+    this.currentSpeed = 0;
+    this.currentStatus = "OK: everything is OK.";
+  }
 
+  /**
+   * Constructs a RegularManualTransmission object with updated status, speed, gear, and speed
+   * ranges.
+   *
+   * @param status Return the current status of this transmission as a String.
+   * @param speed  Return the current speed of the vehicle.
+   * @param gear   Return the current gear of the vehicle.
+   */
+  private RegularManualTransmission(String status, int speed, int gear, int[] speedRanges) {
+    this.currentStatus = status;
+    this.currentSpeed = speed;
+    this.currentGear = gear;
+    this.speedRanges = speedRanges;
   }
 
   @Override
   public String getStatus() {
-    return null;
+    return currentStatus;
   }
 
   @Override
   public int getSpeed() {
-    return 0;
+    return currentSpeed;
   }
 
   @Override
   public int getGear() {
-    return 0;
+    return currentGear;
   }
 
   @Override
   public ManualTransmission increaseSpeed() {
-    return null;
+    String message = null;
+    int updatedSpeed = 0;
+
+    for (int i = 0; i < speedRanges.length - 1; i += 2) {
+      // checks if its in range between low and high
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]) {
+        int newSpeed = currentSpeed + 1;
+        if (newSpeed >= speedRanges[i + 2] && newSpeed <= speedRanges[i+1]) {
+          //check if it overlaps with next one and  new speed is next range,
+          // we need to let them know to change gear
+          message = "OK: you may increase the gear.";
+          updatedSpeed = newSpeed;
+        } else if (newSpeed >= speedRanges[i + 1]) {
+          // case need to increase the gear first
+          message = "Cannot increase speed, increase gear first.";
+          updatedSpeed = currentSpeed;
+        } else {
+          message = "OK: everything is OK.";
+          updatedSpeed = newSpeed;
+        }
+        break;
+      } else if (currentSpeed > speedRanges[speedRanges.length - 1]) {
+        // reached last gear
+        message = "Cannot increase speed. Reached maximum speed.";
+        updatedSpeed = currentSpeed;
+        break;
+      }
+    }
+
+    return new RegularManualTransmission(message, updatedSpeed, currentGear,speedRanges);
   }
 
   @Override
   public ManualTransmission decreaseSpeed() {
+    /*if (isDecreaseOfSpeedAllowed()) {
+      this.speed = speed - 1;
+    }*/
+
     return null;
   }
 
   @Override
   public ManualTransmission increaseGear() {
+   /* if (isIncreaseOfGearAllowed()) {
+      // cannot exceed gear 5
+      if (!(gear + 1 > GearEnum.GEAR_5.getGearValue())) {
+        //gear = gear + 1;
+        // it means gear was changed successfully without changing speed.
+        return new RegularManualTransmission("OK: everything is OK.", speed, gear + 1, speedRanges);
+      }
+    }*/
     return null;
+
   }
 
   @Override
   public ManualTransmission decreaseGear() {
+    /*if (isDecreasedOfGearAllowed()) {
+      // cannot exceed gear 5
+      if (!(gear - 1 < GearEnum.GEAR_1.getGearValue())) {
+        gear = gear - 1;
+      }
+    }*/
     return null;
+
   }
+
+/*  private boolean isIncreaseOfSpeedAllowed() {
+    if ((speed > l1 && speed < h1) && (speed + 1 < h1)) {
+      return true;
+    } else if ((speed > l2 && speed < h2) && (speed + 1 < h2)) {
+      return true;
+    } else if ((speed > l3 && speed < h3) && (speed + 1 < h3)) {
+      return true;
+    } else if ((speed > l4 && speed < h4) && (speed + 1 < h4)) {
+      return true;
+    } else if ((speed > l5 && speed < h5) && (speed + 1 < h5)) {
+      return true;
+    }
+    return false;
+  }*/
+
+/*  private boolean isDecreaseOfSpeedAllowed() {
+    if ((speed > l1 && speed < h1) && (speed - 1 > l1)) {
+      return true;
+    } else if ((speed > l2 && speed < h2) && (speed - 1 > l2)) {
+      return true;
+    } else if ((speed > l3 && speed < h3) && (speed - 1 > l3)) {
+      return true;
+    } else if ((speed > l4 && speed < h4) && (speed - 1 > l4)) {
+      return true;
+    } else if ((speed > l5 && speed < h5) && (speed - 1 > l5)) {
+      return true;
+    }
+    return false;
+  }*/
+
+/*  private boolean isIncreaseOfGearAllowed() {
+    // check for overlapping
+    if ((speed > l1 && speed < h1) && (l2 > l1 && l2 < h1)) {
+      return true;
+    } else if ((speed > l2 && speed < h2) && (l3 > l2 && l3 < h2)) {
+      return true;
+    } else if ((speed > l3 && speed < h3) && (l4 > l3 && l4 < h3)) {
+      return true;
+    } else if ((speed > l4 && speed < h4) && (l5 > l4 && l5 < h4)) {
+      return true;
+    } else if (speed > l5 && speed < h5) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean isDecreasedOfGearAllowed() {
+    // check for overlapping
+    if (speed > l1 && speed < h1) {
+      return true;
+    } else if (speed > l2 && speed < h2) {
+      return true;
+    } else if (speed > l3 && speed < h3) {
+      return true;
+    } else if (speed > l4 && speed < h4) {
+      return true;
+    } else if (speed > l5 && speed < h5) {
+      return true;
+    }
+    return false;
+  }*/
+
+  // implement maybe compareTo method ??
 }
