@@ -161,6 +161,8 @@ public class RegularManualTransmission implements ManualTransmission {
         return new RegularManualTransmission("OK: everything is OK.", speed, gear + 1, speedRanges);
       }
     }*/
+
+
     return null;
 
   }
