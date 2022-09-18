@@ -85,7 +85,7 @@ public class RegularManualTransmission implements ManualTransmission {
           // we need to let them know to change gear
           message = "OK: you may increase the gear.";
           updatedSpeed = newSpeed;
-        } else if (newSpeed >= speedRanges[i + 1]) {
+        } else if (newSpeed >= speedRanges[i + 1] && currentGear < i + 1) {
           // case need to increase the gear first
           message = "Cannot increase speed, increase gear first.";
           updatedSpeed = currentSpeed;
@@ -153,30 +153,58 @@ public class RegularManualTransmission implements ManualTransmission {
 
   @Override
   public ManualTransmission increaseGear() {
-   /* if (isIncreaseOfGearAllowed()) {
-      // cannot exceed gear 5
-      if (!(gear + 1 > GearEnum.GEAR_5.getGearValue())) {
-        //gear = gear + 1;
-        // it means gear was changed successfully without changing speed.
-        return new RegularManualTransmission("OK: everything is OK.", speed, gear + 1, speedRanges);
+    String message = null;
+    int updatedGear = 0;
+
+    for (int i = 0; i < speedRanges.length - 1; i+=2) {
+      // check what range the gear is in
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i+1]) {
+        int newGear = currentGear + 1;
+
+        if (newGear > GearEnum.GEAR_5.getGearValue()) {
+          message = "Cannot increase gear. Reached maximum gear.";
+          updatedGear = currentGear;
+        } else if (currentSpeed < speedRanges[i+1]) { // TODO need to consider adjacent speed for letting me increase gear?
+          //check if current speed is greater than hx speed for the gear
+          message = "Cannot increase gear, increase speed first.";
+          updatedGear = currentGear;
+        } else {
+          message = "OK: everything is OK.";
+          updatedGear = newGear;
+        }
+        break;
       }
-    }*/
+    }
 
-
-    return null;
-
+    return new RegularManualTransmission(message, currentSpeed, updatedGear, speedRanges);
   }
 
   @Override
   public ManualTransmission decreaseGear() {
-    /*if (isDecreasedOfGearAllowed()) {
-      // cannot exceed gear 5
-      if (!(gear - 1 < GearEnum.GEAR_1.getGearValue())) {
-        gear = gear - 1;
-      }
-    }*/
-    return null;
+    String message = null;
+    int updatedGear = 0;
 
+    for (int i = 0; i < speedRanges.length - 1; i+=2) {
+      // check what range the gear is in
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i+1]) {
+        int newGear = currentGear - 1;
+
+        if (newGear < GearEnum.GEAR_1.getGearValue()) {
+          message = "Cannot decrease gear. Reached minimum gear.";
+          updatedGear = currentGear;
+        } else if (currentSpeed > speedRanges[i-1]) { // TODO need to consider adjacent speed for letting me increase gear?
+          //check if current speed is greater than hx speed for the gear
+          message = "Cannot decrease gear, decrease speed first.";
+          updatedGear = currentGear;
+        } else {
+          message = "OK: everything is OK.";
+          updatedGear = newGear;
+        }
+        break;
+      }
+    }
+
+    return new RegularManualTransmission(message, currentSpeed, updatedGear, speedRanges);
   }
 
 }

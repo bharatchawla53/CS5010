@@ -6,6 +6,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static vehicle.GearEnum.GEAR_1;
+import static vehicle.GearEnum.GEAR_2;
+import static vehicle.GearEnum.GEAR_5;
 
 public class RegularManualTransmissionTest {
 
@@ -215,6 +217,76 @@ public class RegularManualTransmissionTest {
     assertEquals("OK: everything is OK.", mt.getStatus());
   }
 
+  @Test
+  public void testIncreaseGearEverythingIsOk() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
 
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 10; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.increaseGear();
+
+    assertEquals(GEAR_2.getGearValue(), mt.getGear());
+    assertEquals(10, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
+
+  @Test
+  public void testIncreaseGearReachMaxGear() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 46; i++) {
+      mt = mt.increaseSpeed();
+      if (mt.getSpeed() == 10 || mt.getSpeed() == 25 || mt.getSpeed() == 45 || mt.getSpeed() == 45) {
+        mt = mt.increaseGear();
+      }
+    }
+
+    mt = mt.increaseGear();
+
+    assertEquals(GEAR_5.getGearValue(), mt.getGear());
+    assertEquals(46, mt.getSpeed());
+    assertEquals("Cannot increase gear. Reached maximum gear.", mt.getStatus());
+  }
+
+  @Test
+  public void testIncreaseGearIncreaseSpeedFirst() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 3; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.increaseGear();
+
+    assertEquals(GEAR_1.getGearValue(), mt.getGear());
+    assertEquals(4, mt.getSpeed());
+    assertEquals("Cannot increase gear, increase speed first.", mt.getStatus());
+  }
+
+  @Test
+  public void testDecreaseGearEverythingIsOk() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 9; i++) {
+      mt = mt.increaseSpeed();
+    }
+
+    mt = mt.increaseGear();
+    mt = mt.decreaseGear();
+
+    assertEquals(GEAR_2.getGearValue(), mt.getGear());
+    assertEquals(10, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
 
 }
