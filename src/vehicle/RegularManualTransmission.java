@@ -76,25 +76,31 @@ public class RegularManualTransmission implements ManualTransmission {
     String message = null;
     int updatedSpeed = 0;
 
-    for (int i = 0; i < speedRanges.length - 1; i += 2) {
+    for (int i = 0; i < speedRanges.length; i += 2) {
       // checks if its in range between low and high
       if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]) {
         int newSpeed = currentSpeed + 1;
-        if (newSpeed >= speedRanges[i + 2] && newSpeed <= speedRanges[i+1]) {
-          //check if it overlaps with next one and  new speed is next range,
-          // we need to let them know to change gear
-          message = "OK: you may increase the gear.";
-          updatedSpeed = newSpeed;
-        } else if (newSpeed >= speedRanges[i + 1] && currentGear < i + 1) {
-          // case need to increase the gear first
-          message = "Cannot increase speed, increase gear first.";
-          updatedSpeed = currentSpeed;
-        } else {
+        if (i < 8){
+          // TODO prevent out of bounds ex once we are in the last gear of subset to check speed limits
+          if (newSpeed >= speedRanges[i + 2] && newSpeed <= speedRanges[i + 1]) {
+            //check if it overlaps with next one and  new speed is next range,
+            // we need to let them know to change gear
+            message = "OK: you may increase the gear.";
+            updatedSpeed = newSpeed;
+          } else if (newSpeed >= speedRanges[i + 1] && currentGear < i - 1) { // TODO need to fix this gear check
+            // case need to increase the gear first
+            message = "Cannot increase speed, increase gear first.";
+            updatedSpeed = currentSpeed;
+          } else {
+            message = "OK: everything is OK.";
+            updatedSpeed = newSpeed;
+          }
+          break;
+        } else if (newSpeed <= speedRanges[i+1]){
           message = "OK: everything is OK.";
           updatedSpeed = newSpeed;
         }
-        break;
-      } else if (currentSpeed > speedRanges[speedRanges.length - 1]) {
+      } else if (currentSpeed >= speedRanges[speedRanges.length - 1]) {
         // reached last gear
         message = "Cannot increase speed. Reached maximum speed.";
         updatedSpeed = currentSpeed;
@@ -102,7 +108,7 @@ public class RegularManualTransmission implements ManualTransmission {
       }
     }
 
-    return new RegularManualTransmission(message, updatedSpeed, currentGear,speedRanges);
+    return new RegularManualTransmission(message, updatedSpeed, currentGear, speedRanges);
   }
 
   @Override
@@ -110,19 +116,19 @@ public class RegularManualTransmission implements ManualTransmission {
     String message = null;
     int updatedSpeed = 0;
 
-    for (int i = 0; i < speedRanges.length - 1; i+=2) {
+    for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // checks if its in range between low and high
       if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]) {
         int newSpeed = currentSpeed - 1;
 
         // TODO clarify logic for checking decreasing values
         if (i - 2 > 0) {
-          if (newSpeed >= speedRanges[i-2] && newSpeed <= speedRanges[i-1]) {
+          if (newSpeed >= speedRanges[i - 2] && newSpeed <= speedRanges[i - 1]) {
             //check if it overlaps with next one and  new speed is next range,
             // we need to let them know to change gear
             message = "OK: you may decrease the gear.";
             updatedSpeed = newSpeed;
-          } else if (newSpeed <= speedRanges[i-1]) {
+          } else if (newSpeed <= speedRanges[i - 1]) {
             // case need to increase the gear first
             message = "Cannot decrease speed, decrease gear first.";
             updatedSpeed = currentSpeed;
@@ -130,7 +136,7 @@ public class RegularManualTransmission implements ManualTransmission {
             message = "OK: everything is OK.";
             updatedSpeed = newSpeed;
           }
-        } else if (newSpeed < speedRanges[0]){
+        } else if (newSpeed < speedRanges[0]) {
           // special case ??
           // reached first gear
           message = "Cannot decrease speed. Reached minimum speed.";
@@ -156,15 +162,15 @@ public class RegularManualTransmission implements ManualTransmission {
     String message = null;
     int updatedGear = 0;
 
-    for (int i = 0; i < speedRanges.length - 1; i+=2) {
+    for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // check what range the gear is in
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i+1]) {
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]) {
         int newGear = currentGear + 1;
 
         if (newGear > GearEnum.GEAR_5.getGearValue()) {
           message = "Cannot increase gear. Reached maximum gear.";
           updatedGear = currentGear;
-        } else if (currentSpeed < speedRanges[i+1]) { // TODO need to consider adjacent speed for letting me increase gear?
+        } else if (currentSpeed < speedRanges[i + 1] && currentSpeed < speedRanges[i + 2]) { // TODO need to consider adjacent speed for letting me increase gear?
           //check if current speed is greater than hx speed for the gear
           message = "Cannot increase gear, increase speed first.";
           updatedGear = currentGear;
@@ -184,21 +190,35 @@ public class RegularManualTransmission implements ManualTransmission {
     String message = null;
     int updatedGear = 0;
 
-    for (int i = 0; i < speedRanges.length - 1; i+=2) {
+    for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // check what range the gear is in
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i+1]) {
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]) {
         int newGear = currentGear - 1;
 
-        if (newGear < GearEnum.GEAR_1.getGearValue()) {
-          message = "Cannot decrease gear. Reached minimum gear.";
-          updatedGear = currentGear;
-        } else if (currentSpeed > speedRanges[i-1]) { // TODO need to consider adjacent speed for letting me increase gear?
-          //check if current speed is greater than hx speed for the gear
-          message = "Cannot decrease gear, decrease speed first.";
-          updatedGear = currentGear;
+        if (i == 0) { // to avoid out of bounds exception
+          if (currentSpeed > speedRanges[1] && currentSpeed > speedRanges[0]) {
+            //check if current speed is greater than hx speed for the gear
+            message = "Cannot decrease gear, decrease speed first.";
+            updatedGear = currentGear;
+          } else if (newGear < GearEnum.GEAR_1.getGearValue()) {
+            message = "Cannot decrease gear. Reached minimum gear.";
+            updatedGear = currentGear;
+          } else {
+            message = "OK: everything is OK.";
+            updatedGear = newGear;
+          }
         } else {
-          message = "OK: everything is OK.";
-          updatedGear = newGear;
+          if (newGear < GearEnum.GEAR_1.getGearValue()) {
+            message = "Cannot decrease gear. Reached minimum gear.";
+            updatedGear = currentGear;
+          } else if (currentSpeed > speedRanges[i - 1] && currentSpeed > speedRanges[i - 2]) { // TODO need to consider adjacent speed for letting me increase gear?
+            //check if current speed is greater than hx speed for the gear
+            message = "Cannot decrease gear, decrease speed first.";
+            updatedGear = currentGear;
+          } else {
+            message = "OK: everything is OK.";
+            updatedGear = newGear;
+          }
         }
         break;
       }
