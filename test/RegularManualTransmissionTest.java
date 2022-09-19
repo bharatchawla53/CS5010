@@ -1,13 +1,17 @@
-package vehicle;
-
 import org.junit.Test;
 
+import vehicle.ManualTransmission;
+import vehicle.RegularManualTransmission;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static vehicle.GearEnum.GEAR_1;
 import static vehicle.GearEnum.GEAR_2;
 import static vehicle.GearEnum.GEAR_5;
+
+/**
+ * A JUnit test class for the RegularManualTransmission class.
+ */
 
 public class RegularManualTransmissionTest {
 
@@ -16,11 +20,9 @@ public class RegularManualTransmissionTest {
     RegularManualTransmission rmt = new
             RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
 
-    assertTrue(0 <= 10);
-    assertTrue(3 <= 25);
-    assertTrue(15 <= 45);
-    assertTrue(30 <= 65);
-    assertTrue(45 <= 80);
+    assertEquals(GEAR_1.getGearValue(), rmt.getGear());
+    assertEquals(0, rmt.getSpeed());
+    assertEquals("OK: everything is OK.", rmt.getStatus());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -41,10 +43,9 @@ public class RegularManualTransmissionTest {
     RegularManualTransmission rmt = new
             RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
 
-    assertTrue(0 < 3);
-    assertTrue(3 < 15);
-    assertTrue(15 < 30);
-    assertTrue(30 < 45);
+    assertEquals(GEAR_1.getGearValue(), rmt.getGear());
+    assertEquals(0, rmt.getSpeed());
+    assertEquals("OK: everything is OK.", rmt.getStatus());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -65,11 +66,9 @@ public class RegularManualTransmissionTest {
     RegularManualTransmission rmt = new
             RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
 
-    assertTrue(3 > 0 && 3 < 10);
-    assertTrue(15 > 3 && 15 < 25);
-    assertTrue(30 > 15 && 30 < 45);
-    assertTrue(45 > 30 && 45 < 65);
-
+    assertEquals(GEAR_1.getGearValue(), rmt.getGear());
+    assertEquals(0, rmt.getSpeed());
+    assertEquals("OK: everything is OK.", rmt.getStatus());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -121,7 +120,8 @@ public class RegularManualTransmissionTest {
 
   @Test
   public void testIncreaseSpeedIncreaseTheGearFirst() {
-    RegularManualTransmission rmt = new RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
     ManualTransmission mt = rmt.increaseSpeed();
     for (int i = 0; i < 10; i++) {
       mt = mt.increaseSpeed();
@@ -134,7 +134,8 @@ public class RegularManualTransmissionTest {
 
   @Test
   public void testIncreaseSpeedReachedMaxSpeed() {
-    RegularManualTransmission rmt = new RegularManualTransmission(0, 5, 3, 10, 8, 20, 16, 30, 22, 35);
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 5, 3, 10, 8, 20, 16, 30, 22, 35);
     ManualTransmission mt = rmt.increaseSpeed();
     for (int i = 0; i < 35; i++) {
       mt = mt.increaseSpeed();
@@ -251,7 +252,8 @@ public class RegularManualTransmissionTest {
     ManualTransmission mt = rmt.increaseSpeed();
     for (int i = 0; i < 66; i++) {
       mt = mt.increaseSpeed();
-      if (mt.getSpeed() == 10 || mt.getSpeed() == 25 || mt.getSpeed() == 45 || mt.getSpeed() == 65) {
+      if (mt.getSpeed() == 10 || mt.getSpeed() == 25 || mt.getSpeed() == 45
+              || mt.getSpeed() == 65) {
         mt = mt.increaseGear();
       }
     }
