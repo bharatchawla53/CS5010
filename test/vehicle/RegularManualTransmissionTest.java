@@ -77,7 +77,7 @@ public class RegularManualTransmissionTest {
               RegularManualTransmission(0, 10, 12, 25, 28, 45, 30, 65, 45, 80);
       fail("Adjacent gear ranges cannot be overlapping exception didn't throw");
     } catch (IllegalArgumentException iae) {
-      String message = "Adjacent gear ranges cannot be overlapping";
+      String message = "Adjacent gear ranges cannot be non-overlapping";
       assertEquals(message, iae.getMessage());
       throw iae;
     }
@@ -166,6 +166,26 @@ public class RegularManualTransmissionTest {
   }
 
   @Test
+  public void testDecreaseSpeedEverythingIsOk_2() {
+    RegularManualTransmission rmt = new
+            RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
+
+    ManualTransmission mt = rmt.increaseSpeed();
+    for (int i = 0; i < 12; i++) {
+      mt = mt.increaseSpeed();
+      if (mt.getSpeed() == 10) {
+        mt = mt.increaseGear();
+      }
+    }
+
+    mt = mt.decreaseSpeed();
+
+    assertEquals(GEAR_2.getGearValue(), mt.getGear());
+    assertEquals(12, mt.getSpeed());
+    assertEquals("OK: everything is OK.", mt.getStatus());
+  }
+
+  @Test
   public void testDecreaseSpeedMayDecreaseTheGear() {
     RegularManualTransmission rmt = new
             RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
@@ -200,10 +220,9 @@ public class RegularManualTransmissionTest {
     }
 
     mt = mt.decreaseSpeed();
-    //mt = mt.decreaseSpeed();
 
     assertEquals(GEAR_5.getGearValue(), mt.getGear());
-    assertEquals(65, mt.getSpeed());
+    assertEquals(49, mt.getSpeed());
     assertEquals("OK: you may decrease the gear.", mt.getStatus());
   }
 
@@ -213,19 +232,19 @@ public class RegularManualTransmissionTest {
             RegularManualTransmission(0, 10, 3, 25, 15, 45, 30, 65, 45, 80);
 
     ManualTransmission mt = rmt.increaseSpeed();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 9; i++) {
       mt = mt.increaseSpeed();
       if (mt.getSpeed() == 10) {
         mt = mt.increaseGear();
       }
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 8; i++) {
       mt = mt.decreaseSpeed();
     }
 
     assertEquals(GEAR_2.getGearValue(), mt.getGear());
-    assertEquals(10, mt.getSpeed());
+    assertEquals(3, mt.getSpeed());
     assertEquals("Cannot decrease speed, decrease gear first.", mt.getStatus());
   }
 
@@ -301,10 +320,6 @@ public class RegularManualTransmissionTest {
   }
 
   @Test
-  //Attempting to unsuccessfully increase gear from 2 at speed 10 but status is incorrect.
-  // expected:<[Cannot increase gear, increase speed first].> but was:<[OK: everything is OK].
-
-  //
   public void testIncreaseGearIncreaseSpeedFirst_2() {
     RegularManualTransmission rmt = new
             RegularManualTransmission(0, 12, 10, 25, 15, 45, 30, 65, 45, 80);
