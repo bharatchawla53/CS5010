@@ -84,11 +84,7 @@ public class RegularManualTransmission implements ManualTransmission {
     int updatedSpeed = 0;
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
-      //checks which range the current speed lies in
-      //and if i also matches the currentGear since currentSpeed could overlap
-      //if they are adjacent
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
-              && i == 2 * (currentGear - 1)) {
+      if (isCurrentSpeedInRange(i)) {
         int newSpeed = currentSpeed + 1;
         //this check to prevent out of bounds exception
         if (i < 8) {
@@ -125,13 +121,8 @@ public class RegularManualTransmission implements ManualTransmission {
     int updatedSpeed = 0;
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
-      //checks which range the current speed lies in
-      //and if i also matches the currentGear since currentSpeed could overlap
-      //if they are adjacent
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
-              && i == 2 * (currentGear - 1)) {
+      if (isCurrentSpeedInRange(i)) {
         int newSpeed = currentSpeed - 1;
-
         //this check to prevent out of bounds exception
         if (i - 2 >= 0) {
           if (newSpeed < speedRanges[i]) { //case need to decrease the gear first
@@ -165,13 +156,8 @@ public class RegularManualTransmission implements ManualTransmission {
     int updatedGear = 0;
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
-      //checks which range the current speed lies in
-      //and if i also matches the currentGear since currentSpeed could overlap
-      //if they are adjacent
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
-              && i == 2 * (currentGear - 1)) {
+      if (isCurrentSpeedInRange(i)) {
         int newGear = currentGear + 1;
-
         if (newGear > GearEnum.GEAR_5.getGearValue()) { // case newGear exceeds the maxGear
           message = "Cannot increase gear. Reached maximum gear.";
           updatedGear = currentGear;
@@ -197,13 +183,8 @@ public class RegularManualTransmission implements ManualTransmission {
     int updatedGear = 0;
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
-      //checks which range the current speed lies in
-      //and if i also matches the currentGear since currentSpeed could overlap
-      //if they are adjacent
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
-              && i == 2 * (currentGear - 1)) {
+      if (isCurrentSpeedInRange(i)) {
         int newGear = currentGear - 1;
-
         // this check to prevent out of bounds
         if (i == 0) {
           if (newGear < GearEnum.GEAR_1.getGearValue()) { // newGear is less than minGear
@@ -226,6 +207,19 @@ public class RegularManualTransmission implements ManualTransmission {
     }
 
     return new RegularManualTransmission(message, currentSpeed, updatedGear, speedRanges);
+  }
+
+  /**
+   * It checks which range the current speed lies in based off index given and if index also matches
+   * the currentGear since currentSpeed could overlap if they are adjacent.
+   *
+   * @param index the index we are looking at to check if current speed lies in the range
+   * @return true if current speed is in range and currentGear matches with the index provided since
+   *         current speed could overlap if they are adjacent.
+   */
+  private boolean isCurrentSpeedInRange(int index) {
+    return currentSpeed >= speedRanges[index] && currentSpeed <= speedRanges[index + 1]
+            && index == 2 * (currentGear - 1);
   }
 
 }
