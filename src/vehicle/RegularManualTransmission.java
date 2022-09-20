@@ -82,7 +82,8 @@ public class RegularManualTransmission implements ManualTransmission {
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // checks if its in range between low and high
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1] && i == 2 * (currentGear - 1)) {
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
+              && i == 2 * (currentGear - 1)) {
         int expectedGear = getExpectedGear(i);
 
         int newSpeed = currentSpeed + 1;
@@ -126,7 +127,8 @@ public class RegularManualTransmission implements ManualTransmission {
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // checks if its in range between low and high
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1] && i == 2 * (currentGear - 1)) {
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
+              && i == 2 * (currentGear - 1)) {
         int expectedGear = getExpectedGear(i); // 4
         int newSpeed = currentSpeed - 1;
 
@@ -177,7 +179,8 @@ public class RegularManualTransmission implements ManualTransmission {
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // check what range the gear is in
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1] && i == 2 * (currentGear - 1)) {
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
+              && i == 2 * (currentGear - 1)) {
         int newGear = currentGear + 1;
 
         if (newGear > GearEnum.GEAR_5.getGearValue()) {
@@ -206,7 +209,8 @@ public class RegularManualTransmission implements ManualTransmission {
 
     for (int i = 0; i < speedRanges.length - 1; i += 2) {
       // check what range the gear is in
-      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1] && i == 2 * (currentGear - 1)) {
+      if (currentSpeed >= speedRanges[i] && currentSpeed <= speedRanges[i + 1]
+              && i == 2 * (currentGear - 1)) {
         int newGear = currentGear - 1;
 
         if (i == 0) { // to avoid out of bounds exception

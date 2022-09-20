@@ -1,13 +1,11 @@
-import org.junit.Test;
+package vehicle;
 
-import vehicle.ManualTransmission;
-import vehicle.RegularManualTransmission;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static vehicle.GearEnum.GEAR_1;
 import static vehicle.GearEnum.GEAR_2;
-import static vehicle.GearEnum.GEAR_4;
 import static vehicle.GearEnum.GEAR_5;
 
 /**
@@ -195,7 +193,8 @@ public class RegularManualTransmissionTest {
     ManualTransmission mt = rmt.increaseSpeed();
     for (int i = 0; i < 49; i++) {
       mt = mt.increaseSpeed();
-      if (mt.getSpeed() == 15 || mt.getSpeed() == 25 || mt.getSpeed() == 35 || mt.getSpeed() == 50) {
+      if (mt.getSpeed() == 15 || mt.getSpeed() == 25 || mt.getSpeed() == 35
+              || mt.getSpeed() == 50) {
         mt = mt.increaseGear();
       }
     }
