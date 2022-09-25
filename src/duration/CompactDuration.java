@@ -1,12 +1,11 @@
 package duration;
 
 /**
- * Durations represented as hours, minutes, and seconds.
+ * Durations represented compactly, with a range of 0 to 2<sup>63</sup>-1
+ * seconds.
  */
-public final class HmsDuration extends AbstractDuration {
-  private final int hours;
-  private final int minutes;
-  private final int seconds;
+public final class CompactDuration extends AbstractDuration {
+  private final long inSeconds;
 
   /**
    * Constructs a duration in terms of its length in hours, minutes, and
@@ -17,17 +16,12 @@ public final class HmsDuration extends AbstractDuration {
    * @param seconds the number of seconds
    * @throws IllegalArgumentException if any argument is negative
    */
-  public HmsDuration(int hours, int minutes, int seconds)
+  public CompactDuration(int hours, int minutes, int seconds)
           throws IllegalArgumentException {
     if ((hours < 0) || (minutes < 0) || (seconds < 0)) {
       throw new IllegalArgumentException("Negative durations are not supported");
     }
-
-    long totalSeconds = inSeconds(hours, minutes, seconds);
-
-    this.hours = hoursOf(totalSeconds);
-    this.minutes = minutesOf(totalSeconds);
-    this.seconds = secondsOf(totalSeconds);
+    this.inSeconds = inSeconds(hours, minutes, seconds);
   }
 
   /**
@@ -36,19 +30,17 @@ public final class HmsDuration extends AbstractDuration {
    * @param inSeconds the number of seconds (non-negative)
    * @throws IllegalArgumentException {@code inSeconds} is negative
    */
-  public HmsDuration(long inSeconds) {
+  public CompactDuration(long inSeconds) {
     if (inSeconds < 0) {
       throw new IllegalArgumentException("must be non-negative");
     }
 
-    hours = hoursOf(inSeconds);
-    minutes = minutesOf(inSeconds);
-    seconds = secondsOf(inSeconds);
+    this.inSeconds = inSeconds;
   }
 
   @Override
   public long inSeconds() {
-    return inSeconds(hours, minutes, seconds);
+    return this.inSeconds;
   }
 
 
@@ -59,6 +51,4 @@ public final class HmsDuration extends AbstractDuration {
     long total = thisSeconds + otherSeconds;
     return new HmsDuration(total);
   }
-
-
 }
