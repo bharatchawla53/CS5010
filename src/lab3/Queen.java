@@ -1,49 +1,25 @@
 package lab3;
 
-public class Queen implements ChessPiece {
+/**
+ * It represents Queen operations.
+ */
+public class Queen extends AbstractChessPiece {
 
-  private int row;
-  private int col;
-
-  private Color color;
-
-  public Queen(int row, int col, Color color) throws IllegalArgumentException {
-    if ((row < 0) || (col < 0)) {
-      throw new IllegalArgumentException("Illegal position");
-    }
-    this.row = row;
-    this.col = col;
-    this.color = color;
+  /**
+   * Constructs a Queen object using row, col, and color provided.
+   *
+   * @param row   the row to which this chess piece can be moved.
+   * @param col   the col to which this chess piece can be moved.
+   * @param color the color of the chess piece checking for.
+   */
+  public Queen(int row, int col, Color color) {
+    super(row, col, color);
   }
 
   @Override
   public boolean canMove(int row, int col) {
-    if ((row < 0) || (col < 0) || (row >= 8) || (col >= 8)) {
-      return false;
-    }
-    return ((this.row == row) || (this.col == col)
-            || (Math.abs(this.row - row) == Math.abs(this.col - col)));
+    return isInRangeToMove(row, col) && ((this.getRow() == row) || (this.getColumn() == col)
+            || (Math.abs(this.getRow() - row) == Math.abs(this.getColumn() - col)));
   }
 
-  @Override
-  public int getRow() {
-    return row;
-  }
-
-  @Override
-  public int getColumn() {
-    return col;
-  }
-
-  @Override
-  public Color getColor() {
-    return color;
-  }
-
-  @Override
-  public boolean canKill(ChessPiece piece) {
-    return (this.getColor() != piece.getColor()) && canMove(
-            piece.getRow(),
-            piece.getColumn());
-  }
 }
