@@ -72,6 +72,7 @@ public class SimpleCalculator extends AbstractCalculator {
       } else if (sbContainsOperators(builder.toString())) {
         // check first if previously we appended any operator
         String updatedResult = performArithmeticOperation(builder.toString());
+        updatedResult = updatedResult + argument;
         return new SimpleCalculator(updatedResult);
       } else {
         builder.append(argument);
@@ -85,9 +86,13 @@ public class SimpleCalculator extends AbstractCalculator {
               && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1))) {
         throw new IllegalArgumentException("The calculator does not infer any missing inputs. Please check your inputs.");
       } else if (allowedArithmeticOperators(builder.toString().charAt(0))
-      || (!sbContainsOperators(builder.substring(1)))) {
-        // case for negative results
+      && (!sbContainsOperators(builder.substring(1)))) {
+        // case for negative results where no further operation is given
         return new SimpleCalculator(this.inputString); // previously calculated result
+      } else if (!allowedArithmeticOperators(builder.toString().charAt(0))
+              && (!sbContainsOperators(builder.substring(1)))) {
+        // case for negative result where we have a new operation to perform
+        return new SimpleCalculator(this.inputString);
       }
       else if (sbContainsOperators(builder.toString())) {
         // case to commute value of arithmetic operation if sequence is valid
@@ -117,11 +122,7 @@ public class SimpleCalculator extends AbstractCalculator {
   // TODO check which exception is thrown if multi value digits are passed
   // Test for negative inputs to see how it reacts
   private boolean isValidOperandCharacter(char argument) {
-    try {
       return Character.isDigit(argument);
-    } catch (Exception e) {
-      return false;
-    }
   }
 
   private boolean isValidArithmeticOperator(char argument) {
@@ -159,21 +160,18 @@ public class SimpleCalculator extends AbstractCalculator {
         result = Math.addExact(firstOperand, secondOperand);
       } catch (ArithmeticException ae) {
         result = 0;
-        throw new RuntimeException("The arithmetic of the operand causes an integer overflow.");
       }
     } else if (operator == '-') {
       try {
         result = Math.subtractExact(firstOperand, secondOperand);
       } catch (ArithmeticException ae) {
         result = 0;
-        throw new RuntimeException("The arithmetic of the operand causes an integer overflow.");
       }
     } else if (operator == '*') {
       try {
         result = Math.multiplyExact(firstOperand, secondOperand);
       } catch (ArithmeticException ae) {
         result = 0;
-        throw new RuntimeException("The arithmetic of the operand causes an integer overflow.");
       }
     }
 
@@ -182,7 +180,15 @@ public class SimpleCalculator extends AbstractCalculator {
 
   private String performArithmeticOperation(String builder) {
     String result = null;
+    boolean foundNegativeOperand = false;
     // TODO test this if it works
+
+    // check if first char is a negative number since we allow negative result
+    if (allowedArithmeticOperators(builder.charAt(0))) {
+      builder = builder.substring(1);
+      foundNegativeOperand = true;
+    }
+
     Pattern pattern = Pattern.compile(REGEX);
     Matcher matcher = pattern.matcher(builder);
     int operatorIndex = 0;
@@ -193,6 +199,8 @@ public class SimpleCalculator extends AbstractCalculator {
     String[] split = builder.split(REGEX);
 
     if (split[0] != null && split[1] != null) {
+
+      split[0] = foundNegativeOperand ? '-' + split[0] : split[0];
 
       result = computeTwoOperands(Integer.parseInt(split[0]),
               Integer.parseInt(split[1]),
