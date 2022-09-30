@@ -69,7 +69,8 @@ public class SimpleCalculator extends AbstractCalculator {
               && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1))) {
         // check if last index value is also an operator
         throw new IllegalArgumentException("Cannot have two consecutive operators.");
-      } else if (sbContainsOperators(builder.toString())) {
+      } else if (sbContainsOperators(builder.toString())
+        && !allowedArithmeticOperators(builder.toString().charAt(0))) {
         // check first if previously we appended any operator
         String updatedResult = performArithmeticOperation(builder.toString());
         updatedResult = updatedResult + argument;
