@@ -1,8 +1,5 @@
 package calculator;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * A simple calculator takes straightforward inputs, and due to limited processing power it cannot
  * work with whole numbers longer than 32 bits.
@@ -11,11 +8,6 @@ public class SimpleCalculator extends AbstractCalculator {
 
   private String inputString;
   private boolean hasComputationPerformed = false;
-
-  private int firstOperand;
-  private int secondOperand;
-
-  private final static String REGEX = "[+\\-*]";
 
   /**
    *
@@ -32,7 +24,7 @@ public class SimpleCalculator extends AbstractCalculator {
   }
 
   @Override
-  public Calculator input(char argument) throws RuntimeException {
+  public Calculator input(char argument) throws IllegalArgumentException {
     // initialize with what has been already entered thus far
     StringBuilder builder =
             inputString != null
@@ -54,15 +46,15 @@ public class SimpleCalculator extends AbstractCalculator {
       // determine which operand it belongs to
       if (!sbContainsOperators(builder.toString())) {
         // check if new value causes an overflow which is done in parseInt()
-        firstOperand = parseInt(builder.toString());
+        parseInt(builder.toString());
       } else {
         // split it at a Math operator
         String operandString = builder.toString().split(REGEX)[1];
         // check if new value causes an overflow which is done in parseInt()
-        secondOperand = parseInt(operandString);
+        parseInt(operandString);
       }
       return new SimpleCalculator(builder.toString(), false);
-    } else if (isValidArithmeticOperator(argument)) { // check if its a valid operator before append it to sb
+    } else if (allowedArithmeticOperators(argument)) { // check if its a valid operator before append it to sb
       // ex: +23+1 invalid sequence
       if (builder == null || builder.toString().equals("")) {
         throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, followed by the operator, followed by the second operand, followed by \"=\"");
@@ -112,93 +104,6 @@ public class SimpleCalculator extends AbstractCalculator {
   @Override
   public String getResult() {
     return this.inputString;
-  }
-
-  private boolean isValidOperandCharacter(char argument) {
-      return Character.isDigit(argument);
-  }
-
-  private boolean isValidArithmeticOperator(char argument) {
-    return allowedArithmeticOperators(argument);
-  }
-
-  private boolean allowedArithmeticOperators(char argument) {
-    switch (argument) {
-      case '+':
-      case '-':
-      case '*':
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  private boolean sbContainsOperators(String builder) {
-    return builder.contains("+")
-            || builder.contains("-")
-            || builder.contains("*");
-  }
-
-  private int parseInt(String value) {
-    if (Long.parseLong(value) > Integer.MAX_VALUE) {
-      throw new IllegalArgumentException("A valid input causes an operand to integer overflow.");
-    }
-    return Integer.parseInt(value);
-  }
-
-  private String computeTwoOperands(int firstOperand, int secondOperand, char operator) {
-    int result = 0;
-    if (operator == '+') {
-      try {
-        result = Math.addExact(firstOperand, secondOperand);
-      } catch (ArithmeticException ae) {
-        result = 0;
-      }
-    } else if (operator == '-') {
-      try {
-        result = Math.subtractExact(firstOperand, secondOperand);
-      } catch (ArithmeticException ae) {
-        result = 0;
-      }
-    } else if (operator == '*') {
-      try {
-        result = Math.multiplyExact(firstOperand, secondOperand);
-      } catch (ArithmeticException ae) {
-        result = 0;
-      }
-    }
-
-    return String.valueOf(result);
-  }
-
-  private String performArithmeticOperation(String builder) {
-    String result = null;
-    boolean foundNegativeOperand = false;
-
-    // check if first char is a negative number since we allow negative result
-    if (allowedArithmeticOperators(builder.charAt(0))) {
-      builder = builder.substring(1);
-      foundNegativeOperand = true;
-    }
-
-    Pattern pattern = Pattern.compile(REGEX);
-    Matcher matcher = pattern.matcher(builder);
-    int operatorIndex = 0;
-    if (matcher.find()) {
-      operatorIndex = matcher.start();
-    }
-
-    String[] split = builder.split(REGEX);
-
-    if (split[0] != null && split[1] != null) {
-
-      split[0] = foundNegativeOperand ? '-' + split[0] : split[0];
-
-      result = computeTwoOperands(Integer.parseInt(split[0]),
-              Integer.parseInt(split[1]),
-              builder.charAt(operatorIndex));
-    }
-    return result;
   }
 
 }
