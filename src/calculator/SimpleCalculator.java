@@ -9,14 +9,9 @@ import java.util.regex.Pattern;
  */
 public class SimpleCalculator extends AbstractCalculator {
 
-  // to keep track of individual input values
-  // can help to support currentState??
-  // TODO use stacks??? queue??
   private String inputString;
+  private boolean hasComputationPerformed = false;
 
-  //private Queue<Character> inputQueue = new LinkedList<>();
-
-  // new approach to compute
   private int firstOperand;
   private int secondOperand;
 
@@ -31,8 +26,9 @@ public class SimpleCalculator extends AbstractCalculator {
   /**
    * @param inputString
    */
-  private SimpleCalculator(String inputString) {
+  private SimpleCalculator(String inputString, boolean hasComputationPerformed) {
     this.inputString = inputString;
+    this.hasComputationPerformed = hasComputationPerformed;
   }
 
   @Override
@@ -45,22 +41,27 @@ public class SimpleCalculator extends AbstractCalculator {
 
     // check if its a valid digit before append it to sb
     if (isValidOperandCharacter(argument)) {
+
+      // override the string with fresh input value
+      if ((hasComputationPerformed && !sbContainsOperators(builder.toString()))
+              || (hasComputationPerformed && allowedArithmeticOperators(builder.toString().charAt(0)) && !sbContainsOperators(builder.substring(1)))) {
+        builder.delete(0, builder.length());
+      }
+
       // build stringBuilder
       builder.append(argument);
 
       // determine which operand it belongs to
       if (!sbContainsOperators(builder.toString())) {
         // check if new value causes an overflow which is done in parseInt()
-        // TODO test overflow does not cause to lose previous value
         firstOperand = parseInt(builder.toString());
       } else {
         // split it at a Math operator
         String operandString = builder.toString().split(REGEX)[1];
         // check if new value causes an overflow which is done in parseInt()
-        // TODO test overflow does not cause to lose previous value
         secondOperand = parseInt(operandString);
       }
-      return new SimpleCalculator(builder.toString());
+      return new SimpleCalculator(builder.toString(), false);
     } else if (isValidArithmeticOperator(argument)) { // check if its a valid operator before append it to sb
       // ex: +23+1 invalid sequence
       if (builder == null || builder.toString().equals("")) {
@@ -74,13 +75,13 @@ public class SimpleCalculator extends AbstractCalculator {
         // check first if previously we appended any operator
         String updatedResult = performArithmeticOperation(builder.toString());
         updatedResult = updatedResult + argument;
-        return new SimpleCalculator(updatedResult);
+        return new SimpleCalculator(updatedResult, true);
       } else {
         builder.append(argument);
-        return new SimpleCalculator(builder.toString());
+        return new SimpleCalculator(builder.toString(), false);
       }
     } else if (argument == 'C') { // Check for correct sequence of inputs
-      return new SimpleCalculator(""); // clear calculator inputs
+      return new SimpleCalculator("", false); // clear calculator inputs
     } else if (argument == '=') {
       // case for missing inputs
       if (!builder.toString().equals("")
@@ -89,22 +90,17 @@ public class SimpleCalculator extends AbstractCalculator {
       } else if (allowedArithmeticOperators(builder.toString().charAt(0))
       && (!sbContainsOperators(builder.substring(1)))) {
         // case for negative results where no further operation is given
-        return new SimpleCalculator(this.inputString); // previously calculated result
+        return new SimpleCalculator(this.inputString, false); // previously calculated result
       } else if (!allowedArithmeticOperators(builder.toString().charAt(0))
               && (!sbContainsOperators(builder.substring(1)))) {
         // case for negative result where we have a new operation to perform
-        return new SimpleCalculator(this.inputString);
+        return new SimpleCalculator(this.inputString, false);
       }
       else if (sbContainsOperators(builder.toString())) {
         // case to commute value of arithmetic operation if sequence is valid
         String updatedResult = performArithmeticOperation(builder.toString());
-        return new SimpleCalculator(updatedResult);
-      } /*else { // TODO test this if we need this code at all
-        // case to handle multiple "="
-        if (inputQueue.size() == 1) {
-
-        }
-      }*/
+        return new SimpleCalculator(updatedResult, true);
+      }
     } else {
       throw new IllegalArgumentException("The only valid operand characters are 0-9 and operators are +, - and *");
     }
@@ -116,12 +112,8 @@ public class SimpleCalculator extends AbstractCalculator {
   @Override
   public String getResult() {
     return this.inputString;
-    //TODO test and should show what has been entered so far
-    // before entering any inputs, the result should be a blank string
   }
 
-  // TODO check which exception is thrown if multi value digits are passed
-  // Test for negative inputs to see how it reacts
   private boolean isValidOperandCharacter(char argument) {
       return Character.isDigit(argument);
   }
@@ -182,7 +174,6 @@ public class SimpleCalculator extends AbstractCalculator {
   private String performArithmeticOperation(String builder) {
     String result = null;
     boolean foundNegativeOperand = false;
-    // TODO test this if it works
 
     // check if first char is a negative number since we allow negative result
     if (allowedArithmeticOperators(builder.charAt(0))) {
