@@ -1,5 +1,14 @@
 package calculator;
 
+/**
+ * A smart calculator accepts inputs like simple calculator, and is backwards compatible with it.
+ * There are certain smart operations it can perform such as - 1. Input '=' entered multiple times
+ * produces the result of the previous operands plus the last operand and operator it used to
+ * compute it. 2. Skipping second operand, it produces the result with it's own first operand. 3.
+ * Given two consecutive operators, it ignores the first one. 4. Begin with '+' operator in the
+ * sequence, it ignores it, and use the next operator given between two operands. It does not allow
+ * any other operators to be at the first of the sequence.
+ */
 public class SmartCalculator extends AbstractCalculator {
 
   private String inputString;
@@ -7,11 +16,21 @@ public class SmartCalculator extends AbstractCalculator {
   private char lastOperator;
   private boolean hasComputationPerformed = false;
 
+  /**
+   * Constructs an empty SmartCalculator constructor.
+   */
   public SmartCalculator() {
   }
 
   /**
-   * @param inputString
+   * Constructs an SimpleCalculator constructor with inputString, hasComputationPerformed,
+   * lastOperand, and lastOperator.
+   *
+   * @param inputString             the inputs that has been entered thus far.
+   * @param hasComputationPerformed indicating if the computation has performed on given input
+   *                                string or not.
+   * @param lastOperand             the last operand used in previous computation.
+   * @param lastOperator            the last operator used in previous computation.
    */
   private SmartCalculator(String inputString, boolean hasComputationPerformed, int lastOperand, char lastOperator) {
     this.inputString = inputString;

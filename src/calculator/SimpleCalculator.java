@@ -1,8 +1,9 @@
 package calculator;
 
 /**
- * A simple calculator takes straightforward inputs, and due to limited processing power it cannot
- * work with whole numbers longer than 32 bits.
+ * A simple calculator takes straightforward inputs to perform computation between given operands
+ * and operator. The only valid operand characters are 0-9, and the only valid operators are +, -
+ * and *.
  */
 public class SimpleCalculator extends AbstractCalculator {
 
@@ -10,13 +11,17 @@ public class SimpleCalculator extends AbstractCalculator {
   private boolean hasComputationPerformed = false;
 
   /**
-   *
+   * Constructs an empty SimpleCalculator constructor.
    */
   public SimpleCalculator() {
   }
 
   /**
-   * @param inputString
+   * Constructs an SimpleCalculator constructor with inputString and hasComputationPerformed.
+   *
+   * @param inputString             the inputs that has been entered thus far.
+   * @param hasComputationPerformed indicating if the computation has performed on given input
+   *                                string or not.
    */
   private SimpleCalculator(String inputString, boolean hasComputationPerformed) {
     this.inputString = inputString;
