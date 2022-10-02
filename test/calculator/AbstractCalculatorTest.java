@@ -14,12 +14,6 @@ import static org.junit.Assert.assertNull;
  * Tests for {@link Calculator}s.
  */
 public abstract class AbstractCalculatorTest {
-    /*
-      Leave this section alone: It contains abstract methods to
-      create Calculator, and concrete implementations of this testing class
-      will supply particular implementations of Calculator to be used within
-      these tests.
-    */
 
   /**
    * Constructs an instance of the class under test representing AbstractCalculator object.
@@ -48,7 +42,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -72,7 +66,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -102,7 +96,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -120,7 +114,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       calculator.input(operator);
     }
@@ -137,7 +131,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1;
         try {
@@ -170,7 +164,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -215,7 +209,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -245,7 +239,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -278,7 +272,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(operator);
         assertEquals(String.valueOf(operator), calculator1.getResult());
@@ -310,7 +304,7 @@ public abstract class AbstractCalculatorTest {
 
         // no mutations
         Calculator calculator = abstractCalculator();
-        assertNull(calculator.getResult());
+        assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
         assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -351,7 +345,7 @@ public abstract class AbstractCalculatorTest {
     Calculator calculator = abstractCalculator();
     String actualResult = calculator.getResult();
 
-    assertNull(actualResult);
+    assertEquals("", calculator.getResult());
   }
 
   @Test
@@ -422,7 +416,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -451,7 +445,7 @@ public abstract class AbstractCalculatorTest {
       char input1 = (char) (i1 + '0');
       char operator = getRandomOperator();
 
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -476,7 +470,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -510,7 +504,7 @@ public abstract class AbstractCalculatorTest {
 
     // no mutations
     Calculator calculator = abstractCalculator();
-    assertNull(calculator.getResult());
+    assertEquals("", calculator.getResult());
 
     Calculator calculator1 = calculator.input(input1);
     assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -537,7 +531,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -564,7 +558,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -606,7 +600,7 @@ public abstract class AbstractCalculatorTest {
   public void testAdditionOverflow() {
     //input 1 '2055786000'
     Calculator calculator = abstractCalculator();
-    assertNull(calculator.getResult());
+    assertEquals("", calculator.getResult());
 
     Calculator calculator27 = operand1(calculator);
     assertEquals("2055786000", calculator27.getResult());
@@ -637,7 +631,7 @@ public abstract class AbstractCalculatorTest {
   public void testMultiplicationOverflow() {
     //input 1 '2055786000'
     Calculator calculator = abstractCalculator();
-    assertNull(calculator.getResult());
+    assertEquals("", calculator.getResult());
 
     Calculator calculator27 = operand1(calculator);
     assertEquals("2055786000", calculator27.getResult());
@@ -711,7 +705,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());
@@ -751,7 +745,7 @@ public abstract class AbstractCalculatorTest {
 
       // no mutations
       Calculator calculator = abstractCalculator();
-      assertNull(calculator.getResult());
+      assertEquals("", calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
       assertEquals(String.valueOf(input1), calculator1.getResult());

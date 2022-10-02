@@ -11,7 +11,7 @@ package calculator;
  */
 public class SmartCalculator extends AbstractCalculator {
 
-  private String inputString;
+  private String inputString = "";
   private int lastOperand;
   private char lastOperator;
   private boolean hasComputationPerformed = false;
@@ -56,8 +56,8 @@ public class SmartCalculator extends AbstractCalculator {
       // ex: +23+1 invalid sequence
       if (isBuilderEmpty(builder)) {
         if (argument == '-' || argument == '*') {
-          throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, " +
-                  "followed by the operator, followed by the second operand, followed by \"=\"");
+          throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
+                  + "followed by the operator, followed by the second operand, followed by \"=\"");
         } else {
           builder.append(argument);
           return new SmartCalculator(builder.toString(), false, 0, '\0');
@@ -67,7 +67,8 @@ public class SmartCalculator extends AbstractCalculator {
         return new SmartCalculator(overrideOperator(builder.toString(), argument),
                 false, 0, '\0');
       } else if (checkBuilderContainsOperator(builder)) {
-        return new SmartCalculator(computeSequenceThusFar(argument, builder), true, getLastOperand(), getLastOperator());
+        return new SmartCalculator(computeSequenceThusFar(argument, builder),
+                true, getLastOperand(), getLastOperator());
       } else {
         return new SmartCalculator(builder.append(argument).toString(), false, 0, '\0');
       }
@@ -100,8 +101,8 @@ public class SmartCalculator extends AbstractCalculator {
                 true, getLastOperand(), getLastOperator());
       }
     } else {
-      throw new IllegalArgumentException("The only valid operand characters are 0-9 " +
-              "and operators are +, - and *");
+      throw new IllegalArgumentException("The only valid operand characters are 0-9 "
+              + "and operators are +, - and *");
     }
 
     // if it falls here, just return empty object
