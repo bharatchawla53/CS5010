@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractCalculator implements Calculator {
 
-  protected final static String REGEX = "[+\\-*]";
+  protected static final String REGEX = "[+\\-*]";
   private int secondOperand;
   private char operator;
 
@@ -181,7 +181,8 @@ public abstract class AbstractCalculator implements Calculator {
    */
   protected boolean isLastCharAnOperator(StringBuilder builder) {
     return builder != null
-            && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1));
+            && allowedArithmeticOperators(builder.toString()
+            .charAt(builder.toString().length() - 1));
   }
 
   /**
@@ -238,7 +239,8 @@ public abstract class AbstractCalculator implements Calculator {
    */
   protected boolean isSecondOperandMissing(StringBuilder builder) {
     return !builder.toString().equals("")
-            && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1));
+            && allowedArithmeticOperators(builder.toString()
+            .charAt(builder.toString().length() - 1));
   }
 
   /**

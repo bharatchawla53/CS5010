@@ -15,18 +15,18 @@ import static org.junit.Assert.assertNull;
  */
 public abstract class AbstractCalculatorTest {
     /*
-    Leave this section alone: It contains abstract methods to
-    create Calculator, and concrete implementations of this testing class
-    will supply particular implementations of Calculator to be used within
-    these tests.
-   */
+      Leave this section alone: It contains abstract methods to
+      create Calculator, and concrete implementations of this testing class
+      will supply particular implementations of Calculator to be used within
+      these tests.
+    */
 
   /**
    * Constructs an instance of the class under test representing AbstractCalculator object.
    *
    * @return an instance of the class under test
    */
-  protected abstract Calculator ac();
+  protected abstract Calculator abstractCalculator();
 
   /**
    * This class tests simple calculator.
@@ -34,7 +34,7 @@ public abstract class AbstractCalculatorTest {
   public static final class SimpleCalculatorTest extends AbstractCalculatorTest {
 
     @Override
-    protected Calculator ac() {
+    protected Calculator abstractCalculator() {
       return new SimpleCalculator();
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -71,7 +71,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -101,7 +101,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -119,7 +119,7 @@ public abstract class AbstractCalculatorTest {
       char operator = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       calculator.input(operator);
@@ -136,7 +136,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1;
@@ -169,7 +169,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -201,7 +201,7 @@ public abstract class AbstractCalculatorTest {
   public static final class SmartCalculatorTest extends AbstractCalculatorTest {
 
     @Override
-    protected Calculator ac() {
+    protected Calculator abstractCalculator() {
       return new SmartCalculator();
     }
 
@@ -214,7 +214,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -244,7 +244,7 @@ public abstract class AbstractCalculatorTest {
         char operator1 = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -277,7 +277,7 @@ public abstract class AbstractCalculatorTest {
         char operator1 = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(operator);
@@ -309,7 +309,7 @@ public abstract class AbstractCalculatorTest {
         char operator = getRandomOperator();
 
         // no mutations
-        Calculator calculator = ac();
+        Calculator calculator = abstractCalculator();
         assertNull(calculator.getResult());
 
         Calculator calculator1 = calculator.input(input1);
@@ -326,11 +326,13 @@ public abstract class AbstractCalculatorTest {
         assertEquals(expectedFirstComputation, calculator4.getResult());
 
         Calculator calculator5 = calculator4.input('=');
-        String expectedSecondComputation = computeValues(Integer.parseInt(expectedFirstComputation), i2, operator);
+        String expectedSecondComputation = computeValues(Integer.parseInt(expectedFirstComputation),
+                i2, operator);
         assertEquals(expectedSecondComputation, calculator5.getResult());
 
         Calculator calculator6 = calculator5.input('=');
-        String expectedThirdComputation = computeValues(Integer.parseInt(expectedSecondComputation), i2, operator);
+        String expectedThirdComputation = computeValues(Integer.parseInt(expectedSecondComputation),
+                i2, operator);
         assertEquals(expectedThirdComputation, calculator6.getResult());
       }
     }
@@ -346,7 +348,7 @@ public abstract class AbstractCalculatorTest {
 
   @Test
   public void testGetResultIsEmptyBeforeEnteringInputs() {
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     String actualResult = calculator.getResult();
 
     assertNull(actualResult);
@@ -357,7 +359,7 @@ public abstract class AbstractCalculatorTest {
     for (int i = 0; i < 999; i++) {
       char input = (char) (random.nextInt(10) + '0');
 
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       Calculator actualCalculator = calculator.input(input);
 
       String expectedResult = String.valueOf(input);
@@ -368,7 +370,7 @@ public abstract class AbstractCalculatorTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testIsInvalidOperandCharacter() {
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     calculator.input('R');
   }
 
@@ -377,7 +379,7 @@ public abstract class AbstractCalculatorTest {
     for (int i = 0; i < 999; i++) {
       char input = (char) (random.nextInt(10) + '0');
 
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       Calculator calculator1;
 
       try {
@@ -393,13 +395,13 @@ public abstract class AbstractCalculatorTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testIsInvalidOperandCharacterForNegativeValues() {
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     calculator.input('-');
   }
 
   @Test
-  public void testIsInvalidOperandCharacterForNegativeValuesAndCatchTheExceptionToTestWithNewValidInput() {
-    Calculator calculator = ac();
+  public void testIsInvalidOperandCharacterForNegativeValuesAndCatchTheExceptionToTestValidInput() {
+    Calculator calculator = abstractCalculator();
     try {
       calculator.input('-');
     } catch (IllegalArgumentException e) {
@@ -419,7 +421,7 @@ public abstract class AbstractCalculatorTest {
       char operator = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
@@ -435,13 +437,13 @@ public abstract class AbstractCalculatorTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testIsInvalidOperator() {
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     calculator.input('/');
   }
 
   @Test
   public void testIsInvalidOperatorAndCatchTheExceptionToTestWithNewValidInput() {
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     try {
       calculator.input('/');
     } catch (IllegalArgumentException e) {
@@ -473,7 +475,7 @@ public abstract class AbstractCalculatorTest {
       char operator1 = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
@@ -492,7 +494,8 @@ public abstract class AbstractCalculatorTest {
       assertEquals(computeValues(i1, i2, operator) + operator1 + input3, calculator5.getResult());
 
       Calculator calculator6 = calculator5.input('=');
-      assertEquals(computeValues(Integer.parseInt(computeValues(i1, i2, operator)), i3, operator1), calculator6.getResult());
+      assertEquals(computeValues(Integer.parseInt(computeValues(i1, i2, operator)),
+              i3, operator1), calculator6.getResult());
     }
   }
 
@@ -506,7 +509,7 @@ public abstract class AbstractCalculatorTest {
     char operator = '-';
 
     // no mutations
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     assertNull(calculator.getResult());
 
     Calculator calculator1 = calculator.input(input1);
@@ -533,7 +536,7 @@ public abstract class AbstractCalculatorTest {
       char operator = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
@@ -560,7 +563,7 @@ public abstract class AbstractCalculatorTest {
       char operator = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
@@ -602,7 +605,7 @@ public abstract class AbstractCalculatorTest {
   @Test
   public void testAdditionOverflow() {
     //input 1 '2055786000'
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     assertNull(calculator.getResult());
 
     Calculator calculator27 = operand1(calculator);
@@ -633,7 +636,7 @@ public abstract class AbstractCalculatorTest {
   @Test
   public void testMultiplicationOverflow() {
     //input 1 '2055786000'
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     assertNull(calculator.getResult());
 
     Calculator calculator27 = operand1(calculator);
@@ -707,7 +710,7 @@ public abstract class AbstractCalculatorTest {
       char operator1 = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
@@ -747,7 +750,7 @@ public abstract class AbstractCalculatorTest {
       char operator = getRandomOperator();
 
       // no mutations
-      Calculator calculator = ac();
+      Calculator calculator = abstractCalculator();
       assertNull(calculator.getResult());
 
       Calculator calculator1 = calculator.input(input1);
@@ -794,12 +797,13 @@ public abstract class AbstractCalculatorTest {
         return String.valueOf(i1 - i2);
       case '*':
         return String.valueOf(i1 * i2);
+      default:
+        return null;
     }
-    return null;
   }
 
   private Calculator getOperandOverflowObject(char input) {
-    Calculator calculator = ac();
+    Calculator calculator = abstractCalculator();
     Calculator calculator1 = calculator.input(input);
     Calculator calculator2 = calculator1.input(input);
     Calculator calculator3 = calculator2.input(input);

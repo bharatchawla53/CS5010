@@ -39,10 +39,11 @@ public class SimpleCalculator extends AbstractCalculator {
     if (isValidOperandCharacter(argument)) {
       performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
       return new SimpleCalculator(builder.toString(), false);
-    } else if (allowedArithmeticOperators(argument)) { // check if its a valid operator before append it to sb
+    } else if (allowedArithmeticOperators(argument)) {
       // ex: +23+1 invalid sequence
       if (isBuilderEmpty(builder)) {
-        throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, followed by the operator, followed by the second operand, followed by \"=\"");
+        throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, " +
+                "followed by the operator, followed by the second operand, followed by \"=\"");
       } else if (isLastCharAnOperator(builder)) {
         throw new IllegalArgumentException("Cannot have two consecutive operators.");
       } else if (checkBuilderContainsOperator(builder)) {
@@ -54,7 +55,8 @@ public class SimpleCalculator extends AbstractCalculator {
       return new SimpleCalculator("", false);
     } else if (argument == '=') {
       if (isSecondOperandMissing(builder)) {
-        throw new IllegalArgumentException("The calculator does not infer any missing inputs. Please check your inputs.");
+        throw new IllegalArgumentException("The calculator does not infer any missing inputs. " +
+                "Please check your inputs.");
       } else if (!sbContainsOperators(builder.toString())) {
         return new SimpleCalculator(builder.toString(), false);
       } else if (sbContainsOperators(builder.toString())) {
@@ -67,7 +69,8 @@ public class SimpleCalculator extends AbstractCalculator {
         return new SimpleCalculator(performArithmeticOperation(builder.toString()), true);
       }
     } else {
-      throw new IllegalArgumentException("The only valid operand characters are 0-9 and operators are +, - and *");
+      throw new IllegalArgumentException("The only valid operand characters are 0-9 " +
+              "and operators are +, - and *");
     }
     // if it falls here, just return empty object
     return new SimpleCalculator();
