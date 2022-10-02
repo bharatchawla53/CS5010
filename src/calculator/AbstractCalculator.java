@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 public abstract class AbstractCalculator implements Calculator {
 
   protected final static String REGEX = "[+\\-*]";
+  private int secondOperand;
+  private char operator;
 
   /**
    * Checks if operand characters are withing range [0-9].
@@ -97,9 +99,11 @@ public abstract class AbstractCalculator implements Calculator {
 
       split[0] = foundNegativeOperand ? '-' + split[0] : split[0];
 
-      result = computeTwoOperands(Integer.parseInt(split[0]),
-              Integer.parseInt(split[1]),
-              builder.charAt(operatorIndex));
+      int firstOperand = Integer.parseInt(split[0]);
+      secondOperand = Integer.parseInt(split[1]);
+      operator = builder.charAt(operatorIndex);
+
+      result = computeTwoOperands(firstOperand, secondOperand, operator);
     }
     return result;
   }
@@ -136,5 +140,122 @@ public abstract class AbstractCalculator implements Calculator {
     }
 
     return String.valueOf(result);
+  }
+
+  /**
+   * It performs operation on builder for a valid input i.e. digits.
+   *
+   * @param argument                a valid digit to be appended to the string builder.
+   * @param builder                 containing the sequence of inputs.
+   * @param hasComputationPerformed boolean denoting if the computation has performed previously or
+   *                                not to overwrite the builder and initiate a new sequence of
+   *                                inputs.
+   */
+  protected void performValidOperandCharacterOperation(char argument, StringBuilder builder,
+                                                       boolean hasComputationPerformed) {
+    // override the string with fresh input value
+    if ((hasComputationPerformed && !sbContainsOperators(builder.toString()))
+            || (hasComputationPerformed && allowedArithmeticOperators(builder.toString().charAt(0))
+            && !sbContainsOperators(builder.substring(1)))) {
+      builder.delete(0, builder.length());
+    }
+
+    // build stringBuilder
+    builder.append(argument);
+
+    // determine which operand it belongs to
+    if (!sbContainsOperators(builder.toString())) {
+      // check if new value causes an overflow
+      parseInt(builder.toString());
+    } else {
+      // split it at a Math operator and check if it causes an overflow
+      parseInt(builder.toString().split(REGEX)[1]);
+    }
+  }
+
+  /**
+   * Checks if the last character in the sequence is an operator.
+   *
+   * @param builder containing the sequence of inputs.
+   * @return true, if the last character is an operator, false otherwise.
+   */
+  protected boolean isLastCharAnOperator(StringBuilder builder) {
+    return builder != null
+            && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1));
+  }
+
+  /**
+   * Checks if the given string builder is empty or null.
+   *
+   * @param builder containing the sequence of inputs.
+   * @return true, if the builder is empty, false, otherwise.
+   */
+  protected boolean isBuilderEmpty(StringBuilder builder) {
+    return builder == null || builder.toString().equals("");
+  }
+
+  /**
+   * It checks if builder contains an operator between two given operands before we allow them to
+   * compute the results.
+   *
+   * @param builder contains the sequence of inputs.
+   * @return true, if it contains a valid operator, false, otherwise.
+   */
+  protected boolean checkBuilderContainsOperator(StringBuilder builder) {
+    return sbContainsOperators(builder.toString())
+            && !allowedArithmeticOperators(builder.toString().charAt(0));
+  }
+
+  /**
+   * If the argument is an operator, and the sequence is valid, it performs computation to evaluate
+   * `just in time` and append the new operator once expression is evaluated.
+   *
+   * @param argument an operator to be appended after expression is evaluated.
+   * @param builder  contains the sequence of inputs.
+   * @return the computed result with the new operator.
+   */
+  protected String computeSequenceThusFar(char argument, StringBuilder builder) {
+    String updatedResult = performArithmeticOperation(builder.toString());
+    updatedResult = updatedResult + argument;
+    return updatedResult;
+  }
+
+  /**
+   * It clears calculator input sequence if argument `C` is provided.
+   *
+   * @param argument calculator input to clear the sequence.
+   * @return true if argument matches, false, otherwise.
+   */
+  protected boolean clearCalculatorInputs(char argument) {
+    return argument == 'C';
+  }
+
+  /**
+   * Given the string builder it checks if the second operand is missing.
+   *
+   * @param builder builder containing the sequence of inputs captured thus far.
+   * @return true if the second operand is missing, false, otherwise.
+   */
+  protected boolean isSecondOperandMissing(StringBuilder builder) {
+    return !builder.toString().equals("")
+            && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1));
+  }
+
+  /**
+   * Need to access this if we want to continue to evaluate expression if multiple `=` are given.
+   *
+   * @return the last operand used in previous computation.
+   */
+  protected int getLastOperand() {
+    return this.secondOperand;
+  }
+
+  /**
+   * Need to access this if we want to continue to evaluate expression if multiple `=` are given.
+   *
+   * @return the last operator used in previous computation.
+   */
+  protected char getLastOperator() {
+    return this.operator;
   }
 }

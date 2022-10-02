@@ -587,6 +587,137 @@ public class SimpleCalculatorTest {
     }
   }
 
+  // testing smart calculator specific changes here for now until abstraction is done
+
+  @Test
+  public void testAllowedResultInputEnteredMultipleTimes() {
+    for (int i = 0; i < 999; i++) {
+      int i1 = random.nextInt(10);
+      int i2 = random.nextInt(10);
+
+      char input1 = (char) (i1 + '0');
+      char input2 = (char) (i2 + '0');
+      char operator = getRandomOperator();
+
+      // no mutations
+      SmartCalculator simpleCalculator = new SmartCalculator();
+      assertNull(simpleCalculator.getResult());
+
+      Calculator calculator = simpleCalculator.input(input1);
+      assertEquals(String.valueOf(input1), calculator.getResult());
+
+      Calculator calculator1 = calculator.input(operator);
+      assertEquals("" + input1 + operator, calculator1.getResult());
+
+      Calculator calculator2 = calculator1.input(input2);
+      assertEquals("" + input1 + operator + input2, calculator2.getResult());
+
+      Calculator calculator3 = calculator2.input('=');
+      String expectedFirstComputation = computeValues(i1, i2, operator);
+      assertEquals(expectedFirstComputation, calculator3.getResult());
+
+      Calculator calculator4 = calculator3.input('=');
+      String expectedSecondComputation = computeValues(Integer.parseInt(expectedFirstComputation), i2, operator);
+      assertEquals(expectedSecondComputation, calculator4.getResult());
+
+      Calculator calculator5 = calculator4.input('=');
+      String expectedThirdComputation = computeValues(Integer.parseInt(expectedSecondComputation), i2, operator);
+      assertEquals(expectedThirdComputation, calculator5.getResult());
+    }
+  }
+
+  @Test
+  public void testTwoConsecutiveOperatorsIgnoresFirstOne() {
+    for (int i = 0; i < 999; i++) {
+      int i1 = random.nextInt(10);
+      int i2 = random.nextInt(10);
+
+      char input1 = (char) (i1 + '0');
+      char input2 = (char) (i2 + '0');
+      char operator = getRandomOperator();
+      char operator1 = getRandomOperator();
+
+      // no mutations
+      SmartCalculator simpleCalculator = new SmartCalculator();
+      assertNull(simpleCalculator.getResult());
+
+      Calculator calculator = simpleCalculator.input(input1);
+      assertEquals(String.valueOf(input1), calculator.getResult());
+
+      Calculator calculator1 = calculator.input(operator);
+      assertEquals("" + input1 + operator, calculator1.getResult());
+
+      Calculator calculator2 = calculator1.input(operator1);
+      assertEquals("" + input1 + operator1, calculator2.getResult());
+
+      Calculator calculator3 = calculator2.input(input2);
+      assertEquals("" + input1 + operator1 + input2, calculator3.getResult());
+
+      Calculator calculator4 = calculator3.input('=');
+      String expectedFirstComputation = computeValues(i1, i2, operator1);
+      assertEquals(expectedFirstComputation, calculator4.getResult());
+    }
+  }
+
+  @Test
+  public void testBeginWithAdditionOperator() {
+    for (int i = 0; i < 999; i++) {
+      int i1 = random.nextInt(10);
+      int i2 = random.nextInt(10);
+
+      char input1 = (char) (i1 + '0');
+      char input2 = (char) (i2 + '0');
+      char operator = '+';
+      char operator1 = getRandomOperator();
+
+      // no mutations
+      SmartCalculator simpleCalculator = new SmartCalculator();
+      assertNull(simpleCalculator.getResult());
+
+      Calculator calculator = simpleCalculator.input(operator);
+      assertEquals(String.valueOf(operator), calculator.getResult());
+
+      Calculator calculator1 = calculator.input(input1);
+      assertEquals("" + operator + input1, calculator1.getResult());
+
+      Calculator calculator2 = calculator1.input(operator1);
+      assertEquals("" + operator + input1 + operator1, calculator2.getResult());
+
+      Calculator calculator3 = calculator2.input(input2);
+      assertEquals("" + operator + input1 + operator1 + input2, calculator3.getResult());
+
+      Calculator calculator4 = calculator3.input('=');
+      String expectedFirstComputation = computeValues(i1, i2, operator1);
+      assertEquals(expectedFirstComputation, calculator4.getResult());
+    }
+  }
+
+  @Test
+  public void testSkipSecondOperand() {
+    for (int i = 0; i < 999; i++) {
+      int i1 = random.nextInt(10);
+
+      char input1 = (char) (i1 + '0');
+      char operator = getRandomOperator();
+
+      // no mutations
+      SmartCalculator simpleCalculator = new SmartCalculator();
+      assertNull(simpleCalculator.getResult());
+
+      Calculator calculator = simpleCalculator.input(input1);
+      assertEquals(String.valueOf(input1), calculator.getResult());
+
+      Calculator calculator1 = calculator.input(operator);
+      assertEquals("" + input1 + operator, calculator1.getResult());
+
+      Calculator calculator2 = calculator1.input('=');
+      assertEquals(computeValues(i1, i1, operator), calculator2.getResult());
+
+      Calculator calculator3 = calculator2.input('=');
+      assertEquals(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator), calculator3.getResult());
+    }
+  }
+
   /**
    * Generates a random math operator from the given array defined with allowed operators.
    *

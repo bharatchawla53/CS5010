@@ -31,72 +31,39 @@ public class SimpleCalculator extends AbstractCalculator {
                     ? new StringBuilder(this.inputString)
                     : new StringBuilder();
 
-    // check if its a valid digit before append it to sb
     if (isValidOperandCharacter(argument)) {
-
-      // override the string with fresh input value
-      if ((hasComputationPerformed && !sbContainsOperators(builder.toString()))
-              || (hasComputationPerformed && allowedArithmeticOperators(builder.toString().charAt(0)) && !sbContainsOperators(builder.substring(1)))) {
-        builder.delete(0, builder.length());
-      }
-
-      // build stringBuilder
-      builder.append(argument);
-
-      // determine which operand it belongs to
-      if (!sbContainsOperators(builder.toString())) {
-        // check if new value causes an overflow which is done in parseInt()
-        parseInt(builder.toString());
-      } else {
-        // split it at a Math operator
-        String operandString = builder.toString().split(REGEX)[1];
-        // check if new value causes an overflow which is done in parseInt()
-        parseInt(operandString);
-      }
+      performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
       return new SimpleCalculator(builder.toString(), false);
     } else if (allowedArithmeticOperators(argument)) { // check if its a valid operator before append it to sb
       // ex: +23+1 invalid sequence
-      if (builder == null || builder.toString().equals("")) {
+      if (isBuilderEmpty(builder)) {
         throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, followed by the operator, followed by the second operand, followed by \"=\"");
-      } else if (builder != null
-              && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1))) {
-        // check if last index value is also an operator
+      } else if (isLastCharAnOperator(builder)) {
         throw new IllegalArgumentException("Cannot have two consecutive operators.");
-      } else if (sbContainsOperators(builder.toString())
-        && !allowedArithmeticOperators(builder.toString().charAt(0))) {
-        // check first if previously we appended any operator
-        String updatedResult = performArithmeticOperation(builder.toString());
-        updatedResult = updatedResult + argument;
-        return new SimpleCalculator(updatedResult, true);
+      } else if (checkBuilderContainsOperator(builder)) {
+        return new SimpleCalculator(computeSequenceThusFar(argument, builder), true);
       } else {
-        builder.append(argument);
-        return new SimpleCalculator(builder.toString(), false);
+        return new SimpleCalculator(builder.append(argument).toString(), false);
       }
-    } else if (argument == 'C') { // Check for correct sequence of inputs
-      return new SimpleCalculator("", false); // clear calculator inputs
+    } else if (clearCalculatorInputs(argument)) {
+      return new SimpleCalculator("", false);
     } else if (argument == '=') {
-      // case for missing inputs
-      if (!builder.toString().equals("")
-              && allowedArithmeticOperators(builder.toString().charAt(builder.toString().length() - 1))) {
+      if (isSecondOperandMissing(builder)) {
         throw new IllegalArgumentException("The calculator does not infer any missing inputs. Please check your inputs.");
-      } else if (allowedArithmeticOperators(builder.toString().charAt(0))
-      && (!sbContainsOperators(builder.substring(1)))) {
-        // case for negative results where no further operation is given
-        return new SimpleCalculator(this.inputString, false); // previously calculated result
-      } else if (!allowedArithmeticOperators(builder.toString().charAt(0))
-              && (!sbContainsOperators(builder.substring(1)))) {
-        // case for negative result where we have a new operation to perform
-        return new SimpleCalculator(this.inputString, false);
-      }
-      else if (sbContainsOperators(builder.toString())) {
+      } else if (!sbContainsOperators(builder.toString())) {
+        return new SimpleCalculator(builder.toString(), false);
+      } else if (sbContainsOperators(builder.toString())) {
+        // case where resulted computation resulted in a negative result
+        if (allowedArithmeticOperators(builder.toString().charAt(0))
+                && (!sbContainsOperators(builder.substring(1)))) {
+          return new SimpleCalculator(builder.toString(), false);
+        }
         // case to commute value of arithmetic operation if sequence is valid
-        String updatedResult = performArithmeticOperation(builder.toString());
-        return new SimpleCalculator(updatedResult, true);
+        return new SimpleCalculator(performArithmeticOperation(builder.toString()), true);
       }
     } else {
       throw new IllegalArgumentException("The only valid operand characters are 0-9 and operators are +, - and *");
     }
-
     // if it falls here, just return empty object
     return new SimpleCalculator();
   }
