@@ -11,47 +11,29 @@ package calculator;
  */
 public class SmartCalculator extends AbstractCalculator {
 
-  private String inputString = "";
-  private int lastOperand;
-  private char lastOperator;
-  private boolean hasComputationPerformed = false;
-
   /**
    * Constructs an empty SmartCalculator constructor.
    */
   public SmartCalculator() {
+    super("", 0, '\0', false);
   }
 
-  /**
-   * Constructs an SimpleCalculator constructor with inputString, hasComputationPerformed,
-   * lastOperand, and lastOperator.
-   *
-   * @param inputString             the inputs that has been entered thus far.
-   * @param hasComputationPerformed indicating if the computation has performed on given input
-   *                                string or not.
-   * @param lastOperand             the last operand used in previous computation.
-   * @param lastOperator            the last operator used in previous computation.
-   */
-  private SmartCalculator(String inputString, boolean hasComputationPerformed,
-                          int lastOperand, char lastOperator) {
-    this.inputString = inputString;
-    this.hasComputationPerformed = hasComputationPerformed;
-    this.lastOperand = lastOperand;
-    this.lastOperator = lastOperator;
+  private SmartCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
+    super(inputString, secondOperand, operator, hasComputationPerformed);
   }
 
   @Override
   public Calculator input(char argument) {
     // initialize with what has been already entered thus far
     StringBuilder builder =
-            inputString != null
+            this.inputString != null
                     ? new StringBuilder(this.inputString)
                     : new StringBuilder();
 
     // check if its a valid digit before append it to sb
     if (isValidOperandCharacter(argument)) {
       performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
-      return new SmartCalculator(builder.toString(), false, 0, '\0');
+      return new SmartCalculator(builder.toString(), 0, '\0', false);
     } else if (allowedArithmeticOperators(argument)) {
       // ex: +23+1 invalid sequence
       if (isBuilderEmpty(builder)) {
@@ -60,45 +42,45 @@ public class SmartCalculator extends AbstractCalculator {
                   + "followed by the operator, followed by the second operand, followed by \"=\"");
         } else {
           builder.append(argument);
-          return new SmartCalculator(builder.toString(), false, 0, '\0');
+          return new SmartCalculator(builder.toString(),  0, '\0', false);
         }
       } else if (isLastCharAnOperator(builder)) {
         //3 2 + - 2 4 = > 32-24 = 8
         return new SmartCalculator(overrideOperator(builder.toString(), argument),
-                false, 0, '\0');
+                 0, '\0', false);
       } else if (checkBuilderContainsOperator(builder)) {
         return new SmartCalculator(computeSequenceThusFar(argument, builder),
-                true, getLastOperand(), getLastOperator());
+                 getLastOperand(), getLastOperator(), true);
       } else {
-        return new SmartCalculator(builder.append(argument).toString(), false, 0, '\0');
+        return new SmartCalculator(builder.append(argument).toString(),  0, '\0', false);
       }
     } else if (clearCalculatorInputs(argument)) {
-      return new SmartCalculator("", false, 0, '\0');
+      return new SmartCalculator("", 0, '\0', false);
     } else if (argument == '=') {
       if (isSecondOperandMissing(builder)) {
         // get the first operand to perform computation
         String firstOperand = builder.substring(0, builder.toString().length() - 1);
         String updatedResult = performArithmeticOperation(builder.append(firstOperand).toString());
-        return new SmartCalculator(updatedResult, true, getLastOperand(), getLastOperator());
+        return new SmartCalculator(updatedResult,  getLastOperand(), getLastOperator(), true);
       } else if (!sbContainsOperators(builder.toString())) {
-        String updatedResult = performArithmeticOperation(builder.append(this.lastOperator)
-                .append(this.lastOperand).toString());
-        return new SmartCalculator(updatedResult, true,
-                getLastOperand(), getLastOperator());
+        String updatedResult = performArithmeticOperation(builder.append(this.operator)
+                .append(this.secondOperand).toString());
+        return new SmartCalculator(updatedResult,
+                getLastOperand(), getLastOperator(), true);
       } else if (sbContainsOperators(builder.toString())) {
         if (allowedArithmeticOperators(builder.toString().charAt(0))
                 && (!sbContainsOperators(builder.substring(1)))) {
-          String updatedResult = performArithmeticOperation(builder.append(this.lastOperator)
-                  .append(this.lastOperand).toString());
-          return new SmartCalculator(updatedResult, true,
-                  getLastOperand(), getLastOperator());
+          String updatedResult = performArithmeticOperation(builder.append(this.operator)
+                  .append(this.secondOperand).toString());
+          return new SmartCalculator(updatedResult,
+                  getLastOperand(), getLastOperator(), true);
         }
         if (builder.charAt(0) == '+') {
           builder.deleteCharAt(0);
         }
         // case to commute value of arithmetic operation if sequence is valid
-        return new SmartCalculator(performArithmeticOperation(builder.toString()),
-                true, getLastOperand(), getLastOperator());
+        return new SmartCalculator(performArithmeticOperation(builder.toString())
+                , getLastOperand(), getLastOperator(), true);
       }
     } else {
       throw new IllegalArgumentException("The only valid operand characters are 0-9 "
@@ -106,7 +88,7 @@ public class SmartCalculator extends AbstractCalculator {
     }
 
     // if it falls here, just return empty object
-    return new SmartCalculator();
+    return new SmartCalculator(this.inputString, this.secondOperand, this.operator, this.hasComputationPerformed);
   }
 
   /**
@@ -119,10 +101,5 @@ public class SmartCalculator extends AbstractCalculator {
    */
   private String overrideOperator(String builder, char operator) {
     return builder.replaceAll(REGEX, String.valueOf(operator));
-  }
-
-  @Override
-  public String getResult() {
-    return this.inputString;
   }
 }

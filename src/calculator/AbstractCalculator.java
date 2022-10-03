@@ -13,8 +13,42 @@ import java.util.regex.Pattern;
 public abstract class AbstractCalculator implements Calculator {
 
   protected static final String REGEX = "[+\\-*]";
-  private int secondOperand;
-  private char operator;
+
+  protected String inputString;
+  protected int secondOperand;
+  protected char operator;
+  protected boolean hasComputationPerformed;
+
+
+  public AbstractCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
+    this.inputString = inputString;
+    this.secondOperand = secondOperand;
+    this.operator = operator;
+    this.hasComputationPerformed = hasComputationPerformed;
+  }
+
+  @Override
+  public String getResult() {
+    return this.inputString;
+  }
+
+  /**
+   * Need to access this if we want to continue to evaluate expression if multiple `=` are given.
+   *
+   * @return the last operand used in previous computation.
+   */
+  protected int getLastOperand() {
+    return this.secondOperand;
+  }
+
+  /**
+   * Need to access this if we want to continue to evaluate expression if multiple `=` are given.
+   *
+   * @return the last operator used in previous computation.
+   */
+  protected char getLastOperator() {
+    return this.operator;
+  }
 
   /**
    * Checks if operand characters are withing range [0-9].
@@ -243,21 +277,4 @@ public abstract class AbstractCalculator implements Calculator {
             .charAt(builder.toString().length() - 1));
   }
 
-  /**
-   * Need to access this if we want to continue to evaluate expression if multiple `=` are given.
-   *
-   * @return the last operand used in previous computation.
-   */
-  protected int getLastOperand() {
-    return this.secondOperand;
-  }
-
-  /**
-   * Need to access this if we want to continue to evaluate expression if multiple `=` are given.
-   *
-   * @return the last operator used in previous computation.
-   */
-  protected char getLastOperator() {
-    return this.operator;
-  }
 }

@@ -683,7 +683,7 @@ public abstract class AbstractCalculatorTest {
     int x = 2099999999 - 2099999990;
 
     //input 1 '2055786000'
-    SimpleCalculator simpleCalculator = new SimpleCalculator();
+    Calculator simpleCalculator = abstractCalculator();
     assertNull(simpleCalculator.getResult());
 
     Calculator calculator27 = operand1(simpleCalculator);
