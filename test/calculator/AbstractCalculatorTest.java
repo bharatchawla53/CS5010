@@ -185,8 +185,6 @@ public abstract class AbstractCalculatorTest {
         assertEquals(computeValues(i1, i2, operator), calculator6.getResult());
       }
     }
-
-
   }
 
   /**
@@ -292,6 +290,27 @@ public abstract class AbstractCalculatorTest {
       }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testBeginWithOperatorOtherThanAddition() {
+      for (int i = 0; i < 999; i++) {
+        int i1 = random.nextInt(10);
+        int i2 = random.nextInt(10);
+
+        char input1 = (char) (i1 + '0');
+        char operator = '-';
+
+        // no mutations
+        Calculator calculator = abstractCalculator();
+        assertEquals("", calculator.getResult());
+
+        Calculator calculator1 = calculator.input(operator);
+        assertEquals(String.valueOf(operator), calculator1.getResult());
+
+        Calculator calculator2 = calculator1.input(input1);
+        assertEquals("" + operator + input1, calculator2.getResult());
+      }
+    }
+
     @Test
     public void testResultInputEnteredMultipleTimes() {
       for (int i = 0; i < 999; i++) {
@@ -345,7 +364,7 @@ public abstract class AbstractCalculatorTest {
     Calculator calculator = abstractCalculator();
     String actualResult = calculator.getResult();
 
-    assertEquals("", calculator.getResult());
+    assertEquals(actualResult, calculator.getResult());
   }
 
   @Test
@@ -661,6 +680,8 @@ public abstract class AbstractCalculatorTest {
   @Ignore // TODO fix this
   @Test
   public void testSubtractionOverflow() {
+    int x = 2099999999 - 2099999990;
+
     //input 1 '2055786000'
     SimpleCalculator simpleCalculator = new SimpleCalculator();
     assertNull(simpleCalculator.getResult());

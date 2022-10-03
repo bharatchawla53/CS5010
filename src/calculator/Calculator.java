@@ -12,6 +12,7 @@ public interface Calculator {
    *
    * @param argument Single character to simulate button press functionality.
    * @return {@link Calculator} object as a result of processing the input.
+   * @throws IllegalArgumentException for all invalid inputs, sequences and operand overflows.
    */
   Calculator input(char argument);
 
