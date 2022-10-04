@@ -14,6 +14,18 @@ public class SimpleCalculator extends AbstractCalculator {
     super("", 0, '\0', false);
   }
 
+  /**
+   * Constructs an SimpleCalculator constructor with inputString, second operand, operator, and
+   * hasComputationPerformed.
+   *
+   * @param inputString             the inputs that has been entered thus far.
+   * @param secondOperand           tracks the last operand used in computation before a new
+   *                                operator or operand is given.
+   * @param operator                tracks the last operator used in computation before a new
+   *                                operator or operand is given.
+   * @param hasComputationPerformed indicating if the computation has performed on given input
+   *                                string or not.
+   */
   private SimpleCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
     super(inputString, secondOperand, operator, hasComputationPerformed);
   }

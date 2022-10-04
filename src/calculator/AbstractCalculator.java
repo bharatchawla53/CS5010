@@ -19,7 +19,18 @@ public abstract class AbstractCalculator implements Calculator {
   protected char operator;
   protected boolean hasComputationPerformed;
 
-
+  /**
+   * Constructs an AbstractCalculator constructor with inputString, second operand, operator, and
+   * hasComputationPerformed.
+   *
+   * @param inputString             the inputs that has been entered thus far.
+   * @param secondOperand           tracks the last operand used in computation before a new
+   *                                operator or operand is given.
+   * @param operator                tracks the last operator used in computation before a new
+   *                                operator or operand is given.
+   * @param hasComputationPerformed indicating if the computation has performed on given input
+   *                                string or not.
+   */
   public AbstractCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
     this.inputString = inputString;
     this.secondOperand = secondOperand;
