@@ -206,6 +206,7 @@ public abstract class AbstractCalculator implements Calculator {
   protected String performArithmeticOperation(String builder) {
     String result = null;
     boolean foundNegativeOperand = false;
+    boolean foundNegativeOperand2 = false;
 
     // check if first char is a negative number since we allow negative result
     if (allowedArithmeticOperators(builder.charAt(0))) {
@@ -220,11 +221,20 @@ public abstract class AbstractCalculator implements Calculator {
       operatorIndex = matcher.start();
     }
 
+    // check if there is another operator which denotes negative result from previous calculations.
+    if (allowedArithmeticOperators(builder.charAt(operatorIndex + 1))) {
+      String substring = builder.substring(0, operatorIndex + 1);
+      String substring1 = builder.substring(operatorIndex + 2);
+
+      builder = substring + substring1;
+      foundNegativeOperand2 = true;
+    }
     String[] split = builder.split(REGEX);
 
     if (split[0] != null && split[1] != null) {
 
       split[0] = foundNegativeOperand ? '-' + split[0] : split[0];
+      split[1] = foundNegativeOperand2 ? '-' + split[1] : split[1];
 
       int firstOperand = Integer.parseInt(split[0]);
       secondOperand = Integer.parseInt(split[1]);

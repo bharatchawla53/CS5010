@@ -77,6 +77,7 @@ public abstract class AbstractCalculatorTest {
         try {
           calculator3 = calculator2.input('=');
         } catch (IllegalArgumentException e) {
+          assertEquals("" + input1 + operator, calculator2.getResult());
           calculator3 = calculator2.input(input2);
           assertEquals("" + input1 + operator + input2, calculator3.getResult());
         }
@@ -137,6 +138,7 @@ public abstract class AbstractCalculatorTest {
         try {
           calculator1 = calculator.input(operator);
         } catch (IllegalArgumentException e) {
+          assertEquals("", calculator.getResult());
           calculator1 = calculator.input(input1);
           assertEquals(String.valueOf(input1), calculator1.getResult());
 
@@ -157,10 +159,13 @@ public abstract class AbstractCalculatorTest {
       for (int i = 0; i < 999; i++) {
         int i1 = random.nextInt(10);
         int i2 = random.nextInt(10);
+        int i3 = random.nextInt(10);
 
         char input1 = (char) (i1 + '0');
         char input2 = (char) (i2 + '0');
+        char input3 = (char) (i3 + '0');
         char operator = getRandomOperator();
+        char operator1 = getRandomOperator();
 
         // no mutations
         Calculator calculator = abstractCalculator();
@@ -181,8 +186,15 @@ public abstract class AbstractCalculatorTest {
         Calculator calculator5 = calculator4.input('=');
         assertEquals(computeValues(i1, i2, operator), calculator5.getResult());
 
-        Calculator calculator6 = calculator5.input('=');
-        assertEquals(computeValues(i1, i2, operator), calculator6.getResult());
+        Calculator calculator6 = calculator5.input(operator1);
+        assertEquals(computeValues(i1, i2, operator) + operator1, calculator6.getResult());
+
+        Calculator calculator7 = calculator6.input(input3);
+        assertEquals(computeValues(i1, i2, operator) + operator1 + input3, calculator7.getResult());
+
+        Calculator calculator8 = calculator7.input('=');
+        assertEquals(computeValues(Integer.parseInt(computeValues(i1, i2, operator)),
+                i3, operator1), calculator8.getResult());
       }
     }
   }
@@ -204,6 +216,7 @@ public abstract class AbstractCalculatorTest {
 
         char input1 = (char) (i1 + '0');
         char operator = getRandomOperator();
+        char operator1 = getRandomOperator();
 
         // no mutations
         Calculator calculator = abstractCalculator();
@@ -221,6 +234,15 @@ public abstract class AbstractCalculatorTest {
         Calculator calculator4 = calculator3.input('=');
         assertEquals(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator),
                 calculator4.getResult());
+
+        Calculator calculator5 = calculator4.input(operator1);
+        assertEquals(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator)
+          + operator1, calculator5.getResult());
+
+        Calculator calculator6 = calculator5.input('=');
+        int expectedResult = Integer.parseInt(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator));
+        assertEquals(computeValues(expectedResult, expectedResult, operator1), calculator6.getResult());
+
       }
     }
 
@@ -362,9 +384,8 @@ public abstract class AbstractCalculatorTest {
   @Test
   public void testGetResultIsEmptyBeforeEnteringInputs() {
     Calculator calculator = abstractCalculator();
-    String actualResult = calculator.getResult();
 
-    assertEquals(actualResult, calculator.getResult());
+    assertEquals("", calculator.getResult());
   }
 
   @Test
@@ -398,9 +419,10 @@ public abstract class AbstractCalculatorTest {
       try {
         calculator1 = calculator.input('R');
       } catch (IllegalArgumentException e) {
+        assertEquals("", calculator.getResult());
+
         calculator1 = calculator.input(input);
         String expectedResult = String.valueOf(input);
-
         assertEquals(expectedResult, calculator1.getResult());
       }
     }
@@ -418,6 +440,8 @@ public abstract class AbstractCalculatorTest {
     try {
       calculator.input('-');
     } catch (IllegalArgumentException e) {
+      assertEquals("", calculator.getResult());
+
       Calculator calculator1 = calculator.input('5');
       assertEquals(String.valueOf('5'), calculator1.getResult());
     }
@@ -460,6 +484,8 @@ public abstract class AbstractCalculatorTest {
     try {
       calculator.input('/');
     } catch (IllegalArgumentException e) {
+      assertEquals("", calculator.getResult());
+
       int i1 = random.nextInt(10);
       char input1 = (char) (i1 + '0');
       char operator = getRandomOperator();
@@ -606,7 +632,6 @@ public abstract class AbstractCalculatorTest {
       input = (char) (i1 + '0');
 
       calculator9 = getOperandOverflowObject(input);
-      Calculator calculator10 = calculator9.input(input);
       calculator9.input(input);
     } catch (IllegalArgumentException e) {
       String inputString = "" + input;
@@ -711,7 +736,7 @@ public abstract class AbstractCalculatorTest {
     assertEquals("-2589000", calculator26.getResult());
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testMultipleOperatorsAndResultInputEnteredMultipleTimes() {
     for (int i = 0; i < 999; i++) {
       int i1 = random.nextInt(10);
@@ -746,9 +771,55 @@ public abstract class AbstractCalculatorTest {
       Calculator calculator6 = calculator5.input(input3);
       assertEquals(computeValues(i1, i2, operator) + operator1 + input3, calculator6.getResult());
 
-      Calculator calculator7 = calculator6.input('=');
+      Calculator calculator7 = calculator6.input('@');
+    }
+  }
+
+  @Test
+  public void testMultipleOperatorsAndResultInputEnteredMultipleTimesCatchTheException() {
+    for (int i = 0; i < 999; i++) {
+      int i1 = random.nextInt(10);
+      int i2 = random.nextInt(10);
+      int i3 = random.nextInt(10);
+
+      char input1 = (char) (i1 + '0');
+      char input2 = (char) (i2 + '0');
+      char input3 = (char) (i3 + '0');
+      char operator = getRandomOperator();
+      char operator1 = getRandomOperator();
+
+      // no mutations
+      Calculator calculator = abstractCalculator();
+      assertEquals("", calculator.getResult());
+
+      Calculator calculator1 = calculator.input(input1);
+      assertEquals(String.valueOf(input1), calculator1.getResult());
+
+      Calculator calculator2 = calculator1.input(operator);
+      assertEquals("" + input1 + operator, calculator2.getResult());
+
+      Calculator calculator3 = calculator2.input(input2);
+      assertEquals("" + input1 + operator + input2, calculator3.getResult());
+
+      Calculator calculator4 = calculator3.input('=');
+      assertEquals(computeValues(i1, i2, operator), calculator4.getResult());
+
+      Calculator calculator5 = calculator4.input(operator1);
+      assertEquals(computeValues(i1, i2, operator) + operator1, calculator5.getResult());
+
+      Calculator calculator6 = calculator5.input(input3);
+      assertEquals(computeValues(i1, i2, operator) + operator1 + input3, calculator6.getResult());
+
+      Calculator calculator7 = null;
+      try {
+        calculator7 = calculator6.input('@');
+      } catch (IllegalArgumentException e) {
+        assertEquals(computeValues(i1, i2, operator) + operator1 + input3, calculator6.getResult());
+      }
+
+      Calculator calculator8 = calculator6.input('=');
       assertEquals(computeValues(Integer.parseInt(computeValues(i1, i2, operator)), i3, operator1),
-              calculator7.getResult());
+              calculator8.getResult());
     }
   }
 
