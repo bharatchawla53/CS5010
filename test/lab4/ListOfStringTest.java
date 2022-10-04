@@ -49,12 +49,20 @@ public class ListOfStringTest {
   }
 
   @Test
-  public void testtoString() {
+  public void testToString() {
     ListOfString sentence = makeList("Boston is the capital of Massachusetts");
 
     String answer = "Boston,is,the,capital,of,Massachusetts";
     assertEquals(answer, sentence.toString());
 
+  }
+
+  @Test
+  public void testToStringEmptyList() {
+    ListOfString sentence = makeList("");
+
+    String answer = "";
+    assertEquals(answer, sentence.toString());
   }
 
   @Test

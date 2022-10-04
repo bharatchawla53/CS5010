@@ -1,7 +1,7 @@
 package lab4;
 
 /**
- * This represents an empty node in the list
+ * This represents an empty node in the list.
  */
 public class EmptyList implements ListOfString {
 
@@ -36,12 +36,22 @@ public class EmptyList implements ListOfString {
 
   @Override
   public ListOfString reverse() {
-    return null;
+    return reverseAccumulator(new EmptyList());
+  }
+
+  @Override
+  public ListOfString reverseAccumulator(ListOfString accumulator) {
+    return accumulator;
   }
 
   @Override
   public ListOfString interleave(ListOfString other) {
-    return null;
+    return other;
+  }
+
+  @Override
+  public String toString() {
+    return "";
   }
 
 }
