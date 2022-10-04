@@ -39,10 +39,91 @@ public abstract class AbstractCalculator implements Calculator {
     this.hasComputationPerformed = hasComputationPerformed;
   }
 
+  // abstraction refactoring
+
+  @Override
+  public Calculator input(char argument) throws IllegalArgumentException {
+    // initialize with what has been already entered thus far
+    StringBuilder builder =
+            inputString != null
+                    ? new StringBuilder(this.inputString)
+                    : new StringBuilder();
+
+    // 1st condition
+
+    if (isValidOperandCharacter(argument)) {
+      performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
+      return calculatorFactory(builder.toString(), 0, '\0', false);
+    }
+
+    // 2nd condition
+
+    else if (allowedArithmeticOperators(argument)) {
+      // ex: +23+1 invalid sequence
+      if (isBuilderEmpty(builder)) {
+        return handleBuilderEmptyAndAllowedToBeginWithAnOperator(builder, argument);
+      } else if (isLastCharAnOperator(builder)) {
+        return handleIfThereAreTwoConsecutiveOperators(builder, argument);
+      } else if (checkBuilderContainsOperator(builder)) {
+        return calculatorFactory(computeSequenceThusFar(argument, builder),
+                getLastOperand(), getLastOperator(), true);
+      } else {
+        return calculatorFactory(builder.append(argument).toString(), 0, '\0', false);
+      }
+    }
+
+    // 3rd condition
+    else if (clearCalculatorInputs(argument)) {
+      return calculatorFactory("", 0, '\0', false);
+    }
+
+    // 4th condition
+
+    else if (argument == '=') {
+      if (isSecondOperandMissing(builder)) {
+        return handleIfSecondOperandMissing(builder);
+      } else if (!sbContainsOperators(builder.toString())) {
+        return handleIfBuilderDoesNotContainOperators(builder);
+      } else if (sbContainsOperators(builder.toString())) {
+        // case where resulted computation resulted in a negative result
+        if (allowedArithmeticOperators(builder.toString().charAt(0))
+                && (!sbContainsOperators(builder.substring(1)))) {
+          return handleIfBuilderDoesNotContainOperators(builder);
+        }
+        // case to commute value of arithmetic operation if sequence is valid
+        return handleIfBuilderContainOperators(builder);
+      }
+    }
+
+    // 5th condition
+    else {
+      throw new IllegalArgumentException("The only valid operand characters are 0-9 "
+              + "and operators are +, - and *");
+    }
+    // if it falls here, just return empty object
+    return calculatorFactory(this.inputString, this.secondOperand,
+            this.operator, this.hasComputationPerformed);
+  }
+
   @Override
   public String getResult() {
     return this.inputString;
   }
+
+  protected abstract Calculator handleBuilderEmptyAndAllowedToBeginWithAnOperator
+          (StringBuilder builder, char argument);
+
+  protected abstract Calculator handleIfThereAreTwoConsecutiveOperators(StringBuilder builder,
+                                                                        char argument);
+
+  protected abstract Calculator handleIfSecondOperandMissing(StringBuilder builder);
+
+  protected abstract Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder);
+
+  protected abstract Calculator handleIfBuilderContainOperators(StringBuilder builder);
+
+  protected abstract Calculator calculatorFactory(String inputString, int secondOperand,
+                                                  char operator, boolean hasComputationPerformed);
 
   /**
    * Need to access this if we want to continue to evaluate expression if multiple `=` are given.

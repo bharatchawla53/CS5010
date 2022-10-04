@@ -31,52 +31,81 @@ public class SimpleCalculator extends AbstractCalculator {
     super(inputString, secondOperand, operator, hasComputationPerformed);
   }
 
+  /**
+   * A correct sequence of inputs is the first operand, followed by an operator, followed by the
+   * second operand. So, if the builder is empty and the first sequence of input is an operator, it
+   * throws an exception.
+   *
+   * @param builder  a sequence of inputs appended in a StringBuilder.
+   * @param argument an input received from the client.
+   * @throws IllegalArgumentException for any incorrect inputs and sequences.
+   */
   @Override
-  public Calculator input(char argument) throws IllegalArgumentException {
-    // initialize with what has been already entered thus far
-    StringBuilder builder =
-            inputString != null
-                    ? new StringBuilder(this.inputString)
-                    : new StringBuilder();
-
-    if (isValidOperandCharacter(argument)) {
-      performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
-      return new SimpleCalculator(builder.toString(), 0, '\0', false);
-    } else if (allowedArithmeticOperators(argument)) {
-      // ex: +23+1 invalid sequence
-      if (isBuilderEmpty(builder)) {
-        throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
-                + "followed by the operator, followed by the second operand, followed by \"=\"");
-      } else if (isLastCharAnOperator(builder)) {
-        throw new IllegalArgumentException("Cannot have two consecutive operators.");
-      } else if (checkBuilderContainsOperator(builder)) {
-        return new SimpleCalculator(computeSequenceThusFar(argument, builder), 0, '\0', true);
-      } else {
-        return new SimpleCalculator(builder.append(argument).toString(), 0, '\0', false);
-      }
-    } else if (clearCalculatorInputs(argument)) {
-      return new SimpleCalculator("", 0, '\0', false);
-    } else if (argument == '=') {
-      if (isSecondOperandMissing(builder)) {
-        throw new IllegalArgumentException("The calculator does not infer any missing inputs. "
-                + "Please check your inputs.");
-      } else if (!sbContainsOperators(builder.toString())) {
-        return new SimpleCalculator(builder.toString(), 0, '\0', false);
-      } else if (sbContainsOperators(builder.toString())) {
-        // case where resulted computation resulted in a negative result
-        if (allowedArithmeticOperators(builder.toString().charAt(0))
-                && (!sbContainsOperators(builder.substring(1)))) {
-          return new SimpleCalculator(builder.toString(), 0, '\0', false);
-        }
-        // case to commute value of arithmetic operation if sequence is valid
-        return new SimpleCalculator(performArithmeticOperation(builder.toString()), 0, '\0', true);
-      }
-    } else {
-      throw new IllegalArgumentException("The only valid operand characters are 0-9 "
-              + "and operators are +, - and *");
-    }
-    // if it falls here, just return empty object
-    return new SimpleCalculator(this.inputString, this.secondOperand, this.operator, this.hasComputationPerformed);
+  protected Calculator handleBuilderEmptyAndAllowedToBeginWithAnOperator(StringBuilder builder,
+                                                                         char argument) {
+    throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
+            + "followed by the operator, followed by the second operand, followed by \"=\"");
   }
 
+  /**
+   * It does not allow two consecutive operators.
+   *
+   * @param builder  a sequence of inputs appended in a StringBuilder.
+   * @param argument an input received from the client.
+   * @throws IllegalArgumentException if two consecutive operators are found.
+   */
+  @Override
+  protected Calculator handleIfThereAreTwoConsecutiveOperators(StringBuilder builder,
+                                                               char argument) {
+    throw new IllegalArgumentException("Cannot have two consecutive operators.");
+  }
+
+  /**
+   * It does not "infer" any missing inputs.
+   *
+   * @param builder a sequence of inputs appended in a StringBuilder.
+   * @throws IllegalArgumentException if there are any missing inputs.
+   */
+  @Override
+  protected Calculator handleIfSecondOperandMissing(StringBuilder builder) {
+    throw new IllegalArgumentException("The calculator does not infer any missing inputs. "
+            + "Please check your inputs.");
+  }
+
+  /**
+   * @param builder
+   * @return
+   */
+  @Override
+  protected Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder) {
+    return new SimpleCalculator(builder.toString(), 0, '\0', false);
+  }
+
+  /**
+   * @param builder
+   * @return
+   */
+  @Override
+  protected Calculator handleIfBuilderContainOperators(StringBuilder builder) {
+    return new SimpleCalculator(performArithmeticOperation(builder.toString()), 0, '\0', true);
+  }
+
+  /**
+   * Creates a SimpleCalculator object with updated values that we received from the client thus
+   * far.
+   *
+   * @param inputString             the inputs that has been entered thus far.
+   * @param secondOperand           tracks the last operand used in computation before a new
+   *                                operator or operand is given.
+   * @param operator                tracks the last operator used in computation before a new
+   *                                operator or operand is given.
+   * @param hasComputationPerformed indicating if the computation has performed on given input
+   *                                string or not.
+   * @return a new SimpleCalculator object.
+   */
+  @Override
+  protected Calculator calculatorFactory(String inputString, int secondOperand,
+                                         char operator, boolean hasComputationPerformed) {
+    return new SimpleCalculator(inputString, secondOperand, operator, hasComputationPerformed);
+  }
 }

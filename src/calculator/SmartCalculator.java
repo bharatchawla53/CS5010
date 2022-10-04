@@ -35,73 +35,102 @@ public class SmartCalculator extends AbstractCalculator {
     super(inputString, secondOperand, operator, hasComputationPerformed);
   }
 
+  /**
+   * A correct sequence of inputs is the first operand, followed by an operator, followed by the
+   * second operand. But a smart calculator allows to have '+' operator as it has a mathematical
+   * meaning when it comes before an operand as long as the builder is empty.
+   *
+   * @param builder  a sequence of inputs appended in a StringBuilder.
+   * @param argument an input received from the client.
+   * @return new SmartCalculator object with updated input received thus far.
+   * @throws IllegalArgumentException for any incorrect inputs and sequences, and operators such as
+   *                                  '-' && '*'.
+   */
   @Override
-  public Calculator input(char argument) {
-    // initialize with what has been already entered thus far
-    StringBuilder builder =
-            this.inputString != null
-                    ? new StringBuilder(this.inputString)
-                    : new StringBuilder();
-
-    // check if its a valid digit before append it to sb
-    if (isValidOperandCharacter(argument)) {
-      performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
-      return new SmartCalculator(builder.toString(), 0, '\0', false);
-    } else if (allowedArithmeticOperators(argument)) {
-      // ex: +23+1 invalid sequence
-      if (isBuilderEmpty(builder)) {
-        if (argument == '-' || argument == '*') {
-          throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
-                  + "followed by the operator, followed by the second operand, followed by \"=\"");
-        } else {
-          builder.append(argument);
-          return new SmartCalculator(builder.toString(), 0, '\0', false);
-        }
-      } else if (isLastCharAnOperator(builder)) {
-        //3 2 + - 2 4 = > 32-24 = 8
-        return new SmartCalculator(overrideOperator(builder.toString(), argument),
-                0, '\0', false);
-      } else if (checkBuilderContainsOperator(builder)) {
-        return new SmartCalculator(computeSequenceThusFar(argument, builder),
-                getLastOperand(), getLastOperator(), true);
-      } else {
-        return new SmartCalculator(builder.append(argument).toString(), 0, '\0', false);
-      }
-    } else if (clearCalculatorInputs(argument)) {
-      return new SmartCalculator("", 0, '\0', false);
-    } else if (argument == '=') {
-      if (isSecondOperandMissing(builder)) {
-        // get the first operand to perform computation
-        String firstOperand = builder.substring(0, builder.toString().length() - 1);
-        String updatedResult = performArithmeticOperation(builder.append(firstOperand).toString());
-        return new SmartCalculator(updatedResult, getLastOperand(), getLastOperator(), true);
-      } else if (!sbContainsOperators(builder.toString())) {
-        String updatedResult = performArithmeticOperation(builder.append(this.operator)
-                .append(this.secondOperand).toString());
-        return new SmartCalculator(updatedResult,
-                getLastOperand(), getLastOperator(), true);
-      } else if (sbContainsOperators(builder.toString())) {
-        if (allowedArithmeticOperators(builder.toString().charAt(0))
-                && (!sbContainsOperators(builder.substring(1)))) {
-          String updatedResult = performArithmeticOperation(builder.append(this.operator)
-                  .append(this.secondOperand).toString());
-          return new SmartCalculator(updatedResult,
-                  getLastOperand(), getLastOperator(), true);
-        }
-        if (builder.charAt(0) == '+') {
-          builder.deleteCharAt(0);
-        }
-        // case to commute value of arithmetic operation if sequence is valid
-        return new SmartCalculator(performArithmeticOperation(builder.toString())
-                , getLastOperand(), getLastOperator(), true);
-      }
+  protected Calculator handleBuilderEmptyAndAllowedToBeginWithAnOperator(StringBuilder builder,
+                                                                         char argument) {
+    if (argument == '-' || argument == '*') {
+      throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
+              + "followed by the operator, followed by the second operand, followed by \"=\"");
     } else {
-      throw new IllegalArgumentException("The only valid operand characters are 0-9 "
-              + "and operators are +, - and *");
+      builder.append(argument);
+      return new SmartCalculator(builder.toString(), 0, '\0', false);
     }
+  }
 
-    // if it falls here, just return empty object
-    return new SmartCalculator(this.inputString, this.secondOperand, this.operator, this.hasComputationPerformed);
+  /**
+   * It does allow two consecutive operators, and ignores the first operator, and uses the second
+   * one for computation.
+   *
+   * @param builder  a sequence of inputs appended in a StringBuilder.
+   * @param argument an input received from the client.
+   * @return new SmartCalculator object with updated input received thus far and override the
+   * previous operator.
+   */
+  @Override
+  protected Calculator handleIfThereAreTwoConsecutiveOperators(StringBuilder builder,
+                                                               char argument) {
+    return new SmartCalculator(overrideOperator(builder.toString(), argument),
+            0, '\0', false);
+  }
+
+  /**
+   * If the second operand is missing, it uses the first operand to compute the sequence. For
+   * example: 32 += 64, 32 +== 96, and so on.
+   *
+   * @param builder a sequence of inputs appended in a StringBuilder.
+   * @return new SmartCalculator object with updated computed result.
+   */
+  @Override
+  protected Calculator handleIfSecondOperandMissing(StringBuilder builder) {
+    String firstOperand = builder.substring(0, builder.toString().length() - 1);
+    String updatedResult = performArithmeticOperation(builder.append(firstOperand).toString());
+    return new SmartCalculator(updatedResult, getLastOperand(), getLastOperator(), true);
+  }
+
+  /**
+   * @param builder
+   * @return
+   */
+  @Override // TODO verfiy this logic
+  protected Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder) {
+    String updatedResult = performArithmeticOperation(builder.append(getLastOperator())
+            .append(getLastOperand()).toString());
+    return new SmartCalculator(updatedResult,
+            getLastOperand(), getLastOperator(), true);
+  }
+
+  /**
+   * @param builder
+   * @return
+   */
+  @Override
+  protected Calculator handleIfBuilderContainOperators(StringBuilder builder) {
+    if (builder.charAt(0) == '+') {
+      builder.deleteCharAt(0);
+    }
+    // case to commute value of arithmetic operation if sequence is valid
+    return new SmartCalculator(performArithmeticOperation(builder.toString()),
+            getLastOperand(), getLastOperator(), true);
+  }
+
+  /**
+   * Creates a SmartCalculator object with updated values that we received from the client thus
+   * far.
+   *
+   * @param inputString             the inputs that has been entered thus far.
+   * @param secondOperand           tracks the last operand used in computation before a new
+   *                                operator or operand is given.
+   * @param operator                tracks the last operator used in computation before a new
+   *                                operator or operand is given.
+   * @param hasComputationPerformed indicating if the computation has performed on given input
+   *                                string or not.
+   * @return a new SmartCalculator object.
+   */
+  @Override
+  protected Calculator calculatorFactory(String inputString, int secondOperand,
+                                         char operator, boolean hasComputationPerformed) {
+    return new SmartCalculator(inputString, secondOperand, operator, hasComputationPerformed);
   }
 
   /**
