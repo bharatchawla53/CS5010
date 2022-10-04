@@ -30,7 +30,8 @@ public class SmartCalculator extends AbstractCalculator {
    * @param hasComputationPerformed indicating if the computation has performed on given input
    *                                string or not.
    */
-  private SmartCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
+  private SmartCalculator(String inputString, int secondOperand,
+                          char operator, boolean hasComputationPerformed) {
     super(inputString, secondOperand, operator, hasComputationPerformed);
   }
 

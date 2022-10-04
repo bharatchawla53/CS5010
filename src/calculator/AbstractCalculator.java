@@ -31,7 +31,8 @@ public abstract class AbstractCalculator implements Calculator {
    * @param hasComputationPerformed indicating if the computation has performed on given input
    *                                string or not.
    */
-  public AbstractCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
+  public AbstractCalculator(String inputString, int secondOperand,
+                            char operator, boolean hasComputationPerformed) {
     this.inputString = inputString;
     this.secondOperand = secondOperand;
     this.operator = operator;

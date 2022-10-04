@@ -26,7 +26,8 @@ public class SimpleCalculator extends AbstractCalculator {
    * @param hasComputationPerformed indicating if the computation has performed on given input
    *                                string or not.
    */
-  private SimpleCalculator(String inputString, int secondOperand, char operator, boolean hasComputationPerformed) {
+  private SimpleCalculator(String inputString, int secondOperand,
+                           char operator, boolean hasComputationPerformed) {
     super(inputString, secondOperand, operator, hasComputationPerformed);
   }
 
