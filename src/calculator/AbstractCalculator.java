@@ -188,7 +188,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param argument Single character to check if its a valid value.
    * @return true if the character is a digit, false, otherwise.
    */
-  protected boolean isValidOperandCharacter(char argument) {
+  private boolean isValidOperandCharacter(char argument) {
     return Character.isDigit(argument);
   }
 
@@ -198,7 +198,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param argument Single character to check if its a valid value.
    * @return true if the character is a valid arithmetic operator, false, otherwise.
    */
-  protected boolean allowedArithmeticOperators(char argument) {
+  private boolean allowedArithmeticOperators(char argument) {
     switch (argument) {
       case '+':
       case '-':
@@ -216,7 +216,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @return the integer value of parsed string
    * @throws IllegalArgumentException - if the parsed int value overflows.
    */
-  protected int parseInt(String value) {
+  private int parseInt(String value) {
     if (Long.parseLong(value) > Integer.MAX_VALUE) {
       throw new IllegalArgumentException("A valid input causes an operand to integer overflow.");
     }
@@ -229,7 +229,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param builder a string is a sequence with an possible operator in it.
    * @return true if an operator is found, false, otherwise.
    */
-  protected boolean sbContainsOperators(String builder) {
+  private boolean sbContainsOperators(String builder) {
     return builder.contains("+")
             || builder.contains("-")
             || builder.contains("*");
@@ -327,7 +327,7 @@ public abstract class AbstractCalculator implements Calculator {
    *                                not to overwrite the builder and initiate a new sequence of
    *                                inputs.
    */
-  protected void performValidOperandCharacterOperation(char argument, StringBuilder builder,
+  private void performValidOperandCharacterOperation(char argument, StringBuilder builder,
                                                        boolean hasComputationPerformed) {
     // override the string with fresh input value
     if ((hasComputationPerformed && !sbContainsOperators(builder.toString()))
@@ -355,7 +355,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param builder containing the sequence of inputs.
    * @return true, if the last character is an operator, false otherwise.
    */
-  protected boolean isLastCharAnOperator(StringBuilder builder) {
+  private boolean isLastCharAnOperator(StringBuilder builder) {
     return builder != null
             && allowedArithmeticOperators(builder.toString()
             .charAt(builder.toString().length() - 1));
@@ -367,7 +367,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param builder containing the sequence of inputs.
    * @return true, if the builder is empty, false, otherwise.
    */
-  protected boolean isBuilderEmpty(StringBuilder builder) {
+  private boolean isBuilderEmpty(StringBuilder builder) {
     return builder == null || builder.toString().equals("");
   }
 
@@ -378,7 +378,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param builder contains the sequence of inputs.
    * @return true, if it contains a valid operator, false, otherwise.
    */
-  protected boolean checkBuilderContainsOperator(StringBuilder builder) {
+  private boolean checkBuilderContainsOperator(StringBuilder builder) {
     if (allowedArithmeticOperators(builder.charAt(0))
             && sbContainsOperators(builder.substring(1))) {
       return true;
@@ -397,7 +397,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param builder  contains the sequence of inputs.
    * @return the computed result with the new operator.
    */
-  protected String computeSequenceThusFar(char argument, StringBuilder builder) {
+  private String computeSequenceThusFar(char argument, StringBuilder builder) {
     String updatedResult = performArithmeticOperation(builder.toString());
     updatedResult = updatedResult + argument;
     return updatedResult;
@@ -409,7 +409,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param argument calculator input to clear the sequence.
    * @return true if argument matches, false, otherwise.
    */
-  protected boolean clearCalculatorInputs(char argument) {
+  private boolean clearCalculatorInputs(char argument) {
     return argument == 'C';
   }
 
@@ -420,7 +420,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @param builder builder containing the sequence of inputs captured thus far.
    * @return true if the second operand is missing, false, otherwise.
    */
-  protected boolean isSecondOperandMissing(StringBuilder builder) {
+  private boolean isSecondOperandMissing(StringBuilder builder) {
     return !builder.toString().equals("")
             && allowedArithmeticOperators(builder.charAt(builder.length() - 1));
   }
