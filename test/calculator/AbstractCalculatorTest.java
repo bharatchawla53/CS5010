@@ -192,9 +192,24 @@ public abstract class AbstractCalculatorTest {
         Calculator calculator7 = calculator6.input(input3);
         assertEquals(computeValues(i1, i2, operator) + operator1 + input3, calculator7.getResult());
 
-        Calculator calculator8 = calculator7.input('=');
-        assertEquals(computeValues(Integer.parseInt(computeValues(i1, i2, operator)),
-                i3, operator1), calculator8.getResult());
+        Calculator calculator8 = calculator5.input('=');
+        assertEquals(computeValues(i1, i2, operator), calculator8.getResult());
+      }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAnOperandAndAnEqualCharacterIsGiven() {
+      for (int i = 0; i < 999; i++) {
+        int i1 = random.nextInt(10);
+        char input1 = (char) (i1 + '0');
+
+        Calculator calculator = abstractCalculator();
+        assertEquals("", calculator.getResult());
+
+        Calculator calculator1 = calculator.input(input1);
+        assertEquals(String.valueOf(input1), calculator1.getResult());
+
+        calculator1.input('=');
       }
     }
   }
@@ -237,7 +252,7 @@ public abstract class AbstractCalculatorTest {
 
         Calculator calculator5 = calculator4.input(operator1);
         assertEquals(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator)
-          + operator1, calculator5.getResult());
+                + operator1, calculator5.getResult());
 
         Calculator calculator6 = calculator5.input('=');
         int expectedResult = Integer.parseInt(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator));
@@ -369,6 +384,24 @@ public abstract class AbstractCalculatorTest {
         String expectedThirdComputation = computeValues(Integer.parseInt(expectedSecondComputation),
                 i2, operator);
         assertEquals(expectedThirdComputation, calculator6.getResult());
+      }
+    }
+
+    @Test
+    public void testAnOperandAndAnEqualCharacterIsGiven() {
+      for (int i = 0; i < 999; i++) {
+        int i1 = random.nextInt(10);
+        char input1 = (char) (i1 + '0');
+
+
+        Calculator calculator = abstractCalculator();
+        assertEquals("", calculator.getResult());
+
+        Calculator calculator1 = calculator.input(input1);
+        assertEquals(String.valueOf(input1), calculator1.getResult());
+
+        Calculator calculator2 = calculator1.input('=');
+        assertEquals(String.valueOf(input1), calculator2.getResult());
       }
     }
 
@@ -542,9 +575,13 @@ public abstract class AbstractCalculatorTest {
   public void testForNegativeResults() {
     int i1 = 5;
     int i2 = 8;
+    int i3 = 9;
+    int i4 = 7;
 
     char input1 = (char) (i1 + '0');
     char input2 = (char) (i2 + '0');
+    char input3 = (char) (i3 + '0');
+    char input4 = (char) (i4 + '0');
     char operator = '-';
 
     // no mutations
@@ -560,8 +597,12 @@ public abstract class AbstractCalculatorTest {
     Calculator calculator3 = calculator2.input(input2);
     assertEquals("" + input1 + operator + input2, calculator3.getResult());
 
-    Calculator calculator4 = calculator3.input('=');
-    assertEquals(String.valueOf(i1 - i2), calculator4.getResult());
+    Calculator calculator4 = calculator3.input(operator);
+    assertEquals(computeValues(i1, i2, operator) + operator, calculator4.getResult());
+
+    Calculator calculator5 = calculator4.input(input3);
+    assertEquals(computeValues(i1, i2, operator) + operator + input3, calculator5.getResult());
+
   }
 
   @Test
@@ -702,38 +743,66 @@ public abstract class AbstractCalculatorTest {
     assertEquals("2589000", calculator26.getResult());
   }
 
-  @Ignore // TODO fix this
   @Test
+  //@Ignore
   public void testSubtractionOverflow() {
-    int x = 2099999999 - 2099999990;
+    char input1 = '3';
+    char input2 = '9';
+    char operator = '-';
 
     //input 1 '2055786000'
-    Calculator simpleCalculator = abstractCalculator();
-    assertNull(simpleCalculator.getResult());
+    Calculator calculator = abstractCalculator();
+    assertEquals("", calculator.getResult());
 
-    Calculator calculator27 = operand1(simpleCalculator);
-    assertEquals("2055786000", calculator27.getResult());
+    Calculator calculator1 = calculator.input(input1);
+    Calculator calculator2 = calculator1.input(input1);
+    Calculator calculator3 = calculator2.input(input1);
+    Calculator calculator4 = calculator3.input(input1);
+    Calculator calculator5 = calculator4.input(input1);
+    Calculator calculator6 = calculator5.input(input1);
+    Calculator calculator7 = calculator6.input(input1);
+    Calculator calculator8 = calculator7.input(input1);
+    Calculator calculator9 = calculator8.input(input1);
 
-    //operator '+'
-    Calculator calculator9 = calculator27.input('-');
-    assertEquals("2055786000-", calculator9.getResult());
+    Calculator calculator10 = calculator9.input(operator);
 
-    //input 2 '93552000'
-    Calculator calculator17 = operand2(calculator9);
+    Calculator calculator11 = calculator10.input(input2);
+    Calculator calculator12 = calculator11.input(input2);
+    Calculator calculator13 = calculator12.input(input2);
+    Calculator calculator15 = calculator13.input(input2);
+    Calculator calculator16 = calculator15.input(input2);
+    Calculator calculator17 = calculator16.input(input2);
+    Calculator calculator18 = calculator17.input(input2);
+    Calculator calculator19 = calculator18.input(input2);
+    Calculator calculator20 = calculator19.input(input2);
 
-    //operator '-'
-    Calculator calculator18 = calculator17.input('-');
+    Calculator calculator21 = calculator20.input(operator);
 
-    assertEquals("0-", calculator18.getResult());
+    Calculator calculator22 = calculator21.input(input2);
+    Calculator calculator23 = calculator22.input(input2);
+    Calculator calculator24 = calculator23.input(input2);
+    Calculator calculator25 = calculator24.input(input2);
+    Calculator calculator26 = calculator25.input(input2);
+    Calculator calculator27 = calculator26.input(input2);
+    Calculator calculator28 = calculator27.input(input2);
+    Calculator calculator29 = calculator28.input(input2);
+    Calculator calculator30 = calculator29.input(input2);
 
-    // input 3 2589000
-    Calculator calculator25 = operand3(calculator18);
+    Calculator calculator31 = calculator30.input(operator);
 
-    assertEquals("0-2589000", calculator25.getResult());
+    Calculator calculator32 = calculator31.input(input2);
+    Calculator calculator33 = calculator32.input(input2);
+    Calculator calculator34 = calculator33.input(input2);
+    Calculator calculator35 = calculator34.input(input2);
+    Calculator calculator36 = calculator35.input(input2);
+    Calculator calculator37 = calculator36.input(input2);
+    Calculator calculator38 = calculator37.input(input2);
+    Calculator calculator39 = calculator38.input(input2);
+    Calculator calculator40 = calculator39.input(input2);
+    Calculator calculator41 = calculator40.input('=');
 
-    Calculator calculator26 = calculator25.input('=');
+    assertEquals("0", calculator41.getResult());
 
-    assertEquals("-2589000", calculator26.getResult());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -855,6 +924,49 @@ public abstract class AbstractCalculatorTest {
       assertEquals(String.valueOf(input3), calculator5.getResult());
     }
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testEqualCharacterAsTheFirstInput() {
+    // no mutations
+    Calculator calculator = abstractCalculator();
+    assertEquals("", calculator.getResult());
+
+    calculator.input('=');
+  }
+
+  @Test
+  public void testEqualCharacterAsTheFirstInputAndCatchTheException() {
+    for (int i = 0; i < 999; i++) {
+      int i1 = random.nextInt(10);
+      int i2 = random.nextInt(10);
+
+      char input1 = (char) (i1 + '0');
+      char input2 = (char) (i2 + '0');
+      char operator = getRandomOperator();
+
+      // no mutations
+      Calculator calculator = abstractCalculator();
+      assertEquals("", calculator.getResult());
+
+      Calculator calculator1 = null;
+      try {
+        calculator1 = calculator.input('=');
+      } catch (IllegalArgumentException e) {
+        assertEquals("", calculator.getResult());
+
+        calculator1 = calculator.input(input1);
+        assertEquals(String.valueOf(input1), calculator1.getResult());
+
+        Calculator calculator2 = calculator1.input(operator);
+        assertEquals("" + input1 + operator, calculator2.getResult());
+
+        Calculator calculator3 = calculator2.input(input2);
+        assertEquals("" + input1 + operator + input2, calculator3.getResult());
+      }
+    }
+  }
+
+
 
   /**
    * Generates a random math operator from the given array defined with allowed operators.

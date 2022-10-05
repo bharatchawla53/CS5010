@@ -80,11 +80,25 @@ public abstract class AbstractCalculator implements Calculator {
     // 4th condition
 
     else if (argument == '=') {
-      if (isSecondOperandMissing(builder)) {
-        return handleIfSecondOperandMissing(builder);
-      } else if (!sbContainsOperators(builder.toString())) {
+
+      if (isBuilderEmpty(builder)) {
+        throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
+                + "followed by the operator, followed by the second operand, followed by \"=\"");
+      }
+
+/*      else if (isSecondOperandMissing(builder) && !sbContainsOperators(builder.toString())) {
+        return calculatorFactory(this.inputString, 0, '\0', false);
+      }*/
+
+      else if (!sbContainsOperators(builder.toString())) {
         return handleIfBuilderDoesNotContainOperators(builder);
-      } else if (sbContainsOperators(builder.toString())) {
+      }
+
+      else if (isSecondOperandMissing(builder)) {
+        return handleIfSecondOperandMissing(builder);
+      }
+
+      else if (sbContainsOperators(builder.toString())) {
         // case where resulted computation resulted in a negative result
         if (allowedArithmeticOperators(builder.toString().charAt(0))
                 && (!sbContainsOperators(builder.substring(1)))) {
@@ -340,8 +354,17 @@ public abstract class AbstractCalculator implements Calculator {
    * @return true, if it contains a valid operator, false, otherwise.
    */
   protected boolean checkBuilderContainsOperator(StringBuilder builder) {
-    return sbContainsOperators(builder.toString())
-            && !allowedArithmeticOperators(builder.toString().charAt(0));
+    if (allowedArithmeticOperators(builder.charAt(0))
+            && sbContainsOperators(builder.substring(1))) {
+      return true;
+    } else if (!allowedArithmeticOperators(builder.charAt(0))
+            && sbContainsOperators(builder.toString())) {
+      return true;
+    }
+
+    return false;
+    //return sbContainsOperators(builder.toString())
+      //      && allowedArithmeticOperators(builder.toString().charAt(0));
   }
 
   /**
@@ -370,14 +393,15 @@ public abstract class AbstractCalculator implements Calculator {
 
   /**
    * Given the string builder it checks if the second operand is missing.
+   * It checks if the last character is an operator
    *
    * @param builder builder containing the sequence of inputs captured thus far.
    * @return true if the second operand is missing, false, otherwise.
    */
   protected boolean isSecondOperandMissing(StringBuilder builder) {
+
     return !builder.toString().equals("")
-            && allowedArithmeticOperators(builder.toString()
-            .charAt(builder.toString().length() - 1));
+            && allowedArithmeticOperators(builder.charAt(builder.length() - 1));
   }
 
 }

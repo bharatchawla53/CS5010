@@ -78,7 +78,11 @@ public class SimpleCalculator extends AbstractCalculator {
    */
   @Override
   protected Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder) {
-    return new SimpleCalculator(builder.toString(), 0, '\0', false);
+    if (this.hasComputationPerformed) {
+      return new SimpleCalculator(builder.toString(), 0, '\0', true);
+    }
+    throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
+            + "followed by the operator, followed by the second operand, followed by \"=\"");
   }
 
   /**
