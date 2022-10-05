@@ -42,10 +42,7 @@ public abstract class AbstractCalculator implements Calculator {
   @Override
   public Calculator input(char argument) throws IllegalArgumentException {
     // initialize with what has been already entered thus far
-    StringBuilder builder =
-            inputString != null
-                    ? new StringBuilder(this.inputString)
-                    : new StringBuilder();
+    StringBuilder builder = new StringBuilder(this.inputString);
 
     if (isValidOperandCharacter(argument)) {
       return processValidOperandCharacter(argument, builder);
@@ -328,7 +325,7 @@ public abstract class AbstractCalculator implements Calculator {
    *                                inputs.
    */
   private void performValidOperandCharacterOperation(char argument, StringBuilder builder,
-                                                       boolean hasComputationPerformed) {
+                                                     boolean hasComputationPerformed) {
     // override the string with fresh input value
     if ((hasComputationPerformed && !sbContainsOperators(builder.toString()))
             || (hasComputationPerformed && allowedArithmeticOperators(builder.toString().charAt(0))

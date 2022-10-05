@@ -115,9 +115,6 @@ public class SmartCalculator extends AbstractCalculator {
    */
   @Override
   protected Calculator handleIfBuilderContainOperators(StringBuilder builder) {
-    if (builder.charAt(0) == '+') {
-      builder.deleteCharAt(0);
-    }
     // case to commute value of arithmetic operation if sequence is valid
     return new SmartCalculator(performArithmeticOperation(builder.toString()),
             getLastOperand(), getLastOperator(), true);
