@@ -53,7 +53,6 @@ public class SmartCalculator extends AbstractCalculator {
       throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
               + "followed by the operator, followed by the second operand, followed by \"=\"");
     } else {
-      //builder.append(argument);
       return new SmartCalculator(builder.toString(), 0, '\0', false);
     }
   }

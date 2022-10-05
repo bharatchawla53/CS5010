@@ -14,10 +14,10 @@ public abstract class AbstractCalculator implements Calculator {
 
   protected static final String REGEX = "[+\\-*]";
 
-  protected String inputString;
+  private final String inputString;
   protected int secondOperand;
   protected char operator;
-  protected boolean hasComputationPerformed;
+  private final boolean hasComputationPerformed;
 
   /**
    * Constructs an AbstractCalculator constructor with inputString, second operand, operator, and
@@ -113,7 +113,7 @@ public abstract class AbstractCalculator implements Calculator {
    * @return the state of this calculator using factory pattern.
    */
   private Calculator processValidOperandCharacter(char argument, StringBuilder builder) {
-    performValidOperandCharacterOperation(argument, builder, hasComputationPerformed);
+    performValidOperandCharacterOperation(argument, builder, this.hasComputationPerformed);
     return calculatorFactory(builder.toString(), 0, '\0', false);
   }
 
