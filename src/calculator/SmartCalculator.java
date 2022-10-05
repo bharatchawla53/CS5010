@@ -65,7 +65,7 @@ public class SmartCalculator extends AbstractCalculator {
    * @param builder  a sequence of inputs appended in a StringBuilder.
    * @param argument an input received from the client.
    * @return new SmartCalculator object with updated input received thus far and override the
-   * previous operator.
+   *         previous operator.
    */
   @Override
   protected Calculator handleIfThereAreTwoConsecutiveOperators(StringBuilder builder,
@@ -89,10 +89,13 @@ public class SmartCalculator extends AbstractCalculator {
   }
 
   /**
-   * @param builder
-   * @return
+   * It handles the scenario if the builder does not contain operators.
+   *
+   * @param builder a sequence of inputs appended in a StringBuilder.
+   * @return this object with updated state.
+   * @throws IllegalArgumentException if an operator wasn't provided in a valid sequence.
    */
-  @Override // TODO verfiy this logic
+  @Override
   protected Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder) {
     if (getLastOperator() != '\0') {
       String updatedResult = performArithmeticOperation(builder.append(getLastOperator())
@@ -104,8 +107,11 @@ public class SmartCalculator extends AbstractCalculator {
   }
 
   /**
-   * @param builder
-   * @return
+   * It allows to have '+' operator at the beginning and we need to delete it and don't consider it
+   * during computation.
+   *
+   * @param builder builder a sequence of inputs appended in a StringBuilder.
+   * @return this object with updated state.
    */
   @Override
   protected Calculator handleIfBuilderContainOperators(StringBuilder builder) {

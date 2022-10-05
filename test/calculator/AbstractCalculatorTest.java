@@ -253,8 +253,10 @@ public abstract class AbstractCalculatorTest {
                 + operator1, calculator5.getResult());
 
         Calculator calculator6 = calculator5.input('=');
-        int expectedResult = Integer.parseInt(computeValues(Integer.parseInt(computeValues(i1, i1, operator)), i1, operator));
-        assertEquals(computeValues(expectedResult, expectedResult, operator1), calculator6.getResult());
+        int expectedResult = Integer.parseInt(computeValues(
+                Integer.parseInt(computeValues(i1, i1, operator)), i1, operator));
+        assertEquals(computeValues(expectedResult, expectedResult, operator1),
+                calculator6.getResult());
 
       }
     }
@@ -311,7 +313,7 @@ public abstract class AbstractCalculatorTest {
         assertEquals("", calculator1.getResult());
 
         Calculator calculator2 = calculator1.input(input1);
-        assertEquals(""  + input1, calculator2.getResult());
+        assertEquals("" + input1, calculator2.getResult());
 
         Calculator calculator3 = calculator2.input(operator1);
         assertEquals("" + input1 + operator1, calculator3.getResult());
@@ -963,7 +965,6 @@ public abstract class AbstractCalculatorTest {
       }
     }
   }
-
 
 
   /**

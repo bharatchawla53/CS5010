@@ -73,12 +73,17 @@ public class SimpleCalculator extends AbstractCalculator {
   }
 
   /**
-   * @param builder
-   * @return
+   * It checks if the computation has performed and if '=' times input multiple times, it
+   * necessarily not contain the operator, and we need to keep returning that resultant value. Else,
+   * throw exception if the operand was entered without an operator.
+   *
+   * @param builder a sequence of inputs appended in a StringBuilder.
+   * @return this object with updated state.
+   * @throws IllegalArgumentException if an operator wasn't provided in a valid sequence.
    */
   @Override
   protected Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder) {
-    if (this.hasComputationPerformed) {
+    if (this.getHasComputationPerformed()) {
       return new SimpleCalculator(builder.toString(), 0, '\0', true);
     }
     throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
@@ -86,12 +91,16 @@ public class SimpleCalculator extends AbstractCalculator {
   }
 
   /**
-   * @param builder
-   * @return
+   * It performs computation on a valid sequence and return this object with updated state.
+   *
+   * @param builder a sequence of inputs appended in a StringBuilder.
+   * @return this object with updated state.
    */
   @Override
   protected Calculator handleIfBuilderContainOperators(StringBuilder builder) {
-    return new SimpleCalculator(performArithmeticOperation(builder.toString()), 0, '\0', true);
+    return new SimpleCalculator(
+            performArithmeticOperation(builder.toString()), 0,
+            '\0', true);
   }
 
   /**
