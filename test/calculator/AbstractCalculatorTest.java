@@ -1,14 +1,12 @@
 package calculator;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Tests for {@link Calculator}s.
@@ -310,16 +308,16 @@ public abstract class AbstractCalculatorTest {
         assertEquals("", calculator.getResult());
 
         Calculator calculator1 = calculator.input(operator);
-        assertEquals(String.valueOf(operator), calculator1.getResult());
+        assertEquals("", calculator1.getResult());
 
         Calculator calculator2 = calculator1.input(input1);
-        assertEquals("" + operator + input1, calculator2.getResult());
+        assertEquals(""  + input1, calculator2.getResult());
 
         Calculator calculator3 = calculator2.input(operator1);
-        assertEquals("" + operator + input1 + operator1, calculator3.getResult());
+        assertEquals("" + input1 + operator1, calculator3.getResult());
 
         Calculator calculator4 = calculator3.input(input2);
-        assertEquals("" + operator + input1 + operator1 + input2, calculator4.getResult());
+        assertEquals("" + input1 + operator1 + input2, calculator4.getResult());
 
         Calculator calculator5 = calculator4.input('=');
         String expectedFirstComputation = computeValues(i1, i2, operator1);

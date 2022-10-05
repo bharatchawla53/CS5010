@@ -53,7 +53,7 @@ public class SmartCalculator extends AbstractCalculator {
       throw new IllegalArgumentException("A correct basic sequence of inputs is the first operand, "
               + "followed by the operator, followed by the second operand, followed by \"=\"");
     } else {
-      builder.append(argument);
+      //builder.append(argument);
       return new SmartCalculator(builder.toString(), 0, '\0', false);
     }
   }
@@ -94,10 +94,13 @@ public class SmartCalculator extends AbstractCalculator {
    */
   @Override // TODO verfiy this logic
   protected Calculator handleIfBuilderDoesNotContainOperators(StringBuilder builder) {
-    String updatedResult = performArithmeticOperation(builder.append(getLastOperator())
-            .append(getLastOperand()).toString());
-    return new SmartCalculator(updatedResult,
-            getLastOperand(), getLastOperator(), true);
+    if (getLastOperator() != '\0') {
+      String updatedResult = performArithmeticOperation(builder.append(getLastOperator())
+              .append(getLastOperand()).toString());
+      return new SmartCalculator(updatedResult,
+              getLastOperand(), getLastOperator(), true);
+    }
+    return new SmartCalculator(getResult(), getLastOperand(), getLastOperator(), false);
   }
 
   /**
