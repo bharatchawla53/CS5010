@@ -1,0 +1,115 @@
+Add front to the list:
+    ex :list.addFront("test")
+        list.addFront("a")
+        list.addFront("is")
+        list.addFront("this")
+    Output should be "This is a test".
+
+ListAdtImpl.java
+    private ListNode<T> head;
+    // for empty list
+    public void addFront(T b) {
+        return ElementListNode<T>(object, rest:this); // could create a helper method to reduce duplication of code
+    }
+    public void addBack(T b) {
+            return ElementListNode<T>(object, rest:this); // could create a helper method to reduce duplication of code
+    }
+
+    // non empty list
+    public void addFront(T b) {
+        return ElementListNode<T> (object, rest:this);
+    }
+    public void addBack(T b) {
+        this.rest = this.rest.addBack(object);
+        return this;
+    }
+
+    // for size
+    we can use head.count() to get the list size;
+    1 + this.rest.count(); // recursive approach non empty list
+
+    // get list node from a given index
+    // empty list
+    public T get(int index) {
+        throw new IAE(index is invalid);
+    }
+    //non  empty list
+    public T get(int index) {
+        if (index == 0) return this.object;
+        return this.rest.get(index - 1);
+    }
+
+    // add with an index given
+    public T add (index, T b ) {
+        if (index == 0) return this.addFront(object);
+
+        this.rest = this.rest.add(index -1, object);
+        return this;
+
+    }
+
+    // remove from list
+    public T remove(T b) {
+        if (object.equals(this.b)) {
+            return this.rest;
+        }
+        this.rest = this.rest.remove(b);
+        return this;
+    }
+
+
+    public T contains(T object) {
+    // short circuiting has better performance
+        return object.equals(this.object) ||
+        this.rest.contains(this.object)
+    }
+
+
+
+Restrict 'T' type :
+    use comparable to enable restrictions on what objects can be compared.
+
+override equals to check for the contents of the two objects even if their references aren't equal.
+
+ Higher ordered functions:
+    // using predicate
+      1. ListADT<T> filter(Predicate<T> pred);
+      2. ListNode<T> result = head.filter(pred);
+      3. filter on an empty list is an empty list.
+      4. if pred.test(this.object) return new ElementListNide(this.object, this.ret.filter(pred);
+         else this.rest.filter(pred);
+
+    // using map
+        U type is unknown
+        this way we can define generic method like below by pre-appenidng before the type
+        public <U> ListADT<U> map(Function<T, U> converter ) {
+            ListADT<U> result = head.map(converter);
+            return new ListADTImpl<U>(result);
+        }
+         public <U> ListADT<U> map(Function<T, U> converter ) {
+             return new ELementListNode<U>(converter.apply(this.object),
+                this.rest.map(converter));
+        }
+
+        Test for this map function that we defined
+        ex :
+
+     // using fold
+     use for converting many items to a single item.
+
+     // empty list
+     public T fold (T initial, BiFunction<T,T, T> combiner) {
+        return initial; // thats where we begin start counting
+     }
+
+     // non empty list
+     public T fold (T initial, BiFunction<T,T, T> combiner) {
+        return combiner.apply(this.object, this.rest.fold(initial, combiner));
+    }
+
+
+    // map followed up fold instead of combining those two operations in a single method
+
+
+     //
+
