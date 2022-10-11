@@ -38,6 +38,16 @@ public class BigNumberEmptyNode implements BigNumberListNode {
   }
 
   @Override
+  public BigNumberListNode addFront(int digit) {
+    return new BigNumberElementNode(digit, this);
+  }
+
+  @Override
+  public BigNumberListNode addBack(int digit) {
+    return addFront(digit);
+  }
+
+  @Override
   public String toString() {
     return "";
   }

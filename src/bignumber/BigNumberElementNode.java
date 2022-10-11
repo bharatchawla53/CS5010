@@ -12,7 +12,7 @@ public class BigNumberElementNode implements BigNumberListNode {
 
   @Override
   public int length() {
-    return 0;
+    return 1 + this.rest.length();
   }
 
   @Override
@@ -43,6 +43,17 @@ public class BigNumberElementNode implements BigNumberListNode {
   @Override
   public BigNumber add(BigNumber other) {
     return null;
+  }
+
+  @Override
+  public BigNumberListNode addFront(int digit) {
+    return new BigNumberElementNode(digit, this);
+  }
+
+  @Override
+  public BigNumberListNode addBack(int digit) {
+    this.rest = this.rest.addBack(digit);
+    return this;
   }
 
   @Override

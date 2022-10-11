@@ -56,4 +56,8 @@ public interface BigNumberListNode {
    * @return the sum of two numbers.
    */
   BigNumber add(BigNumber other);
+
+  BigNumberListNode addFront(int digit);
+
+  BigNumberListNode addBack(int digit);
 }
