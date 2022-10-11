@@ -9,6 +9,7 @@ public class BookListADTImpl implements BookListADT {
   public BookListADTImpl() {
     head = new BookListADTEmptyNode();
   }
+
   @Override
   public void addFront(Book b) {
     head = head.addFront(b);
@@ -21,7 +22,7 @@ public class BookListADTImpl implements BookListADT {
 
   @Override
   public void add(int index, Book b) {
-    head = head.add(index,b);
+    head = head.add(index, b);
   }
 
   @Override
@@ -35,8 +36,8 @@ public class BookListADTImpl implements BookListADT {
   }
 
   @Override
-  public Book get(int index) throws IllegalArgumentException{
-    if ((index>=0) && (index<getSize())) {
+  public Book get(int index) throws IllegalArgumentException {
+    if ((index >= 0) && (index < getSize())) {
       return head.get(index);
     } else throw new IllegalArgumentException("Invalid index");
 

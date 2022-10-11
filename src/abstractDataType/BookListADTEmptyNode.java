@@ -5,22 +5,30 @@ package abstractDataType;
  */
 public class BookListADTEmptyNode implements BookListADTNode {
   @Override
-  public int count(){return 0;}
+  public int count() {
+    return 0;
+  }
 
 
   @Override
-  public String toString() { return "";}
+  public String toString() {
+    return "";
+  }
 
   @Override
-  public BookListADTNode addFront(Book book) {return new
-          BookListADTElementNode(book,this);}
+  public BookListADTNode addFront(Book book) {
+    return new
+            BookListADTElementNode(book, this);
+  }
 
   @Override
-  public BookListADTNode addBack(Book book) { return addFront(book);}
+  public BookListADTNode addBack(Book book) {
+    return addFront(book);
+  }
 
   @Override
-  public BookListADTNode add(int index,Book book) throws IllegalArgumentException {
-    if (index==0){
+  public BookListADTNode add(int index, Book book) throws IllegalArgumentException {
+    if (index == 0) {
       return addFront(book);
     }
     throw new IllegalArgumentException("Invalid index to add an element");

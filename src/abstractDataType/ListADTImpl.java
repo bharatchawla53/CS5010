@@ -3,8 +3,8 @@ package abstractDataType;
 import java.util.function.Function;
 
 /**
- * This is the implementation of a generic list. Specifically it implements
- * the listadt.ListADT interface
+ * This is the implementation of a generic list. Specifically it implements the listadt.ListADT
+ * interface
  */
 public class ListADTImpl<T> implements ListADT<T> {
   private GenericListADTNode<T> head;
@@ -30,7 +30,7 @@ public class ListADTImpl<T> implements ListADT<T> {
 
   @Override
   public void add(int index, T b) {
-    head = head.add(index,b);
+    head = head.add(index, b);
   }
 
   @Override
@@ -44,20 +44,20 @@ public class ListADTImpl<T> implements ListADT<T> {
   }
 
   @Override
-  public T get(int index) throws IllegalArgumentException{
-    if ((index>=0) && (index<getSize())) {
+  public T get(int index) throws IllegalArgumentException {
+    if ((index >= 0) && (index < getSize())) {
       return head.get(index);
     } else throw new IllegalArgumentException("Invalid index");
 
   }
 
   @Override
-  public <R> ListADT<R> map(Function<T,R> converter) {
+  public <R> ListADT<R> map(Function<T, R> converter) {
     return new ListADTImpl(head.map(converter));
   }
 
   @Override
   public String toString() {
-    return "("+head.toString()+")";
+    return "(" + head.toString() + ")";
   }
 }

@@ -13,11 +13,13 @@ public class BookListADTElementNode implements BookListADTNode {
   }
 
   @Override
-  public int count() { return 1+this.rest.count();}
+  public int count() {
+    return 1 + this.rest.count();
+  }
 
   @Override
   public BookListADTNode addFront(Book book) {
-    return new BookListADTElementNode(book,this);
+    return new BookListADTElementNode(book, this);
   }
 
   @Override
@@ -27,12 +29,11 @@ public class BookListADTElementNode implements BookListADTNode {
   }
 
   @Override
-  public BookListADTNode add(int index,Book book) {
-    if (index==0) {
+  public BookListADTNode add(int index, Book book) {
+    if (index == 0) {
       return addFront(book);
-    }
-    else {
-      this.rest = this.rest.add(index-1,book);
+    } else {
+      this.rest = this.rest.add(index - 1, book);
       return this;
     }
   }
@@ -41,21 +42,20 @@ public class BookListADTElementNode implements BookListADTNode {
   public BookListADTNode remove(Book book) {
     if (this.book.equals(book)) {
       return this.rest;
-    }
-    else {
+    } else {
       this.rest = this.rest.remove(book);
       return this;
     }
   }
 
   @Override
-  public Book get(int index) throws IllegalArgumentException{
-    if (index==0) return this.book;
-    return this.rest.get(index-1);
+  public Book get(int index) throws IllegalArgumentException {
+    if (index == 0) return this.book;
+    return this.rest.get(index - 1);
   }
 
   @Override
   public String toString() {
-    return "("+this.book.toString()+")"+this.rest.toString();
+    return "(" + this.book.toString() + ")" + this.rest.toString();
   }
 }
