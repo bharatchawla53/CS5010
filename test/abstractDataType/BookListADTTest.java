@@ -18,7 +18,7 @@ public class BookListADTTest {
     list.addFront(new Book("HP 2", "J.K. Rowling", 1998,10.99f));
     list.addFront(new Book("HP 1","J.K. Rowling", 1997,19.99f));
 
-    assertEquals("(Title: HP 1 Year: 1997 Price: 19.99)(Title: HP 2 Year: " +
+    assertEquals("(Title: HP 1 Author: J.K. Rowling Year: 1997 Price: 19.99)(Title: HP 2 Author: J.K. Rowling Year: " +
             "1998 Price: 10.99)",list.toString());
 
     //add to the end

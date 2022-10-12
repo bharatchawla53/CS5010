@@ -1,14 +1,15 @@
 package bignumber;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class BigNumberImpl implements BigNumber {
 
-  private BigNumberListNode head;
+  private ListADT<BigNumber> head;
 
   // set this BigNumber to 0 so, 0 -> EmptyNode
   public BigNumberImpl() {
-    this.head = new BigNumberElementNode(0, new BigNumberEmptyNode());
+    this.head = new ElementListNode(0, new EmptyListNode());
   }
 
   public BigNumberImpl(String number) throws IllegalArgumentException {
@@ -18,11 +19,11 @@ public class BigNumberImpl implements BigNumber {
       throw new IllegalArgumentException("String passed to it does not represent a valid number.");
     }
 
-    // call empty constructor??
-    // TODO revisit this logic
-    this.head = new BigNumberElementNode(Integer.parseInt(String.valueOf(number.charAt(0))), new BigNumberEmptyNode());
-    // else build the list with the numbers we got in the string
-    for (int i = 1; i < number.length(); i++) {
+    // initialize the head
+    this.head = new EmptyListNode();
+
+    // add each digit to the back of the list
+    for (int i = 0; i < number.length(); i++) {
       this.head = head.addBack(Integer.parseInt(String.valueOf(number.charAt(i))));
     }
 
@@ -30,17 +31,46 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public int length() {
-    return head.length();
+    return head.size();
   }
 
   @Override
   public void shiftLeft(int shiftsBy) {
+    // case where initial value of this number is 0 and left shifting should always yield to 0.
+    if (this.toString().equals("0")) {
+      return;
+    }
 
+    // positive shift
+    if (shiftsBy > 0) {
+      for (int i = 0; i < shiftsBy; i++) {
+        // means appending 0's to the back of the nodes
+        head = head.addBack(0);
+      }
+    } else { // negative shift
+      shiftRight(shiftsBy);
+    }
   }
 
   @Override
   public void shiftRight(int shiftsBy) {
+    // case where initial value of this number is 0 and right shifting should always yield to 0.
+    if (this.toString().equals("0")) {
+      return;
+    }
 
+    if (shiftsBy > 0) {
+     for (int i = 0; i < shiftsBy; i++) {
+       // means removing the last node
+
+       //int lastNodeValue = Integer.parseInt(String.valueOf(head.toString().charAt(head.toString().length() - 1)));
+
+       // removes by the index instead??
+       head = head.remove(head.toString().length() - 1);
+     }
+    } else { // negative shift
+      shiftLeft(shiftsBy);
+    }
   }
 
   @Override
@@ -50,12 +80,21 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public int getDigitAt(int position) throws IllegalArgumentException {
-    return 0;
+    if (position >= 0 && position < length()) {
+      ListADT<BigNumber> bigNumberListADT = head.get(position);
+      return bigNumberListADT.map(bn -> Integer.parseInt(bn.toString())); // TODO check if we can use map instead of type casting it here
+    } else {
+      throw new IllegalArgumentException("Invalid position is passed");
+    }
   }
 
   @Override
   public BigNumber copy() {
+    ListADT independentCopy = head.copyOf();
+
+    //independentCopy.map();
     return null;
+    //return independentCopy; // use map??
   }
 
   @Override
@@ -70,12 +109,26 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return Objects.hashCode(head);
   }
 
   @Override
   public boolean equals(Object obj) {
-    return super.equals(obj);
+    // backwards compatibility with default equals.
+    if (this == obj) {
+      return true;
+    }
+
+    // Check if obj is a BigNumber object
+    if (!(obj instanceof BigNumber)) {
+      return false;
+    }
+
+    // The successful instanceOf check means our cast will succeed.
+    BigNumber that = (BigNumber) obj;
+
+    // checks if two numbers are identical
+    return this.toString().equals(that.toString());
   }
 
   @Override

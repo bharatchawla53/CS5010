@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BigNumberTest {
 
@@ -77,7 +79,18 @@ public class BigNumberTest {
 
   @Test
   public void testShiftLeftWithPositiveNumber() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    bigNumber.shiftLeft(3);
 
+    assertEquals("34456678908765000", bigNumber.toString());
+  }
+
+  @Test
+  public void testShiftLeftWithPositiveNumberWithEmptyConstructor() {
+    bigNumber = new BigNumberImpl();
+    bigNumber.shiftLeft(3);
+
+    assertEquals("0", bigNumber.toString());
   }
 
   @Test
@@ -86,8 +99,16 @@ public class BigNumberTest {
   }
 
   @Test
-  public void testRightShiftWithPositiveNumber() {
+  public void testShiftLeftWithNegativeNumberWithEmptyConstructor() {
 
+  }
+
+  @Test
+  public void testRightShiftWithPositiveNumber() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    bigNumber.shiftRight(3);
+
+    assertEquals("34456678908", bigNumber.toString());
   }
 
   @Test
@@ -112,12 +133,17 @@ public class BigNumberTest {
 
   @Test
   public void testGetDigitAtForValidPosition() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    int digit = bigNumber.getDigitAt(5);
 
+
+    assertEquals(6, digit);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testGetDigitAtForInvalidPosition() {
-
+    bigNumber = new BigNumberImpl();
+    bigNumber.getDigitAt(-4);
   }
 
   @Test
@@ -137,6 +163,27 @@ public class BigNumberTest {
 
   @Test
   public void testEqualsTwoBigNumbers() {
+    bigNumber = new BigNumberImpl("345690");
+    BigNumber bigNumber1 = new BigNumberImpl("345690");
 
+    assertEquals(bigNumber, bigNumber1);
   }
+
+  @Test
+  public void testNotEqualsTwoBigNumbers() {
+    bigNumber = new BigNumberImpl("345690");
+    BigNumber bigNumber1 = new BigNumberImpl("345690435");
+
+    assertNotEquals(bigNumber, bigNumber1);
+  }
+
+  @Test
+  public void testNotEqualsTwoDifferentObjects() {
+    bigNumber = new BigNumberImpl("345690");
+    Object obj = "4322";
+
+    assertNotEquals(bigNumber, obj);
+  }
+
+  // TODO test to create a number by left shifting as listed in the description
 }
