@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests the listadt.ListADT implementation using a list of strings
  */
-public class ListADTTest {
+public class BigNumberListADTNodeTest {
 
   private ListADT<String> stringList;
 

@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests for the list as an ADT
  */
-public class BookListADTTest {
+public class BookBigNumberListADTNodeTest {
 
   @Test
   public void testListADT() {

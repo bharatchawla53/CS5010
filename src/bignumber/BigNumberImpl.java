@@ -5,11 +5,11 @@ import java.util.regex.Pattern;
 
 public class BigNumberImpl implements BigNumber {
 
-  private ListADT<BigNumber> head;
+  private BigNumberListADTNode head;
 
   // set this BigNumber to 0 so, 0 -> EmptyNode
   public BigNumberImpl() {
-    this.head = new ElementListNode(0, new EmptyListNode());
+    this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
   }
 
   public BigNumberImpl(String number) throws IllegalArgumentException {
@@ -20,7 +20,7 @@ public class BigNumberImpl implements BigNumber {
     }
 
     // initialize the head
-    this.head = new EmptyListNode();
+    this.head = new BigNumberEmptyListNode();
 
     // add each digit to the back of the list
     for (int i = 0; i < number.length(); i++) {
@@ -48,7 +48,7 @@ public class BigNumberImpl implements BigNumber {
         head = head.addBack(0);
       }
     } else { // negative shift
-      shiftRight(shiftsBy);
+      shiftRight(Math.abs(shiftsBy));
     }
   }
 
@@ -62,14 +62,10 @@ public class BigNumberImpl implements BigNumber {
     if (shiftsBy > 0) {
      for (int i = 0; i < shiftsBy; i++) {
        // means removing the last node
-
-       //int lastNodeValue = Integer.parseInt(String.valueOf(head.toString().charAt(head.toString().length() - 1)));
-
-       // removes by the index instead??
        head = head.remove(head.toString().length() - 1);
      }
     } else { // negative shift
-      shiftLeft(shiftsBy);
+      shiftLeft(Math.abs(shiftsBy));
     }
   }
 
@@ -81,8 +77,7 @@ public class BigNumberImpl implements BigNumber {
   @Override
   public int getDigitAt(int position) throws IllegalArgumentException {
     if (position >= 0 && position < length()) {
-      ListADT<BigNumber> bigNumberListADT = head.get(position);
-      return bigNumberListADT.map(bn -> Integer.parseInt(bn.toString())); // TODO check if we can use map instead of type casting it here
+      return head.get(position);
     } else {
       throw new IllegalArgumentException("Invalid position is passed");
     }
@@ -90,8 +85,8 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public BigNumber copy() {
-    ListADT independentCopy = head.copyOf();
-
+    BigNumberListADTNode independentCopy = head.copyOf();
+  // Big Number node
     //independentCopy.map();
     return null;
     //return independentCopy; // use map??

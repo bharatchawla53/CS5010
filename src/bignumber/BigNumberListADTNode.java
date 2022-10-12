@@ -2,7 +2,7 @@ package bignumber;
 
 import java.util.function.Function;
 
-public interface ListADT<T> {
+public interface BigNumberListADTNode {
   /**
    * Return the number of digits in this list of BigNumber.
    *
@@ -10,11 +10,11 @@ public interface ListADT<T> {
    */
   int size();
 
-  ListADT<T> addFront(int digit);
+  BigNumberListADTNode addFront(int digit);
 
-  ListADT<T> addBack(int digit);
+  BigNumberListADTNode addBack(int digit);
 
-  ListADT<T> remove(int index);
+  BigNumberListADTNode remove(int index);
 
   /**
    * It takes a position, and returns the digit at that position.
@@ -23,11 +23,11 @@ public interface ListADT<T> {
    * @return the digit at the specified position.
    * @throws IllegalArgumentException if an invalid position is passed.
    */
-  ListADT<T> get(int index) throws IllegalArgumentException;
+  int get(int index) throws IllegalArgumentException;
 
-  ListADT<T> copyOf();
+  BigNumberListADTNode copyOf();
 
-  <R> ListADT<R> map(Function<T,R> converter);
+  //<R> BigNumberListADTNode<R> map(Function<T,R> converter);
 
   /**
    * It takes a single digit and add it to this number.
@@ -35,7 +35,7 @@ public interface ListADT<T> {
    * @param digit a number to be added to this number.
    * @throws IllegalArgumentException if the digit passed to it is not a single non-negative digit.
    */
-  ListADT<T> addDigit(int digit) throws IllegalArgumentException;
+  BigNumberListADTNode addDigit(int digit) throws IllegalArgumentException;
 
   /**
    * Given two BigNumber, it adds them and return the sum of it.
@@ -43,7 +43,7 @@ public interface ListADT<T> {
    * @param other the number to be added.
    * @return the sum of two numbers.
    */
-  ListADT<T> add(T other);
+  //BigNumberListADTNode add(T other);
 
 
 }

@@ -95,12 +95,18 @@ public class BigNumberTest {
 
   @Test
   public void testShiftLeftWithNegativeNumber() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    bigNumber.shiftLeft(-4);
 
+    assertEquals("3445667890", bigNumber.toString());
   }
 
   @Test
   public void testShiftLeftWithNegativeNumberWithEmptyConstructor() {
+    bigNumber = new BigNumberImpl();
+    bigNumber.shiftLeft(-3);
 
+    assertEquals("0", bigNumber.toString());
   }
 
   @Test
@@ -112,13 +118,27 @@ public class BigNumberTest {
   }
 
   @Test
-  public void testRightShiftWithNegativeNumber() {
+  public void testRightShiftWithPositiveNumberWithEmptyConstructor() {
+    bigNumber = new BigNumberImpl();
+    bigNumber.shiftRight(3);
 
+    assertEquals("0", bigNumber.toString());
+  }
+
+  @Test
+  public void testRightShiftWithNegativeNumber() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    bigNumber.shiftRight(-4);
+
+    assertEquals("344566789087650000", bigNumber.toString());
   }
 
   @Test
   public void testRightShiftWithNumberZeroWhichYieldsSameResult() {
+    bigNumber = new BigNumberImpl();
+    bigNumber.shiftRight(-4);
 
+    assertEquals("0", bigNumber.toString());
   }
 
   @Test
