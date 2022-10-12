@@ -143,12 +143,20 @@ public class BigNumberTest {
 
   @Test
   public void testAddDigit() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    int digit = 9;
 
+    bigNumber.addDigit(digit);
+
+    assertEquals("34456678908774", bigNumber.toString());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testAddNegativeDigit() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    int digit = -9;
 
+    bigNumber.addDigit(digit);
   }
 
   @Test
@@ -168,17 +176,28 @@ public class BigNumberTest {
 
   @Test
   public void testCopy() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    BigNumber copyBigNumber = bigNumber.copy();
 
+    assertEquals("34456678908765", copyBigNumber.toString());
   }
 
   @Test
   public void testAdd() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    BigNumber bigNumber1 = new BigNumberImpl("4353454353");
 
+    BigNumber result = bigNumber.add(bigNumber1); // TODO test for other way around for calling the object
+
+    assertEquals("34461032363118", result.toString());
   }
 
   @Test
   public void testCompareTwoBigNumbers() {
+    bigNumber = new BigNumberImpl("34456678908765");
+    BigNumber bigNumber1 = new BigNumberImpl("4353454353");
 
+    assertEquals(1, bigNumber.compareTo(bigNumber1));
   }
 
   @Test

@@ -1,8 +1,6 @@
 package bignumber;
 
-import java.util.function.Function;
-
-public interface BigNumberListADTNode {
+public interface BigNumberListNode {
   /**
    * Return the number of digits in this list of BigNumber.
    *
@@ -10,11 +8,11 @@ public interface BigNumberListADTNode {
    */
   int size();
 
-  BigNumberListADTNode addFront(int digit);
+  BigNumberListNode addFront(int digit);
 
-  BigNumberListADTNode addBack(int digit);
+  BigNumberListNode addBack(int digit);
 
-  BigNumberListADTNode remove(int index);
+  BigNumberListNode remove(int index);
 
   /**
    * It takes a position, and returns the digit at that position.
@@ -25,9 +23,9 @@ public interface BigNumberListADTNode {
    */
   int get(int index) throws IllegalArgumentException;
 
-  BigNumberListADTNode copyOf();
+  BigNumberListNode copyOf();
 
-  //<R> BigNumberListADTNode<R> map(Function<T,R> converter);
+  //<R> BigNumberListADTNode map(Function<BigNumberListADTNode,R> converter);
 
   /**
    * It takes a single digit and add it to this number.
@@ -35,7 +33,9 @@ public interface BigNumberListADTNode {
    * @param digit a number to be added to this number.
    * @throws IllegalArgumentException if the digit passed to it is not a single non-negative digit.
    */
-  BigNumberListADTNode addDigit(int digit) throws IllegalArgumentException;
+  BigNumberListNode sum(int digit) throws IllegalArgumentException;
+
+  BigNumberListNode sumAccumulator(int digit, int carryOver);
 
   /**
    * Given two BigNumber, it adds them and return the sum of it.
@@ -45,5 +45,8 @@ public interface BigNumberListADTNode {
    */
   //BigNumberListADTNode add(T other);
 
+  BigNumberListNode reverse();
+
+  BigNumberListNode reverseAccumulator(BigNumberListNode accumulator);
 
 }

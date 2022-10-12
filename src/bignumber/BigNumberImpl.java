@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class BigNumberImpl implements BigNumber {
 
-  private BigNumberListADTNode head;
+  private BigNumberListNode head;
 
   // set this BigNumber to 0 so, 0 -> EmptyNode
   public BigNumberImpl() {
@@ -27,6 +27,10 @@ public class BigNumberImpl implements BigNumber {
       this.head = head.addBack(Integer.parseInt(String.valueOf(number.charAt(i))));
     }
 
+  }
+
+  private BigNumberImpl(BigNumberListNode newHead) {
+    this.head = newHead;
   }
 
   @Override
@@ -71,7 +75,13 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public void addDigit(int digit) throws IllegalArgumentException {
+    if (digit < 0) {
+      throw new IllegalArgumentException("Digit passed is not a single non-negative digit");
+    }
 
+    head = head.reverse();
+    head = head.sum(digit);
+    head = head.reverse();
   }
 
   @Override
@@ -85,26 +95,25 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public BigNumber copy() {
-    BigNumberListADTNode independentCopy = head.copyOf();
-  // Big Number node
-    //independentCopy.map();
-    return null;
-    //return independentCopy; // use map??
+    BigNumberListNode independentCopy = head.copyOf();
+
+    return new BigNumberImpl(independentCopy); // TODO research if we can use map here
   }
 
   @Override
   public BigNumber add(BigNumber other) {
-    return null;
+
+    return null; // TODO
   }
 
   @Override
-  public int compareTo(BigNumber o) {
-    return 0;
+  public int compareTo(BigNumber other) {
+    return this.head.toString().compareTo(other.toString());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(head);
+    return 31 * Objects.hashCode(head);
   }
 
   @Override
