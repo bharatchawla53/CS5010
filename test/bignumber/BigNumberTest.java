@@ -1,6 +1,7 @@
 package bignumber;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 
@@ -18,7 +19,7 @@ public class BigNumberTest {
   private Random random;
   private BigInteger bigInteger;
 
-  //@Rule
+  @Rule
   public Timeout timeout = new Timeout(3000, TimeUnit.MILLISECONDS);
 
   @Before
@@ -246,7 +247,7 @@ public class BigNumberTest {
     bigInteger = generateBigNumber(10);
 
     bigNumber = new BigNumberImpl(bigInteger.toString());
-    int digit = -getRandomDigit(true);
+    int digit = -getRandomDigit(false);
 
     bigNumber.addDigit(digit);
   }
@@ -388,7 +389,9 @@ public class BigNumberTest {
       bigNumber = new BigNumberImpl(bigInteger.toString());
       BigNumber bigNumber1 = new BigNumberImpl(bigInteger1.toString());
 
-      assertEquals(1, bigNumber.compareTo(bigNumber1));
+      int res = bigInteger.compareTo(bigInteger1);
+
+      assertEquals(res, bigNumber.compareTo(bigNumber1));
     }
   }
 

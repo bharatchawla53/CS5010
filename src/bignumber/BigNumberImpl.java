@@ -151,13 +151,19 @@ public class BigNumberImpl implements BigNumber {
   @Override
   public int compareTo(BigNumber other) { // TODO
     // based on mathematical ordering so no comparison using string
-    return 0;
-    //return this.head.toString().compareTo(other.toString());
+    if (this.length() > other.length()) {
+      return 1;
+    } else if (this.length() < other.length()) {
+      return -1;
+    } else {
+      // length is same, but need to check individual numbers to find which one is bigger or are they equal
+      return head.compare(other, 0);
+    }
   }
 
   @Override
   public int hashCode() {
-    return 31 * Objects.hashCode(head);
+    return Objects.hashCode(head);
   }
 
   @Override

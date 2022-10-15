@@ -34,4 +34,6 @@ public interface BigNumberListNode {
   BigNumberListNode sum(BigNumberListNode other);
 
   BigNumberListNode sumAccumulator(BigNumberListNode other, int carryOver, int indexIncrementer);
+
+  int compare(BigNumber other, int indexIncrementer);
 }

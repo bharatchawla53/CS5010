@@ -60,6 +60,11 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   }
 
   @Override
+  public int compare(BigNumber other, int indexIncrementer) {
+    return 0;
+  }
+
+  @Override
   public BigNumberListNode addFront(int digit) {
     return new BigNumberElementListNode(digit, this);
   }

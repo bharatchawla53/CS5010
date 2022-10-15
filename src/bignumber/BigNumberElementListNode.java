@@ -11,12 +11,6 @@ class BigNumberElementListNode implements BigNumberListNode {
     this.rest = rest;
   }
 
-/*  private BigNumberElementListNode(int sum, int carryOver, BigNumberListNode rest) {
-    this.number = sum;
-    this.carry = carryOver;
-    this.rest = rest;
-  }*/
-
   @Override
   public int size() {
     return 1 + this.rest.size();
@@ -60,7 +54,7 @@ class BigNumberElementListNode implements BigNumberListNode {
   @Override
   public BigNumberListNode sum(BigNumberListNode other) {
     // perform addition on each digit and reverse the result before returning it
-    return this.sumAccumulator(other, 0, 0);
+    return sumAccumulator(other, 0, 0);
 
   }
 
@@ -72,6 +66,17 @@ class BigNumberElementListNode implements BigNumberListNode {
     carryOver = result / 10;
 
     return new BigNumberElementListNode(sum, this.rest.sumAccumulator(other, carryOver, ++indexIncrementer));
+  }
+
+  @Override
+  public int compare(BigNumber other, int indexIncrementer) {
+    if (this.number > other.getDigitAt(indexIncrementer)) {
+      return 1;
+    } else if (this.number < other.getDigitAt(indexIncrementer)) {
+      return -1;
+    } else {
+      return this.rest.compare(other, ++indexIncrementer);
+    }
   }
 
   @Override
