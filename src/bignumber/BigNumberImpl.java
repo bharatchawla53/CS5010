@@ -79,8 +79,20 @@ public class BigNumberImpl implements BigNumber {
       throw new IllegalArgumentException("Digit passed is not a single non-negative digit");
     }
 
+    // map digit to BigNumberListNode
+    BigNumberListNode digitNode = new BigNumberEmptyListNode();
+    digitNode = digitNode.addFront(digit);
+
+
     head = head.reverse();
-    head = head.sum(digit);
+
+    int shiftsBy = head.size() - digitNode.size();
+    for (int i = 0; i < shiftsBy; i++) {
+      // means appending 0's to the back of the nodes
+      digitNode = digitNode.addBack(0);
+    }
+
+    head = head.sum(digitNode);
     head = head.reverse();
   }
 
@@ -102,13 +114,45 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public BigNumber add(BigNumber other) {
+    // map BigNumber to BigNumberListNode
+    BigNumberListNode otherNode = new BigNumberEmptyListNode();
 
-    return null; // TODO
+    for (int i = 0; i < other.toString().length(); i++) {
+      otherNode = otherNode.addBack(other.getDigitAt(i));
+    }
+
+    // reverse first number
+    BigNumberListNode reverseFirstBigNumber = head.reverse();
+
+    // reverse second number
+    BigNumberListNode reverseSecondBigNumber = otherNode.reverse();
+
+    if (reverseFirstBigNumber.size() < reverseSecondBigNumber.size()) {
+      int shiftsBy = reverseSecondBigNumber.size() - reverseFirstBigNumber.size();
+      for (int i = 0; i < shiftsBy; i++) {
+        // means appending 0's to the back of the nodes
+        reverseFirstBigNumber = reverseFirstBigNumber.addBack(0);
+      }
+    } else if (reverseSecondBigNumber.size() < reverseFirstBigNumber.size()){
+      int shiftsBy = reverseFirstBigNumber.size() - reverseSecondBigNumber.size();
+      for (int i = 0; i < shiftsBy; i++) {
+        // means appending 0's to the back of the nodes
+        reverseSecondBigNumber = reverseSecondBigNumber.addBack(0);
+      }
+    }
+
+    BigNumberListNode result = reverseFirstBigNumber
+            .sum(reverseSecondBigNumber)
+            .reverse();
+
+    return new BigNumberImpl(result);
   }
 
   @Override
-  public int compareTo(BigNumber other) {
-    return this.head.toString().compareTo(other.toString());
+  public int compareTo(BigNumber other) { // TODO
+    // based on mathematical ordering so no comparison using string
+    return 0;
+    //return this.head.toString().compareTo(other.toString());
   }
 
   @Override
