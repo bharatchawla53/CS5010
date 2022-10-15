@@ -22,15 +22,7 @@ class BigNumberEmptyListNode implements BigNumberListNode {
     return new BigNumberEmptyListNode();
   }*/
 
-  @Override
-  public BigNumberListNode sum(int digit) {
-    return sumAccumulator(digit, 0);
-  }
 
-  @Override
-  public BigNumberListNode sumAccumulator(int digit, int carryOver) {
-    return addFront(digit); // no carryover here
-  }
 
   // TODO trying out reverse approach and will check later if there is a better approach
   @Override
@@ -41,6 +33,30 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   @Override
   public BigNumberListNode reverseAccumulator(BigNumberListNode accumulator) {
     return accumulator;
+  }
+
+  @Override
+  public BigNumberListNode sum(BigNumberListNode other) {
+    return sumAccumulator(other, 0, 0);
+  }
+
+  @Override
+  public BigNumberListNode sumAccumulator(BigNumberListNode other, int carryOver, int indexIncrementer) {
+    BigNumberListNode resultNode = new BigNumberEmptyListNode();
+
+    if (indexIncrementer == other.size()) {
+      if (carryOver != 0) {
+        resultNode = resultNode.addBack(carryOver);
+      } else {
+        return this;
+      }
+    } else {
+      // we still need to add the values if they weren't same length
+      while (indexIncrementer < other.size()) {
+        resultNode = resultNode.addBack(other.get(indexIncrementer));
+      }
+    }
+    return resultNode;
   }
 
   @Override

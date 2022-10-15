@@ -41,29 +41,6 @@ class BigNumberElementListNode implements BigNumberListNode {
     return new BigNumberElementListNode(converter.apply(this.number), this.rest.map(converter));
   }*/
 
-  @Override
-  public BigNumberListNode sum(int digit) {
-    // get the rightmost node first
-    // add that.node.number + digit
-    // handle carry and update other nodes as needed
-    // assuming we are getting reverse list here
-    return sumAccumulator(digit, 0);
-  }
-
-  @Override
-  public BigNumberElementListNode sumAccumulator(int digit, int carryOver) {
-    int result = this.number + digit + carryOver;
-
-    int sum = result % 10;
-    carryOver = result / 10;
-
-
-    if (carryOver != 0) {
-      return new BigNumberElementListNode(sum, this.rest.sumAccumulator(0, carryOver));
-    } else {
-      return new BigNumberElementListNode(sum, this.rest); // no further calculations so we can just return remaining rest
-    }
-  }
 
   // TODO trying out reverse approach and will check later if there is a better approach
   @Override
@@ -74,6 +51,27 @@ class BigNumberElementListNode implements BigNumberListNode {
   @Override
   public BigNumberListNode reverseAccumulator(BigNumberListNode accumulator) {
     return this.rest.reverseAccumulator(new BigNumberElementListNode(this.number, accumulator));
+  }
+
+  // get the rightmost node first
+  // add that.node.number + digit
+  // handle carry and update other nodes as needed
+  // assuming we are getting reverse list here
+  @Override
+  public BigNumberListNode sum(BigNumberListNode other) {
+    // perform addition on each digit and reverse the result before returning it
+    return this.sumAccumulator(other, 0, 0);
+
+  }
+
+  @Override
+  public BigNumberListNode sumAccumulator(BigNumberListNode other, int carryOver, int indexIncrementer) {
+    int result = this.number + other.get(indexIncrementer) + carryOver;
+
+    int sum = result % 10;
+    carryOver = result / 10;
+
+    return new BigNumberElementListNode(sum, this.rest.sumAccumulator(other, carryOver, ++indexIncrementer));
   }
 
   @Override
