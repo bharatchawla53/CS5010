@@ -433,7 +433,51 @@ public class BigNumberTest {
     }
   }
 
-  // TODO test to create a number by left shifting as listed in the description
+  @Test
+  public void testCreateNumberUsingLeftShift() {
+    for (int i = 0; i < 999; i++) {
+      StringBuilder expectedResult = new StringBuilder();
+
+      bigNumber = new BigNumberImpl();
+
+      bigNumber.shiftLeft(1);
+      int digit1 = getRandomDigit(false);
+      expectedResult.append(digit1);
+      bigNumber.addDigit(digit1);
+
+      assertEquals(expectedResult.toString(), bigNumber.toString());
+
+      bigNumber.shiftLeft(1);
+      int digit2 = getRandomDigit(false);
+      expectedResult.append(digit2);
+      bigNumber.addDigit(digit2);
+
+      assertEquals(expectedResult.toString(), bigNumber.toString());
+
+      bigNumber.shiftLeft(1);
+      int digit3 = getRandomDigit(false);
+      expectedResult.append(digit3);
+      bigNumber.addDigit(digit3);
+
+      assertEquals(expectedResult.toString(), bigNumber.toString());
+
+      bigNumber.shiftLeft(1);
+      int digit4 = getRandomDigit(false);
+      expectedResult.append(digit4);
+      bigNumber.addDigit(digit4);
+
+      assertEquals(expectedResult.toString(), bigNumber.toString());
+
+      bigNumber.shiftLeft(1);
+      int digit5 = getRandomDigit(false);
+      expectedResult.append(digit5);
+      bigNumber.addDigit(digit5);
+
+      assertEquals(expectedResult.toString(), bigNumber.toString());
+
+      assertEquals(expectedResult.toString().length(), bigNumber.length());
+    }
+  }
 
   private BigInteger generateBigNumber(int size) {
     StringBuilder bigInteger = new StringBuilder();
@@ -446,7 +490,9 @@ public class BigNumberTest {
   }
 
   private int getRandomDigit(boolean includeZero) {
-    return includeZero ? random.nextInt(10) : random.nextInt(10) + 1;
+    return includeZero
+            ? random.nextInt(10)
+            : random.nextInt((10 - 1)) + 1;
   }
 
   private BigInteger getBigInteger(String num) {
