@@ -8,6 +8,16 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   }
 
   @Override
+  public BigNumberListNode shiftLeft(int shiftBy) {
+    return new BigNumberElementListNode(0, this);
+  }
+
+  @Override
+  public BigNumberListNode shiftRight(int shiftsBy) {
+    return new BigNumberElementListNode(0, this);
+  }
+
+  @Override
   public int get(int index) throws IllegalArgumentException {
     throw new IllegalArgumentException("Invalid position");
   }
@@ -22,8 +32,6 @@ class BigNumberEmptyListNode implements BigNumberListNode {
     return new BigNumberEmptyListNode();
   }*/
 
-
-
   // TODO trying out reverse approach and will check later if there is a better approach
   @Override
   public BigNumberListNode reverse() {
@@ -36,47 +44,41 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   }
 
   @Override
-  public BigNumberListNode sum(BigNumberListNode other) {
-    return sumAccumulator(other, 0, 0);
-  }
-
-  @Override
-  public BigNumberListNode sumAccumulator(BigNumberListNode other, int carryOver, int indexIncrementer) {
-    BigNumberListNode resultNode = new BigNumberEmptyListNode();
-
-    if (indexIncrementer == other.size()) {
-      if (carryOver != 0) {
-        resultNode = resultNode.addBack(carryOver);
-      } else {
-        return this;
-      }
+  public BigNumberListNode addSum(BigNumberListNode other, int carryOver) {
+    if (carryOver != 0) {
+      return new BigNumberElementListNode(carryOver, new BigNumberEmptyListNode());
     } else {
-      // we still need to add the values if they weren't same length
-      while (indexIncrementer < other.size()) {
-        resultNode = resultNode.addBack(other.get(indexIncrementer));
-      }
+      return new BigNumberEmptyListNode();
     }
-    return resultNode;
   }
 
   @Override
-  public int compare(BigNumber other, int indexIncrementer) {
+  public int compare(BigNumberListNode other) {
     return 0;
+  }
+
+  @Override
+  public BigNumberListNode getRest() {
+    return this;
+  }
+
+  @Override
+  public Boolean isNodeEmpty() {
+    return true;
+  }
+
+  @Override
+  public BigNumberListNode addDigit(int digit, int carryOver) {
+    if (carryOver != 0) {
+      return new BigNumberElementListNode(carryOver, new BigNumberEmptyListNode());
+    } else {
+      return addFront(digit);
+    }
   }
 
   @Override
   public BigNumberListNode addFront(int digit) {
     return new BigNumberElementListNode(digit, this);
-  }
-
-  @Override
-  public BigNumberListNode addBack(int digit) {
-    return addFront(digit);
-  }
-
-  @Override
-  public BigNumberListNode remove(int index) {
-    return this; // nothing to remove from empty
   }
 
   @Override

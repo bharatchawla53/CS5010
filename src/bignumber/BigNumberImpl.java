@@ -20,11 +20,14 @@ public class BigNumberImpl implements BigNumber {
     }
 
     // initialize the head
-    this.head = new BigNumberEmptyListNode();
+    this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
 
     // add each digit to the back of the list
     for (int i = 0; i < number.length(); i++) {
-      this.head = head.addBack(Integer.parseInt(String.valueOf(number.charAt(i))));
+      //this.head = head.addBack(Integer.parseInt(String.valueOf(number.charAt(i))));
+      this.shiftLeft(1);
+      //this.head = head.addFront(Integer.parseInt(String.valueOf(number.charAt(i))));
+      this.addDigit(Integer.parseInt(String.valueOf(number.charAt(i))));
     }
 
   }
@@ -41,16 +44,12 @@ public class BigNumberImpl implements BigNumber {
   @Override
   public void shiftLeft(int shiftsBy) {
     // case where initial value of this number is 0 and left shifting should always yield to 0.
-    if (this.toString().equals("0")) {
+    if (head.isNodeEmpty() || shiftsBy == 0) {
       return;
     }
-
     // positive shift
     if (shiftsBy > 0) {
-      for (int i = 0; i < shiftsBy; i++) {
-        // means appending 0's to the back of the nodes
-        head = head.addBack(0);
-      }
+      head = head.shiftLeft(shiftsBy);
     } else { // negative shift
       shiftRight(Math.abs(shiftsBy));
     }
@@ -59,15 +58,12 @@ public class BigNumberImpl implements BigNumber {
   @Override
   public void shiftRight(int shiftsBy) {
     // case where initial value of this number is 0 and right shifting should always yield to 0.
-    if (this.toString().equals("0")) {
+    if (head.isNodeEmpty() || shiftsBy == 0) {
       return;
     }
 
     if (shiftsBy > 0) {
-     for (int i = 0; i < shiftsBy; i++) {
-       // means removing the last node
-       head = head.remove(head.toString().length() - 1);
-     }
+      head = head.shiftRight(shiftsBy);
     } else { // negative shift
       shiftLeft(Math.abs(shiftsBy));
     }
@@ -75,89 +71,53 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public void addDigit(int digit) throws IllegalArgumentException {
-    if (digit < 0) {
+    if (digit < 0 || digit > 9) {
       throw new IllegalArgumentException("Digit passed is not a single non-negative digit");
     }
-
-    // map digit to BigNumberListNode
-    BigNumberListNode digitNode = new BigNumberEmptyListNode();
-    digitNode = digitNode.addFront(digit);
-
-
-    head = head.reverse();
-
-    int shiftsBy = head.size() - digitNode.size();
-    for (int i = 0; i < shiftsBy; i++) {
-      // means appending 0's to the back of the nodes
-      digitNode = digitNode.addBack(0);
-    }
-
-    head = head.sum(digitNode);
-    head = head.reverse();
+    head = head.addDigit(digit, 0);
   }
 
   @Override
   public int getDigitAt(int position) throws IllegalArgumentException {
-    if (position >= 0 && position < length()) {
+    int listLength = this.length();
+    if (position < 0) {
+      throw new IllegalArgumentException("Invalid position is passed");
+    } else if (position >= 0 && position < listLength) {
       return head.get(position);
     } else {
-      throw new IllegalArgumentException("Invalid position is passed");
+      return 0;
     }
   }
 
   @Override
   public BigNumber copy() {
     BigNumberListNode independentCopy = head.copyOf();
-
     return new BigNumberImpl(independentCopy); // TODO research if we can use map here
   }
 
   @Override
   public BigNumber add(BigNumber other) {
-    // map BigNumber to BigNumberListNode
-    BigNumberListNode otherNode = new BigNumberEmptyListNode();
+    // map BigNumber to BigNumberImpl
+    BigNumberImpl otherBigNum = new BigNumberImpl(other.toString());
 
-    for (int i = 0; i < other.toString().length(); i++) {
-      otherNode = otherNode.addBack(other.getDigitAt(i));
+    if (this.length() > otherBigNum.length()) {
+      return new BigNumberImpl(this.head.addSum(otherBigNum.head, 0));
+    } else {
+      return new BigNumberImpl(otherBigNum.head.addSum(this.head, 0));
     }
-
-    // reverse first number
-    BigNumberListNode reverseFirstBigNumber = head.reverse();
-
-    // reverse second number
-    BigNumberListNode reverseSecondBigNumber = otherNode.reverse();
-
-    if (reverseFirstBigNumber.size() < reverseSecondBigNumber.size()) {
-      int shiftsBy = reverseSecondBigNumber.size() - reverseFirstBigNumber.size();
-      for (int i = 0; i < shiftsBy; i++) {
-        // means appending 0's to the back of the nodes
-        reverseFirstBigNumber = reverseFirstBigNumber.addBack(0);
-      }
-    } else if (reverseSecondBigNumber.size() < reverseFirstBigNumber.size()){
-      int shiftsBy = reverseFirstBigNumber.size() - reverseSecondBigNumber.size();
-      for (int i = 0; i < shiftsBy; i++) {
-        // means appending 0's to the back of the nodes
-        reverseSecondBigNumber = reverseSecondBigNumber.addBack(0);
-      }
-    }
-
-    BigNumberListNode result = reverseFirstBigNumber
-            .sum(reverseSecondBigNumber)
-            .reverse();
-
-    return new BigNumberImpl(result);
   }
 
   @Override
-  public int compareTo(BigNumber other) { // TODO
+  public int compareTo(BigNumber other) {
     // based on mathematical ordering so no comparison using string
     if (this.length() > other.length()) {
       return 1;
     } else if (this.length() < other.length()) {
       return -1;
     } else {
+      BigNumberImpl otherBigNum = new BigNumberImpl(other.toString());
       // length is same, but need to check individual numbers to find which one is bigger or are they equal
-      return head.compare(other, 0);
+      return head.reverse().compare(otherBigNum.head.reverse());
     }
   }
 
@@ -181,8 +141,8 @@ public class BigNumberImpl implements BigNumber {
     // The successful instanceOf check means our cast will succeed.
     BigNumber that = (BigNumber) obj;
 
-    // checks if two numbers are identical
-    return this.toString().equals(that.toString());
+    // checks if two numbers are identical using compareTo
+    return this.compareTo(that) == 0;
   }
 
   @Override
@@ -195,7 +155,7 @@ public class BigNumberImpl implements BigNumber {
     if (number == null) {
       return false;
     }
-    Pattern pattern = Pattern.compile("^\\d+$");
+    Pattern pattern = Pattern.compile("^[0-9]*$");
     return pattern.matcher(number).matches();
   }
 }

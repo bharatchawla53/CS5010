@@ -8,11 +8,11 @@ public interface BigNumberListNode {
    */
   int size();
 
+  BigNumberListNode shiftLeft(int shiftBy);
+
+  BigNumberListNode shiftRight(int shiftsBy);
+
   BigNumberListNode addFront(int digit);
-
-  BigNumberListNode addBack(int digit);
-
-  BigNumberListNode remove(int index);
 
   /**
    * It takes a position, and returns the digit at that position.
@@ -31,9 +31,13 @@ public interface BigNumberListNode {
 
   BigNumberListNode reverseAccumulator(BigNumberListNode accumulator);
 
-  BigNumberListNode sum(BigNumberListNode other);
+  BigNumberListNode addSum(BigNumberListNode other, int carryOver);
 
-  BigNumberListNode sumAccumulator(BigNumberListNode other, int carryOver, int indexIncrementer);
+  int compare(BigNumberListNode other);
 
-  int compare(BigNumber other, int indexIncrementer);
+  BigNumberListNode getRest();
+
+  Boolean isNodeEmpty();
+
+  BigNumberListNode addDigit(int digit, int carryOver);
 }
