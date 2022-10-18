@@ -1,5 +1,8 @@
 package bignumber;
 
+/**
+ * This class represents an empty node in the big number list adt implementation.
+ */
 class BigNumberEmptyListNode implements BigNumberListNode {
 
   @Override
@@ -18,6 +21,11 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   }
 
   @Override
+  public BigNumberListNode addFront(int digit) {
+    return new BigNumberElementListNode(digit, this);
+  }
+
+  @Override
   public int get(int index) throws IllegalArgumentException {
     throw new IllegalArgumentException("Invalid position");
   }
@@ -27,12 +35,6 @@ class BigNumberEmptyListNode implements BigNumberListNode {
     return new BigNumberEmptyListNode();
   }
 
-/*  @Override
-  public <R> BigNumberListADTNode map(Function<BigNumberListADTNode, R> converter) {
-    return new BigNumberEmptyListNode();
-  }*/
-
-  // TODO trying out reverse approach and will check later if there is a better approach
   @Override
   public BigNumberListNode reverse() {
     return reverseAccumulator(new BigNumberEmptyListNode());
@@ -76,13 +78,15 @@ class BigNumberEmptyListNode implements BigNumberListNode {
     }
   }
 
-  @Override
-  public BigNumberListNode addFront(int digit) {
-    return new BigNumberElementListNode(digit, this);
-  }
+
+/*  @Override
+  public <R> BigNumberListADTNode map(Function<BigNumberListADTNode, R> converter) {
+    return new BigNumberEmptyListNode();
+  }*/
 
   @Override
   public String toString() {
     return "";
   }
+
 }

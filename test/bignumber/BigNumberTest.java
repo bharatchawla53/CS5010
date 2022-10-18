@@ -9,28 +9,24 @@ import java.math.BigInteger;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
+/**
+ * Tests for {@link BigNumber}s.
+ */
 public class BigNumberTest {
 
   private BigNumber bigNumber;
   private Random random;
   private BigInteger bigInteger;
 
-  //@Rule
-  public Timeout timeout = new Timeout(3000, TimeUnit.MILLISECONDS);
+  @Rule
+  public Timeout timeout = new Timeout(4000, TimeUnit.MILLISECONDS);
 
   @Before
   public void setup() {
     random = new Random();
-  }
-
-  @Test
-  public void shouldNotTimeOut() throws InterruptedException {
-    sleep(2000);
   }
 
   @Test
@@ -48,7 +44,8 @@ public class BigNumberTest {
       bigNumber = new BigNumberImpl(bigInteger.toString());
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
       assertEquals(bigInteger.toString(), bigNumber.toString());
@@ -107,7 +104,8 @@ public class BigNumberTest {
       bigInteger = getBigInteger(bigInteger.toString() + "0".repeat(shiftBy));
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
       assertEquals(bigInteger.toString(), bigNumber.toString());
@@ -150,7 +148,8 @@ public class BigNumberTest {
       }
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
       assertEquals(bigInteger.toString(), bigNumber.toString());
@@ -170,7 +169,7 @@ public class BigNumberTest {
   @Test
   public void testRightShiftWithPositiveNumber() {
     for (int i = 0; i < 999; i++) {
-      bigInteger = generateBigNumber(200);
+      bigInteger = generateBigNumber(100);
 
       bigNumber = new BigNumberImpl(bigInteger.toString());
       int shiftBy = getRandomDigit(false);
@@ -181,7 +180,8 @@ public class BigNumberTest {
       }
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
 
@@ -227,7 +227,8 @@ public class BigNumberTest {
       bigInteger = getBigInteger(bigInteger.toString() + "0".repeat(Math.abs(shiftBy)));
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
 
@@ -248,7 +249,7 @@ public class BigNumberTest {
   @Test
   public void testBothPositiveShifts() {
     for (int i = 0; i < 999; i++) {
-      bigInteger = generateBigNumber(300);
+      bigInteger = generateBigNumber(100);
       bigNumber = new BigNumberImpl(bigInteger.toString());
 
       for (int l = 0; l < 100; l++) {
@@ -276,38 +277,38 @@ public class BigNumberTest {
   @Test
   public void testBothNegativeShifts() {
     for (int i = 0; i < 999; i++) {
-        bigInteger = generateBigNumber(300);
-        bigNumber = new BigNumberImpl(bigInteger.toString());
+      bigInteger = generateBigNumber(100);
+      bigNumber = new BigNumberImpl(bigInteger.toString());
 
-        for (int l = 0; l < 100; l++) {
-          int digit = getRandomDigit(true);
+      for (int l = 0; l < 100; l++) {
+        int digit = getRandomDigit(true);
 
-          // negative left shift
-          bigNumber.shiftLeft(-1);
-          bigInteger = bigInteger.divide(BigInteger.valueOf(10));
-          bigNumber.addDigit(digit);
-          bigInteger = bigInteger.add(BigInteger.valueOf(digit));
+        // negative left shift
+        bigNumber.shiftLeft(-1);
+        bigInteger = bigInteger.divide(BigInteger.valueOf(10));
+        bigNumber.addDigit(digit);
+        bigInteger = bigInteger.add(BigInteger.valueOf(digit));
 
-          assertEquals(bigInteger.toString(), bigNumber.toString());
+        assertEquals(bigInteger.toString(), bigNumber.toString());
 
-          // negative right shift
-          bigNumber.shiftRight(-1);
-          bigInteger = getBigInteger(bigInteger.toString() + "0");
-          bigNumber.addDigit(digit);
-          bigInteger = bigInteger.add(BigInteger.valueOf(digit));
+        // negative right shift
+        bigNumber.shiftRight(-1);
+        bigInteger = getBigInteger(bigInteger.toString() + "0");
+        bigNumber.addDigit(digit);
+        bigInteger = bigInteger.add(BigInteger.valueOf(digit));
 
-          assertEquals(bigInteger.toString(), bigNumber.toString());
-        }
+        assertEquals(bigInteger.toString(), bigNumber.toString());
+      }
     }
   }
 
   @Test
   public void testBothShiftsWithAddDigit() {
     for (int i = 0; i < 999; i++) {
-      bigInteger = generateBigNumber(300);
+      bigInteger = generateBigNumber(50);
       bigNumber = new BigNumberImpl(bigInteger.toString());
 
-      for (int l = 0; l < 500; l++) {
+      for (int l = 0; l < 50; l++) {
         int digit = getRandomDigit(true);
 
         // left shift
@@ -346,6 +347,20 @@ public class BigNumberTest {
   }
 
   @Test
+  public void testShiftByZero() {
+    bigInteger = generateBigNumber(100);
+    bigNumber = new BigNumberImpl(bigInteger.toString());
+
+    // left shift
+    bigNumber.shiftLeft(0);
+    assertEquals(bigInteger.toString(), bigNumber.toString());
+
+    // right shift
+    bigNumber.shiftRight(0);
+    assertEquals(bigInteger.toString(), bigNumber.toString());
+  }
+
+  @Test
   public void testAddDigit() {
     for (int i = 0; i < 999; i++) {
       bigInteger = generateBigNumber(10);
@@ -359,7 +374,8 @@ public class BigNumberTest {
       }
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
 
@@ -395,7 +411,8 @@ public class BigNumberTest {
       bigNumber = new BigNumberImpl(bigInteger.toString());
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
 
@@ -429,7 +446,8 @@ public class BigNumberTest {
       BigNumber copyBigNumber = bigNumber.copy();
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 bigNumber.getDigitAt(j));
       }
 
@@ -450,8 +468,8 @@ public class BigNumberTest {
   @Test
   public void testAddWithFirstNumberBeTheCaller() {
     for (int i = 0; i < 999; i++) {
-      bigInteger = generateBigNumber(200);
-      BigInteger bigInteger1 = generateBigNumber(200);
+      bigInteger = generateBigNumber(100);
+      BigInteger bigInteger1 = generateBigNumber(100);
 
       bigNumber = new BigNumberImpl(bigInteger.toString());
       BigNumber bigNumber1 = new BigNumberImpl(bigInteger1.toString());
@@ -461,7 +479,8 @@ public class BigNumberTest {
       BigNumber actualResult = bigNumber.add(bigNumber1);
 
       for (int j = 0; j < expectedResult.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString().charAt(expectedResult.toString().length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString()
+                        .charAt(expectedResult.toString().length() - 1 - j))),
                 actualResult.getDigitAt(j));
       }
 
@@ -483,7 +502,8 @@ public class BigNumberTest {
       BigNumber actualResult = bigNumber1.add(bigNumber);
 
       for (int j = 0; j < expectedResult.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString().charAt(expectedResult.toString().length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString()
+                        .charAt(expectedResult.toString().length() - 1 - j))),
                 actualResult.getDigitAt(j));
       }
 
@@ -505,7 +525,8 @@ public class BigNumberTest {
       BigNumber actualResult = bigNumber.add(bigNumber1);
 
       for (int j = 0; j < expectedResult.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString().charAt(bigNumber.length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString()
+                        .charAt(bigNumber.length() - 1 - j))),
                 actualResult.getDigitAt(j));
       }
 
@@ -527,7 +548,8 @@ public class BigNumberTest {
       BigNumber actualResult = bigNumber.add(bigNumber1);
 
       for (int j = 0; j < expectedResult.toString().length(); j++) {
-        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString().charAt(expectedResult.toString().length() - 1 - j))),
+        assertEquals(Integer.parseInt(String.valueOf(expectedResult.toString()
+                        .charAt(expectedResult.toString().length() - 1 - j))),
                 actualResult.getDigitAt(j));
       }
 
@@ -692,77 +714,78 @@ public class BigNumberTest {
 
   @Test
   public void testAllOperations() {
-      bigInteger = generateBigNumber(100);
-      bigNumber = new BigNumberImpl(bigInteger.toString());
+    bigInteger = generateBigNumber(100);
+    bigNumber = new BigNumberImpl(bigInteger.toString());
 
-      for (int i = 0; i < 1000; i++) {
-        // left shift
-        bigNumber.shiftLeft(1);
-        bigInteger = getBigInteger(bigInteger.toString() + "0");
-        int digit1 = getRandomDigit(false);
+    for (int i = 0; i < 1000; i++) {
+      // left shift
+      bigNumber.shiftLeft(1);
+      bigInteger = getBigInteger(bigInteger.toString() + "0");
+      int digit1 = getRandomDigit(false);
 
-        // add digit
-        bigNumber.addDigit(digit1);
-        bigInteger = bigInteger.add(BigInteger.valueOf(digit1));
-        assertEquals(bigInteger.toString(), bigNumber.toString());
+      // add digit
+      bigNumber.addDigit(digit1);
+      bigInteger = bigInteger.add(BigInteger.valueOf(digit1));
+      assertEquals(bigInteger.toString(), bigNumber.toString());
 
-        // right shift
-        bigNumber.shiftRight(1);
-        bigInteger = bigInteger.divide(BigInteger.valueOf(10));
+      // right shift
+      bigNumber.shiftRight(1);
+      bigInteger = bigInteger.divide(BigInteger.valueOf(10));
 
-        int digit2 = getRandomDigit(false);
-        // add digit
-        bigNumber.addDigit(digit2);
+      int digit2 = getRandomDigit(false);
+      // add digit
+      bigNumber.addDigit(digit2);
 
-        bigInteger = bigInteger.add(BigInteger.valueOf(digit2));
-        assertEquals(bigInteger.toString(), bigNumber.toString());
+      bigInteger = bigInteger.add(BigInteger.valueOf(digit2));
+      assertEquals(bigInteger.toString(), bigNumber.toString());
 
-        // negative left shift
-        bigNumber.shiftLeft(-1);
-        bigInteger = bigInteger.divide(BigInteger.valueOf(10));
-        int digit3 = getRandomDigit(false);
+      // negative left shift
+      bigNumber.shiftLeft(-1);
+      bigInteger = bigInteger.divide(BigInteger.valueOf(10));
+      int digit3 = getRandomDigit(false);
 
-        // add digit
-        bigNumber.addDigit(digit3);
-        bigInteger = bigInteger.add(BigInteger.valueOf(digit3));
-        assertEquals(bigInteger.toString(), bigNumber.toString());
+      // add digit
+      bigNumber.addDigit(digit3);
+      bigInteger = bigInteger.add(BigInteger.valueOf(digit3));
+      assertEquals(bigInteger.toString(), bigNumber.toString());
 
-        // negative right shift
-        bigNumber.shiftRight(-1);
-        bigInteger = getBigInteger(bigInteger.toString() + "0");
-        int digit4 = getRandomDigit(false);
+      // negative right shift
+      bigNumber.shiftRight(-1);
+      bigInteger = getBigInteger(bigInteger.toString() + "0");
+      int digit4 = getRandomDigit(false);
 
-        // add digit
-        bigNumber.addDigit(digit4);
-        bigInteger = bigInteger.add(BigInteger.valueOf(digit4));
-        assertEquals(bigInteger.toString(), bigNumber.toString());
+      // add digit
+      bigNumber.addDigit(digit4);
+      bigInteger = bigInteger.add(BigInteger.valueOf(digit4));
+      assertEquals(bigInteger.toString(), bigNumber.toString());
 
-        // copy the list
-        BigNumber newCopy = bigNumber.copy();
-        assertEquals(bigInteger.toString(), newCopy.toString());
+      // copy the list
+      BigNumber newCopy = bigNumber.copy();
+      assertEquals(bigInteger.toString(), newCopy.toString());
 
-        // getDigitAt
-        for (int j = 0; j < bigInteger.toString().length(); j++) {
-          assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString().charAt(bigInteger.toString().length() - 1 - j))),
-                  bigNumber.getDigitAt(j));
-        }
-
-        // add two big numbers
-        BigInteger bigInteger1 = generateBigNumber(200);
-        BigNumber bigNumber1 = new BigNumberImpl(bigInteger1.toString());
-        BigNumber addResult = bigNumber.add(bigNumber1);
-
-        BigInteger actualResult = bigInteger.add(bigInteger1);
-
-        assertEquals(actualResult.toString(), addResult.toString());
-
-        // compare numbers
-        int expectedCompareResult = bigInteger.compareTo(bigInteger1);
-        int actualCompareResult = bigNumber.compareTo(bigNumber1);
-
-        assertEquals(expectedCompareResult, actualCompareResult);
-
+      // getDigitAt
+      for (int j = 0; j < bigInteger.toString().length(); j++) {
+        assertEquals(Integer.parseInt(String.valueOf(bigInteger.toString()
+                        .charAt(bigInteger.toString().length() - 1 - j))),
+                bigNumber.getDigitAt(j));
       }
+
+      // add two big numbers
+      BigInteger bigInteger1 = generateBigNumber(200);
+      BigNumber bigNumber1 = new BigNumberImpl(bigInteger1.toString());
+      BigNumber addResult = bigNumber.add(bigNumber1);
+
+      BigInteger actualResult = bigInteger.add(bigInteger1);
+
+      assertEquals(actualResult.toString(), addResult.toString());
+
+      // compare numbers
+      int expectedCompareResult = bigInteger.compareTo(bigInteger1);
+      int actualCompareResult = bigNumber.compareTo(bigNumber1);
+
+      assertEquals(expectedCompareResult, actualCompareResult);
+
+    }
   }
 
   private BigInteger generateBigNumber(int size) {

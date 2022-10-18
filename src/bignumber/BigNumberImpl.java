@@ -3,35 +3,47 @@ package bignumber;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * The BigNumberImpl class represents a non-negative number of arbitrary lengths.
+ */
 public class BigNumberImpl implements BigNumber {
 
   private BigNumberListNode head;
 
-  // set this BigNumber to 0 so, 0 -> EmptyNode
+  /**
+   * Constructs an empty BigNumberImpl constructor which initializes this number to 0.
+   */
   public BigNumberImpl() {
     this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
   }
 
+  /**
+   * Constructs an BigNumberImpl constructor that takes a string number and represents it.
+   *
+   * @param number a valid string number.
+   * @throws IllegalArgumentException if the string passed to it does not represent a valid number.
+   */
   public BigNumberImpl(String number) throws IllegalArgumentException {
-    // write a Regex to eliminate unwanted chars
     if (!isNumeric(number) || number == null || number.equals("")) {
-      // throw IAE
       throw new IllegalArgumentException("String passed to it does not represent a valid number.");
     }
 
-    // initialize the head
+    // initialize the head // TODO remove dc
     this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
 
-    // add each digit to the back of the list
+    // it performs shift left operation and then add the digit to the list nodes.
     for (int i = 0; i < number.length(); i++) {
-      //this.head = head.addBack(Integer.parseInt(String.valueOf(number.charAt(i))));
       this.shiftLeft(1);
-      //this.head = head.addFront(Integer.parseInt(String.valueOf(number.charAt(i))));
       this.addDigit(Integer.parseInt(String.valueOf(number.charAt(i))));
     }
-
   }
 
+  /**
+   * Constructs an BigNumberImpl that takes a number represented in BigNumberListNode and assign it
+   * to current head.
+   *
+   * @param newHead takes a BigNumberListNode.
+   */
   private BigNumberImpl(BigNumberListNode newHead) {
     this.head = newHead;
   }
@@ -43,7 +55,8 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public void shiftLeft(int shiftsBy) {
-    // case where initial value of this number is 0 and left shifting should always yield to 0.
+    // case where initial value of this number is 0 or shiftBy is 0
+    // and left shifting should always yield to 0.
     if (head.isNodeEmpty() || shiftsBy == 0) {
       return;
     }
@@ -57,11 +70,12 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public void shiftRight(int shiftsBy) {
-    // case where initial value of this number is 0 and right shifting should always yield to 0.
+    // case where initial value of this number is 0 or shiftBy is 0
+    // and right shifting should always yield to 0.
     if (head.isNodeEmpty() || shiftsBy == 0) {
       return;
     }
-
+    // positive shift
     if (shiftsBy > 0) {
       head = head.shiftRight(shiftsBy);
     } else { // negative shift
@@ -72,7 +86,7 @@ public class BigNumberImpl implements BigNumber {
   @Override
   public void addDigit(int digit) throws IllegalArgumentException {
     if (digit < 0 || digit > 9) {
-      throw new IllegalArgumentException("Digit passed is not a single non-negative digit");
+      throw new IllegalArgumentException("Digit passed is not a single non-negative digit.");
     }
     head = head.addDigit(digit, 0);
   }
@@ -81,7 +95,7 @@ public class BigNumberImpl implements BigNumber {
   public int getDigitAt(int position) throws IllegalArgumentException {
     int listLength = this.length();
     if (position < 0) {
-      throw new IllegalArgumentException("Invalid position is passed");
+      throw new IllegalArgumentException("Invalid position is passed.");
     } else if (position >= 0 && position < listLength) {
       return head.get(position);
     } else {
@@ -107,16 +121,22 @@ public class BigNumberImpl implements BigNumber {
     }
   }
 
+  /**
+   * It compares two BigNumbers based on mathematical ordering.
+   *
+   * @param other takes in a BigNumber
+   * @return 1 if the current number is greater than the other, -1 if the current number is less
+   *         than the other the other, and 0 if they are equal.
+   */
   @Override
   public int compareTo(BigNumber other) {
-    // based on mathematical ordering so no comparison using string
     if (this.length() > other.length()) {
       return 1;
     } else if (this.length() < other.length()) {
       return -1;
     } else {
       BigNumberImpl otherBigNum = new BigNumberImpl(other.toString());
-      // length is same, but need to check individual numbers to find which one is bigger or are they equal
+      // length is same, but need to compare individual nodes.
       return head.reverse().compare(otherBigNum.head.reverse());
     }
   }
@@ -150,7 +170,12 @@ public class BigNumberImpl implements BigNumber {
     return head.toString();
   }
 
-  // using regex to find if string contains valid numbers and not unwanted chars.
+  /**
+   * It takes a string and validate against regex to check if the input is a valid number.
+   *
+   * @param number takes a string of number.
+   * @return true if the string is a valid number, false, otherwise.
+   */
   private boolean isNumeric(String number) {
     if (number == null) {
       return false;

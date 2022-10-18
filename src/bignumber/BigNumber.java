@@ -39,6 +39,7 @@ public interface BigNumber extends Comparable<BigNumber> {
 
   /**
    * It takes a position, and returns the digit at that position.
+   * Positions starts at 0 (rightmost).
    *
    * @param position the specified index.
    * @return the digit at the specified position.
@@ -54,7 +55,7 @@ public interface BigNumber extends Comparable<BigNumber> {
   BigNumber copy();
 
   /**
-   * Given two BigNumber, it adds them and return the sum of it.
+   * Given two BigNumber, it adds them and return the sum of it without changing either numbers.
    *
    * @param other the number to be added.
    * @return the sum of two numbers.

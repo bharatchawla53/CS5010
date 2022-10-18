@@ -1,5 +1,8 @@
 package bignumber;
 
+/**
+ * This class represents an element node in the big number list adt implementation.
+ */
 class BigNumberElementListNode implements BigNumberListNode {
 
   private final int number;
@@ -35,6 +38,12 @@ class BigNumberElementListNode implements BigNumberListNode {
   }
 
   @Override
+  public BigNumberListNode addFront(int digit) {
+    return new BigNumberElementListNode(digit, this);
+  }
+
+
+  @Override
   public int get(int index) throws IllegalArgumentException {
     if (index == 0) {
       return this.number;
@@ -48,13 +57,6 @@ class BigNumberElementListNode implements BigNumberListNode {
     return new BigNumberElementListNode(this.number, this.rest.copyOf());
   }
 
-/*  @Override
-  public <R> BigNumberListADTNode map(Function<BigNumberListADTNode, R> converter) {
-    return new BigNumberElementListNode(converter.apply(this.number), this.rest.map(converter));
-  }*/
-
-
-  // TODO trying out reverse approach and will check later if there is a better approach
   @Override
   public BigNumberListNode reverse() {
     return reverseAccumulator(new BigNumberEmptyListNode());
@@ -65,19 +67,20 @@ class BigNumberElementListNode implements BigNumberListNode {
     return this.rest.reverseAccumulator(new BigNumberElementListNode(this.number, accumulator));
   }
 
-  // get the rightmost node first
-  // add that.node.number + digit
-  // handle carry and update other nodes as needed
-  // assuming we are getting reverse list here
   @Override
   public BigNumberListNode addSum(BigNumberListNode other, int carryOver) {
     int result = 0;
+    // if other is instanceof empty list node, the result should just contain
+    // the sum of number and carryover.
     if (other instanceof BigNumberEmptyListNode) {
       result = this.number + carryOver;
     } else {
+      // if the current element node value at index is 0, that means, the result should just
+      // contain the sum of number and carryover.
       if (other.get(0) == 0) {
         result = this.number + carryOver;
       }
+      // else perform sum of two nodes number with carryover.
       result = this.number + other.get(0) + carryOver;
     }
 
@@ -126,10 +129,10 @@ class BigNumberElementListNode implements BigNumberListNode {
     }
   }
 
-  @Override
-  public BigNumberListNode addFront(int digit) {
-    return new BigNumberElementListNode(digit, this);
-  }
+  /*  @Override
+  public <R> BigNumberListADTNode map(Function<BigNumberListADTNode, R> converter) {
+    return new BigNumberElementListNode(converter.apply(this.number), this.rest.map(converter));
+  }*/
 
   @Override
   public String toString() {
