@@ -11,18 +11,13 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   }
 
   @Override
-  public BigNumberListNode shiftLeft(int shiftBy) {
-    return new BigNumberElementListNode(0, this);
-  }
-
-  @Override
-  public BigNumberListNode shiftRight(int shiftsBy) {
-    return new BigNumberElementListNode(0, this);
+  public BigNumberListNode shift(int shiftsBy, int shiftOperation) {
+    return getBigNumberElementListNode(0, this);
   }
 
   @Override
   public BigNumberListNode addFront(int digit) {
-    return new BigNumberElementListNode(digit, this);
+    return getBigNumberElementListNode(digit, this);
   }
 
   @Override
@@ -32,12 +27,12 @@ class BigNumberEmptyListNode implements BigNumberListNode {
 
   @Override
   public BigNumberListNode copyOf() {
-    return new BigNumberEmptyListNode();
+    return getBigNumberEmptyListNode();
   }
 
   @Override
   public BigNumberListNode reverse() {
-    return reverseAccumulator(new BigNumberEmptyListNode());
+    return reverseAccumulator(getBigNumberEmptyListNode());
   }
 
   @Override
@@ -48,9 +43,9 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   @Override
   public BigNumberListNode addSum(BigNumberListNode other, int carryOver) {
     if (carryOver != 0) {
-      return new BigNumberElementListNode(carryOver, new BigNumberEmptyListNode());
+      return getBigNumberElementListNode(carryOver, getBigNumberEmptyListNode());
     } else {
-      return new BigNumberEmptyListNode();
+      return getBigNumberEmptyListNode();
     }
   }
 
@@ -72,17 +67,11 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   @Override
   public BigNumberListNode addDigit(int digit, int carryOver) {
     if (carryOver != 0) {
-      return new BigNumberElementListNode(carryOver, new BigNumberEmptyListNode());
+      return getBigNumberElementListNode(carryOver, getBigNumberEmptyListNode());
     } else {
       return addFront(digit);
     }
   }
-
-
-/*  @Override
-  public <R> BigNumberListADTNode map(Function<BigNumberListADTNode, R> converter) {
-    return new BigNumberEmptyListNode();
-  }*/
 
   @Override
   public String toString() {
@@ -92,6 +81,27 @@ class BigNumberEmptyListNode implements BigNumberListNode {
   @Override
   public String toStringHelper(StringBuilder stringAcc) {
     return stringAcc.toString();
+  }
+
+  /**
+   * It creates a BigNumberElementListNode object.
+   *
+   * @param digit                  number to be represented in node.
+   * @param bigNumberEmptyListNode instance of bigNumberEmptyListNode object.
+   * @return new instance of BigNumberElementListNode.
+   */
+  private BigNumberElementListNode getBigNumberElementListNode(int digit,
+                 BigNumberEmptyListNode bigNumberEmptyListNode) {
+    return new BigNumberElementListNode(digit, bigNumberEmptyListNode);
+  }
+
+  /**
+   * It creates a BigNumberElementListNode object.
+   *
+   * @return new instance of BigNumberEmptyListNode.
+   */
+  private BigNumberEmptyListNode getBigNumberEmptyListNode() {
+    return new BigNumberEmptyListNode();
   }
 
 }

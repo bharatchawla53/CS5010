@@ -14,21 +14,14 @@ public interface BigNumberListNode {
   int size();
 
   /**
-   * Shifts the existing list of numbers by adding a new node with 0 to the front and return this
-   * modified list.
+   * Perform left or right shift based off the arguments provided.
    *
-   * @param shiftBy a number to be used to left shift this number by.
-   * @return the head of the resulting list.
+   * @param shiftsBy a number to be used to shift this number by.
+   * @param shiftOperation an int representing shift operations.
+   *                       0 represents left shift and 1 represents right shift.
+   * @return the head of the resulting shifted list.
    */
-  BigNumberListNode shiftLeft(int shiftBy);
-
-  /**
-   * Shifts the existing list of numbers by removing the head node and return this modified list.
-   *
-   * @param shiftsBy a number to be used to right shift this number by.
-   * @return the head of the resulting list.
-   */
-  BigNumberListNode shiftRight(int shiftsBy);
+  BigNumberListNode shift(int shiftsBy, int shiftOperation);
 
   /**
    * Add the given digit to the front of this list and return this modified list.
@@ -119,5 +112,4 @@ public interface BigNumberListNode {
    */
   String toStringHelper(StringBuilder stringAcc);
 
-  //<R> BigNumberListADTNode map(Function<BigNumberListADTNode,R> converter);
 }

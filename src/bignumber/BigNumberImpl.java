@@ -85,7 +85,7 @@ public class BigNumberImpl implements BigNumber {
   @Override
   public BigNumber copy() {
     BigNumberListNode independentCopy = head.copyOf();
-    return new BigNumberImpl(independentCopy); // TODO research if we can use map here
+    return new BigNumberImpl(independentCopy);
   }
 
   @Override
@@ -163,6 +163,9 @@ public class BigNumberImpl implements BigNumber {
     return pattern.matcher(number).matches();
   }
 
+  /**
+   * It initializes the BigNumberListNode head.
+   */
   private void initializeHead() {
     this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
   }
@@ -185,12 +188,12 @@ public class BigNumberImpl implements BigNumber {
     // positive shift
     if (shiftsBy > 0) {
       head = shiftOperation == 0
-              ? head.shiftLeft(shiftsBy)
-              : head.shiftRight(shiftsBy);
+              ? head.shift(shiftsBy, 0)
+              : head.shift(shiftsBy, 1);
     } else { // negative shift
       head = shiftOperation == 0
-              ? head.shiftRight(Math.abs(shiftsBy))
-              : head.shiftLeft(Math.abs(shiftsBy));
+              ? head.shift(Math.abs(shiftsBy), 1)
+              : head.shift(Math.abs(shiftsBy), 0);
     }
     return head;
   }

@@ -19,21 +19,18 @@ class BigNumberElementListNode implements BigNumberListNode {
   }
 
   @Override
-  public BigNumberListNode shiftLeft(int shiftBy) {
-    if (shiftBy == 0) {
-      return this;
-    } else {
-      return new BigNumberElementListNode(0, this).shiftLeft(shiftBy - 1);
-    }
-  }
-
-  @Override
-  public BigNumberListNode shiftRight(int shiftsBy) {
+  public BigNumberListNode shift(int shiftsBy, int shiftOperation) {
     if (shiftsBy == 0) {
       return this;
     } else {
-      this.rest = this.rest.shiftRight(shiftsBy - 1);
-      return this.rest;
+      // left shift
+      if (shiftOperation == 0) {
+        return new BigNumberElementListNode(0, this).shift(shiftsBy - 1, 0);
+      } else {
+        // right shift
+        this.rest = this.rest.shift(shiftsBy - 1, 1);
+        return this.rest;
+      }
     }
   }
 
@@ -129,11 +126,6 @@ class BigNumberElementListNode implements BigNumberListNode {
     }
   }
 
-  /*  @Override
-  public <R> BigNumberListADTNode map(Function<BigNumberListADTNode, R> converter) {
-    return new BigNumberElementListNode(converter.apply(this.number), this.rest.map(converter));
-  }*/
-
   @Override
   public String toString() {
     return toStringHelper(new StringBuilder());
@@ -143,4 +135,5 @@ class BigNumberElementListNode implements BigNumberListNode {
   public String toStringHelper(StringBuilder stringAcc) {
     return this.rest.toStringHelper(stringAcc.insert(0, this.number));
   }
+
 }
