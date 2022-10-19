@@ -573,7 +573,18 @@ public class BigNumberTest {
   }
 
   @Test
-  public void testEqualsTwoBigNumbers() {
+  public void testEqualsSameObject() {
+    for (int i = 0; i < 999; i++) {
+      bigInteger = generateBigNumber(200);
+      bigNumber = new BigNumberImpl(bigInteger.toString());
+
+      assertEquals(bigNumber, bigNumber);
+      assertEquals(bigNumber.hashCode(), bigNumber.hashCode());
+    }
+  }
+
+  @Test
+  public void testEqualsTwoBigNumbersAndHashCode() {
     for (int i = 0; i < 999; i++) {
       bigInteger = generateBigNumber(200);
       BigInteger bigInteger1 = bigInteger;
@@ -582,6 +593,8 @@ public class BigNumberTest {
       BigNumber bigNumber1 = new BigNumberImpl(bigInteger1.toString());
 
       assertEquals(bigNumber, bigNumber1);
+      assertEquals(bigNumber1, bigNumber);
+      assertEquals(bigNumber.hashCode(), bigNumber1.hashCode());
     }
   }
 
@@ -595,6 +608,7 @@ public class BigNumberTest {
       BigNumber bigNumber1 = new BigNumberImpl(bigInteger1.toString());
 
       assertNotEquals(bigNumber, bigNumber1);
+      assertNotEquals(bigNumber.hashCode(), bigNumber1.hashCode());
     }
   }
 
@@ -607,6 +621,7 @@ public class BigNumberTest {
       Object obj = "4322685*&^%%";
 
       assertNotEquals(bigNumber, obj);
+      assertNotEquals(bigNumber.hashCode(), obj.hashCode());
     }
   }
 

@@ -188,12 +188,12 @@ public class BigNumberImpl implements BigNumber {
     // positive shift
     if (shiftsBy > 0) {
       head = shiftOperation == 0
-              ? head.shift(shiftsBy, 0)
-              : head.shift(shiftsBy, 1);
+              ? head.shift(shiftsBy, 0) // left shift
+              : head.shift(shiftsBy, 1); // right shift
     } else { // negative shift
       head = shiftOperation == 0
-              ? head.shift(Math.abs(shiftsBy), 1)
-              : head.shift(Math.abs(shiftsBy), 0);
+              ? head.shift(Math.abs(shiftsBy), 1) // right shift
+              : head.shift(Math.abs(shiftsBy), 0); // left shift
     }
     return head;
   }
