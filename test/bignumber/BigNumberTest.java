@@ -40,7 +40,7 @@ public class BigNumberTest {
   @Test
   public void testConstructorWithValidParameter() {
     for (int i = 0; i < 999; i++) {
-      bigInteger = generateBigNumber(2);
+      bigInteger = generateBigNumber(100);
       bigNumber = new BigNumberImpl(bigInteger.toString());
 
       for (int j = 0; j < bigInteger.toString().length(); j++) {

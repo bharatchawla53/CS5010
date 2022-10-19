@@ -111,6 +111,12 @@ public interface BigNumberListNode {
    */
   BigNumberListNode addDigit(int digit, int carryOver);
 
+  /**
+   * Accumulates the result of string.
+   *
+   * @param stringAcc the string that is already accumulated.
+   * @return the accumulated string.
+   */
   String toStringHelper(StringBuilder stringAcc);
 
   //<R> BigNumberListADTNode map(Function<BigNumberListADTNode,R> converter);
