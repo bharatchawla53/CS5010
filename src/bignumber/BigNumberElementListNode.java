@@ -136,7 +136,11 @@ class BigNumberElementListNode implements BigNumberListNode {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    return sb.append(this.rest.toString()).append(this.number).toString();
+    return toStringHelper(new StringBuilder());
+  }
+
+  @Override
+  public String toStringHelper(StringBuilder stringAcc) {
+    return stringAcc.append(this.rest.toString()).append(this.number).toString();
   }
 }

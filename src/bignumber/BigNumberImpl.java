@@ -14,7 +14,7 @@ public class BigNumberImpl implements BigNumber {
    * Constructs an empty BigNumberImpl constructor which initializes this number to 0.
    */
   public BigNumberImpl() {
-    this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
+    initializeHead();
   }
 
   /**
@@ -28,8 +28,7 @@ public class BigNumberImpl implements BigNumber {
       throw new IllegalArgumentException("String passed to it does not represent a valid number.");
     }
 
-    // initialize the head // TODO remove dc
-    this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
+    initializeHead();
 
     // it performs shift left operation and then add the digit to the list nodes.
     for (int i = 0; i < number.length(); i++) {
@@ -55,32 +54,12 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public void shiftLeft(int shiftsBy) {
-    // case where initial value of this number is 0 or shiftBy is 0
-    // and left shifting should always yield to 0.
-    if (head.isNodeEmpty() || shiftsBy == 0) {
-      return;
-    }
-    // positive shift
-    if (shiftsBy > 0) {
-      head = head.shiftLeft(shiftsBy);
-    } else { // negative shift
-      shiftRight(Math.abs(shiftsBy));
-    }
+    shiftHelper(shiftsBy, 0);
   }
 
   @Override
   public void shiftRight(int shiftsBy) {
-    // case where initial value of this number is 0 or shiftBy is 0
-    // and right shifting should always yield to 0.
-    if (head.isNodeEmpty() || shiftsBy == 0) {
-      return;
-    }
-    // positive shift
-    if (shiftsBy > 0) {
-      head = head.shiftRight(shiftsBy);
-    } else { // negative shift
-      shiftLeft(Math.abs(shiftsBy));
-    }
+    shiftHelper(shiftsBy, 1);
   }
 
   @Override
@@ -143,7 +122,7 @@ public class BigNumberImpl implements BigNumber {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(head);
+    return Objects.hashCode(head.toString());
   }
 
   @Override
@@ -182,5 +161,37 @@ public class BigNumberImpl implements BigNumber {
     }
     Pattern pattern = Pattern.compile("^[0-9]*$");
     return pattern.matcher(number).matches();
+  }
+
+  private void initializeHead() {
+    this.head = new BigNumberElementListNode(0, new BigNumberEmptyListNode());
+  }
+
+  /**
+   * Perform left or right shift based off the arguments provided.
+   *
+   * @param shiftsBy a number to be used to shift this number by.
+   * @param shiftOperation an int representing shift operations.
+   *                       0 represents left shift and 1 represents right shift.
+   * @return the head of the resulting shifted list.
+   */
+  private BigNumberListNode shiftHelper(int shiftsBy, int shiftOperation) {
+    // case where initial value of this number is 0 or shiftBy is 0
+    // and right shifting should always yield to 0.
+    if (head.isNodeEmpty() || shiftsBy == 0) {
+      return this.head;
+    }
+
+    // positive shift
+    if (shiftsBy > 0) {
+      head = shiftOperation == 0
+              ? head.shiftLeft(shiftsBy)
+              : head.shiftRight(shiftsBy);
+    } else { // negative shift
+      head = shiftOperation == 0
+              ? head.shiftRight(Math.abs(shiftsBy))
+              : head.shiftLeft(Math.abs(shiftsBy));
+    }
+    return head;
   }
 }

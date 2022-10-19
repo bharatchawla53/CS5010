@@ -111,5 +111,7 @@ public interface BigNumberListNode {
    */
   BigNumberListNode addDigit(int digit, int carryOver);
 
+  String toStringHelper(StringBuilder stringAcc);
+
   //<R> BigNumberListADTNode map(Function<BigNumberListADTNode,R> converter);
 }

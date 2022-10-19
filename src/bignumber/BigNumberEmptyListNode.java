@@ -86,7 +86,12 @@ class BigNumberEmptyListNode implements BigNumberListNode {
 
   @Override
   public String toString() {
-    return "";
+    return toStringHelper(new StringBuilder());
+  }
+
+  @Override
+  public String toStringHelper(StringBuilder stringAcc) {
+    return stringAcc.toString();
   }
 
 }
