@@ -24,26 +24,25 @@ public class BinarySearchTreeTest {
     BST<Integer> tree = new BSTImpl<Integer>();
     Set<Integer> expected = new TreeSet<Integer>();
 
-    for (int i=0;i<1000;i++) {
-      expected.add((int)(Math.random()*2000-1000));
+    for (int i = 0; i < 1000; i++) {
+      expected.add((int) (Math.random() * 2000 - 1000));
     }
 
-    for (Integer e:expected) {
+    for (Integer e : expected) {
       tree.insert(e);
     }
 
     StringBuilder sb = new StringBuilder();
-    for (Integer e:expected) {
+    for (Integer e : expected) {
       sb.append(e + " ");
 
     }
     String output = sb.toString();
-    output = "[" + output.substring(0,output.length()-1) + "]";
+    output = "[" + output.substring(0, output.length() - 1) + "]";
 
 
-
-    assertEquals(output,tree.toString());
-    assertEquals(expected.size(),tree.size());
+    assertEquals(output, tree.toString());
+    assertEquals(expected.size(), tree.size());
   }
 
   @Test
@@ -51,18 +50,17 @@ public class BinarySearchTreeTest {
     BST<Integer> tree = new BSTImpl<Integer>();
     TreeSet<Integer> expected = new TreeSet<Integer>();
 
-    for (int i=0;i<1000;i++) {
-      expected.add((int)(Math.random()*2000-1000));
+    for (int i = 0; i < 1000; i++) {
+      expected.add((int) (Math.random() * 2000 - 1000));
     }
 
-    for (Integer e:expected) {
+    for (Integer e : expected) {
       tree.insert(e);
     }
 
 
-
-    assertEquals(expected.first(),tree.minimum());
-    assertEquals(expected.last(),tree.maximum());
+    assertEquals(expected.first(), tree.minimum());
+    assertEquals(expected.last(), tree.maximum());
   }
 
   @Test
@@ -70,36 +68,36 @@ public class BinarySearchTreeTest {
     BST<Integer> tree = new BSTImpl<Integer>();
     List<Integer> expected = new ArrayList<Integer>();
 
-    for (int i=0;i<1000;i++) {
-      expected.add((int)(Math.random()*2000-1000));
+    for (int i = 0; i < 1000; i++) {
+      expected.add((int) (Math.random() * 2000 - 1000));
     }
 
-    for (Integer e:expected) {
+    for (Integer e : expected) {
       tree.insert(e);
     }
 
 
-    for (int i=-1000;i<=1000;i++) {
-      assertEquals(expected.contains(i),tree.present(i));
+    for (int i = -1000; i <= 1000; i++) {
+      assertEquals(expected.contains(i), tree.present(i));
     }
   }
 
   @Test
   public void testTraversals() {
     BST<Integer> tree = new BSTImpl<Integer>();
-    Integer[] input = {5,1,8,3,7,6};
-    Integer []pre = {5,1,3,8,7,6};
-    Integer []in = {1,3,5,6,7,8};
-    Integer []post = {3,1,6,7,8,5};
+    Integer[] input = {5, 1, 8, 3, 7, 6};
+    Integer[] pre = {5, 1, 3, 8, 7, 6};
+    Integer[] in = {1, 3, 5, 6, 7, 8};
+    Integer[] post = {3, 1, 6, 7, 8, 5};
 
 
-    for (Integer e:input) {
+    for (Integer e : input) {
       tree.insert(e);
     }
 
-    assertEquals(Arrays.asList(pre),tree.preorder());
-    assertEquals(Arrays.asList(in),tree.inorder());
-    assertEquals(Arrays.asList(post),tree.postorder());
+    assertEquals(Arrays.asList(pre), tree.preorder());
+    assertEquals(Arrays.asList(in), tree.inorder());
+    assertEquals(Arrays.asList(post), tree.postorder());
 
 
   }

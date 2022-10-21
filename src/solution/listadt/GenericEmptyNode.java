@@ -18,16 +18,18 @@ public class GenericEmptyNode<T> implements GenericListADTNode<T> {
 
   @Override
   public GenericListADTNode<T> addFront(T object) {
-    return new GenericElementNode(object,this);
+    return new GenericElementNode(object, this);
   }
 
   @Override
-  public GenericListADTNode<T> addBack(T object) { return addFront(object);}
+  public GenericListADTNode<T> addBack(T object) {
+    return addFront(object);
+  }
 
   @Override
-  public GenericListADTNode<T> add(int index,T object) throws
+  public GenericListADTNode<T> add(int index, T object) throws
           IllegalArgumentException {
-    if (index==0){
+    if (index == 0) {
       return addFront(object);
     }
     throw new IllegalArgumentException("Invalid index to add an element");
@@ -44,7 +46,7 @@ public class GenericEmptyNode<T> implements GenericListADTNode<T> {
   }
 
   @Override
-  public <R> GenericListADTNode<R> map(Function<T,R> converter) {
+  public <R> GenericListADTNode<R> map(Function<T, R> converter) {
     return new GenericEmptyNode();
   }
 
@@ -54,5 +56,7 @@ public class GenericEmptyNode<T> implements GenericListADTNode<T> {
   }
 
   @Override
-  public String toString() { return "";}
+  public String toString() {
+    return "";
+  }
 }
