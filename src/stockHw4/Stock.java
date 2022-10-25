@@ -6,7 +6,7 @@ public class Stock {
     System.out.println("Stock app started");
 
     StockModel model = new StockModelImpl();
-    StockView view = new StockView();
+    StockView view = new StockViewImpl();
     StockController controller = new StockControllerImpl();
 
     controller.start(model, view);
