@@ -10,6 +10,8 @@ public class Stock {
     StockController controller = new StockControllerImpl();
 
     controller.start(model, view);
+
+    System.out.println("Stock app ended");
   }
 
 }

@@ -1,6 +1,6 @@
 package stockHw4;
 
-public class StockControllerImpl implements StockController{
+public class StockControllerImpl extends StockControllerAbstract {
   private StockModel model;
   private StockView view;
 
