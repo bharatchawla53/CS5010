@@ -12,6 +12,7 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     String input = null;
     boolean invalidInput = true;
+    boolean invalidUserName = true;
 
     // validate the user login input
     while (invalidInput) {
@@ -31,8 +32,27 @@ public class StockControllerImpl extends StockControllerAbstract {
       view.getExistingUserOptions(); // TODO
       input = view.getUserInput(System.in);
     } else {
-      // TODO view for creating user and validating username and other details
-
+      view.getNewUserView();
+      while (invalidUserName) {
+        input = view.getUserInput(System.in);
+        while (input.length() > 8) {
+          view.throwErrorMessage("Username can't be longer than 8 characters");
+          view.getErrorMessageView("Please enter a valid username");
+          input = view.getUserInput(System.in);
+        }
+        // get username and then attempt to save it
+        User user = model.saveUser(User
+                .builder()
+                .userName(input)
+                .build());
+        if (user != null) {
+          invalidUserName = false;
+        } else { // means invalid username meaning already exists
+          view.throwErrorMessage("Username already exists");
+          view.getErrorMessageView("Please try another valid username");
+        }
+      }
+      // if successful proceed to show options
       view.getNewUserOptions(); // TODO
       input = view.getUserInput(System.in);
     }

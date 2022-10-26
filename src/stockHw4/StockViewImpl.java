@@ -56,7 +56,12 @@ public class StockViewImpl implements StockView {
 
   @Override
   public void getNewUserView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Get started with your portfolio account ");
+    opItems.add("Please enter an username and can't be longer than 8 characters: ");
 
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
   }
 
   @Override
