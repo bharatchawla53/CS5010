@@ -16,5 +16,7 @@ public interface StockView {
 
   void getNewUserView();
 
-  void getUserOptions();
+  void getExistingUserOptions();
+
+  void getNewUserOptions();
 }

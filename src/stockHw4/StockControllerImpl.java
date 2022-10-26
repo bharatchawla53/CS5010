@@ -28,18 +28,14 @@ public class StockControllerImpl extends StockControllerAbstract {
     }
 
     if (input.equals(UserInput.Y.name())) {
-      view.getExistingUserView(); // TODO
+      view.getExistingUserOptions(); // TODO
+      input = view.getUserInput(System.in);
     } else {
-      view.getNewUserView(); // TODO
-      // create new user at model level
+      // TODO view for creating user and validating username and other details
+
+      view.getNewUserOptions(); // TODO
+      input = view.getUserInput(System.in);
     }
-
-    // show options to the user
-    view.getUserOptions();
-
-
-
-
 
   }
 }

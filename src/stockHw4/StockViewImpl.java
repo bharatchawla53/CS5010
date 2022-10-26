@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 // displays cmd GUI and relevant texts, and validation is done here
+// TODO see if we can dispatch using New User vs Existing User
 public class StockViewImpl implements StockView {
 
   public StockViewImpl() {
@@ -59,11 +60,23 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getUserOptions() {
+  public void getExistingUserOptions() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("Welcome to the portfolio manager");
-    opItems.add("Are you a existing user or would you like to create a new user ?");
-    opItems.add("Enter Y/N : ");
+    opItems.add("1. Would you like to create a portfolio ?");
+    opItems.add("2. Would you like to examine the composition of a portfolio ?");
+    opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
+    opItems.add("4. Would you like to persist a portfolio so that it can be saved and loaded ?");
+    opItems.add("Enter your option: ");
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getNewUserOptions() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("1. Would you like to create a portfolio ?");
+    opItems.add("Enter your option: ");
 
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
