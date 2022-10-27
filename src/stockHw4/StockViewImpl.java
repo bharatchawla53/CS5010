@@ -69,12 +69,67 @@ public class StockViewImpl implements StockView {
   {
     List<String> opItems = new ArrayList<>();
     opItems.add("Let's create your portfolio!");
-    opItems.add("Enter your preferred ticker(Expected Format: ABC123):");
+    opItems.add("Enter your preferred ticker and no of shares you'd like " +
+            "to invest in this ticker" +
+            "(Expected Format: (ABC123) (number of shares) ):");
 
 
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }
+
+
+
+
+
+  @Override
+  public void getViewBuilder(String[] values)
+  {
+    List<String> opItems = new ArrayList<>();
+    for(String v: values)
+    {
+      opItems.add(v);
+    }
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+
+
+  @Override
+  public void getDisplayPortfolioHeader()
+  {
+    List<String> opItems = new ArrayList<>();
+
+    opItems.add("Here are your Portfolios!");
+
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+
+
+  }
+
+  @Override
+  public void getDisplayPortfolioInput()
+  {
+    List<String> opItems = new ArrayList<>();
+
+    opItems.add("Please enter a Portfolio ID from the above:");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getDisplayTotalPortfolioValueFromDate()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Please enter a date from which the portfolio value will be calculated:");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+
 
   @Override
   public void getExistingUserOptions() {
@@ -83,6 +138,7 @@ public class StockViewImpl implements StockView {
     opItems.add("2. Would you like to examine the composition of a portfolio ?");
     opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
     opItems.add("4. Would you like to persist a portfolio so that it can be saved and loaded ?");
+
     opItems.add("Enter your option: ");
 
     String displayString = formatOutput(opItems);
@@ -98,6 +154,9 @@ public class StockViewImpl implements StockView {
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }
+
+
+
 
 
 }
