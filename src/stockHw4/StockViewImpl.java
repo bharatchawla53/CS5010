@@ -65,6 +65,18 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
+  public void getPortfolioCreatorView()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Let's create your portfolio!");
+    opItems.add("Enter your preferred ticker(Expected Format: ABC123):");
+
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
   public void getExistingUserOptions() {
     List<String> opItems = new ArrayList<>();
     opItems.add("1. Would you like to create a portfolio ?");

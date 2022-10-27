@@ -30,7 +30,55 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     if (input.equals(UserInput.Y.name())) {
       view.getExistingUserOptions(); // TODO
-      input = view.getUserInput(System.in);
+      input = null;
+      invalidInput = true;
+
+
+      // validate the user login input
+      while (invalidInput) {
+
+        try {
+          input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+          if (UserInputOptions.valueOf(input).equals(input)) {
+            invalidInput = false;
+          }
+        } catch (IllegalArgumentException e) {
+          view.throwErrorMessage("Invalid option!");
+          view.getErrorMessageView("Please Enter a Valid Option:");
+          input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+        }
+      }
+      if(input.equals(UserInputOptions.ONE))
+      {
+        view.getPortfolioCreatorView();
+        input = null;
+        invalidInput = true;
+
+
+        // validate the user login input
+        while (invalidInput) {
+
+
+            input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+            model.validateTickerShare(input);
+            if (model.searchTicker(input.split(",")[0])) {
+              invalidInput = false;
+            }
+
+
+
+           else{
+            view.throwErrorMessage("Invalid Input!");
+            view.getErrorMessageView("Please Enter a Valid Ticker/Share Combination");
+            input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+
+          }
+        }
+      }
+
+
+
+
     } else {
       view.getNewUserView();
       while (invalidUserName) {

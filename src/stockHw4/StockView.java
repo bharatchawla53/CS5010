@@ -2,6 +2,7 @@ package stockHw4;
 
 import java.io.InputStream;
 
+//TODO Look into sub views
 public interface StockView {
 
   void getLoginScreenView();
@@ -19,4 +20,7 @@ public interface StockView {
   void getExistingUserOptions();
 
   void getNewUserOptions();
+
+
+  void getPortfolioCreatorView();
 }
