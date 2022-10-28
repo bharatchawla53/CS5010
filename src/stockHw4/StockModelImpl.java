@@ -1,6 +1,7 @@
 package stockHw4;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,6 +12,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StockModelImpl implements StockModel {
 
@@ -142,24 +146,98 @@ public class StockModelImpl implements StockModel {
    return false;
   }
 
+  @Override
+  public String generateUUID()
+  {
+    return  UUID
+            .randomUUID()
+            .toString()
+            .replace("-", "")
+            .substring(0, 8);
+  }
 
   public boolean validateTickerShare(String tickerShare)
   {
-    String tickerShareValidation = "[A-Z]+[ ]\\d+";
-    return true;
+
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
+    Matcher Validator = ticketShareValidationPattern.matcher(tickerShare);
+    return Validator.matches();
   }
 
   public String[] getAllPortfoliosFromUser(User user)
   {
     String username = user.getUserName();
+    File folder = new File("./");
+    File[] listOfFiles = folder.listFiles();
+    String[] vals = {};
+    for (int i = 0; i < listOfFiles.length; i++) {
+      if (listOfFiles[i].isFile()) {
+        if(listOfFiles[i].getName().contains(username))
+        {
+          vals[i] = listOfFiles[i].getName();
+        }
+
+      }
+    }
+    return vals;
 
   }
 
-  public void dumpTickerShare(User user,String portfolioUUID, String ticker, String shares)
+
+  public boolean validatePortfolioUUID(String portfolioUUID,User user)
   {
-    //if portfolio uuid is not there in the folder, then create userid_portfolio.txt
-    //with open("filename.txt","r") as f load all text append at the bottom and then save back to
-    //filename.txt
-    //format of filename.txt - filename is userid_portfolio.txt, with columns ticker and noofshares
+
+    File folder = new File("./");
+    File[] listOfFiles = folder.listFiles();
+    String username = user.getUserName();
+    for (int i = 0; i < listOfFiles.length; i++) {
+      if (listOfFiles[i].isFile()) {
+        if(listOfFiles[i].getName().contains(portfolioUUID) && listOfFiles[i].
+                getName().contains(username));
+        {
+          return true;
+        }
+
+      }
+    }
+    return false;
+
+  }
+  public void dumpTickerShare(User user,String portfolioUUID, String ticker, String shares) {
+
+    String username = user.getUserName();
+    String portfolioFileName = username + "_" + portfolioUUID + ".csv";
+    File f = new File(portfolioFileName);
+    if (f.exists() && !f.isDirectory()) {
+      try {
+        FileWriter fw = new FileWriter(portfolioFileName, true);
+        fw.write(ticker + "," + shares + "\n");
+        fw.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+    } else {
+      try {
+        if (f.createNewFile()) {
+          try {
+            FileWriter fw = new FileWriter(portfolioFileName, true);
+            fw.write(ticker + "," + shares + "\n");
+            fw.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      //if portfolio uuid is not there in the folder, then create userid_portfolio.txt
+      //with open("filename.txt","r") as f load all text append at the bottom and then save back to
+      //filename.txt
+      //format of filename.txt - filename is userid_portfolio.txt, with columns ticker and noofshares
+
+
+    }
   }
 }

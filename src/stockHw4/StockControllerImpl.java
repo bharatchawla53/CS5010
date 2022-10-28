@@ -53,7 +53,7 @@ public class StockControllerImpl extends StockControllerAbstract {
         view.getPortfolioCreatorView();
         input = null;
         invalidInput = true;
-        String portfolioUUID = uuid_generator();
+        String portfolioUUID = model.generateUUID();
         while(!input.equals("ESCAPE"))
         {
         // validate the user login input
@@ -73,7 +73,7 @@ public class StockControllerImpl extends StockControllerAbstract {
           }
         }
 
-        model.dumpTickerShares(this.user, portfolioUUID,
+        model.dumpTickerShare(this.user, portfolioUUID,
                 input.split(",")[0],input.split(",")[1]);
 
 
@@ -101,7 +101,7 @@ public class StockControllerImpl extends StockControllerAbstract {
 
           try {
             input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
-            model.validateUUID();
+            model.validatePortfolioUUID(input,this.user);
             if (isValidPortfolioUUID) {
               invalidInput = false;
             }

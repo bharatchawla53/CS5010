@@ -1,5 +1,7 @@
 package stockHw4;
 
+import java.util.UUID;
+
 // processes the input from controller
 public interface StockModel {
 
@@ -13,7 +15,14 @@ public interface StockModel {
 
   String[] getAllPortfoliosFromUser(User user);
 
-  void dumpTickerShares(User user, String portfolioUUID, String ticker, String shares);
+  void dumpTickerShare(User user, String portfolioUUID, String ticker, String shares);
+
+  public String generateUUID();
+
+
+  public boolean validatePortfolioUUID(String portfolioUUID, User user);
+
+  public
 
 
 }
