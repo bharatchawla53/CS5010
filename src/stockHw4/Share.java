@@ -1,7 +1,6 @@
 package stockHw4;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class Share {
   private final int noOfShares;
@@ -32,20 +31,18 @@ public class Share {
     return this.shareValue;
   }
 
-  public int getNoOfShares()
-  {
+  public int getNoOfShares() {
     return this.noOfShares;
   }
 
   public static class ShareBuilder {
     private String ticker;
-    private Timestamp  date;
+    private Timestamp date;
     private int noOfShares;
     private double shareValue;
 
-    public ShareBuilder() {}
-
-
+    public ShareBuilder() {
+    }
 
     public ShareBuilder ticker(String ticker) {
       this.ticker = ticker;
@@ -56,20 +53,19 @@ public class Share {
       this.noOfShares = noOfShares;
       return this;
     }
+
     public ShareBuilder date(Timestamp date) {
       this.date = date;
       return this;
     }
 
-    public ShareBuilder shareValue(double shareValue)
-    {
+    public ShareBuilder shareValue(double shareValue) {
       this.shareValue = shareValue;
       return this;
     }
-    public Share build() {
 
-       // initialize a random id for this user
-      return new Share(ticker,date,noOfShares,shareValue);
+    public Share build() {
+      return new Share(ticker, date, noOfShares, shareValue);
     }
   }
 }

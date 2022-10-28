@@ -14,15 +14,12 @@ import java.util.Set;
 
 public class StockModelImpl implements StockModel {
 
+  private String[] tickerList = {};
 
-  String[] tickerList = {};
-
-
-
-  public StockModelImpl()
-  {
+  public StockModelImpl() {
     loadTickerList();
   }
+
   @Override
   public User saveUser(User user) {
     // If its valid, persist it to the user file
@@ -45,8 +42,7 @@ public class StockModelImpl implements StockModel {
     return false;
   }
 
-  private void loadTickerList()
-  {
+  private void loadTickerList() {
     try {
       BufferedReader in = new BufferedReader(new FileReader("path/of/text"));
       String str;
@@ -59,13 +55,9 @@ public class StockModelImpl implements StockModel {
       String[] stringArr = list.toArray(new String[0]);
       this.tickerList = stringArr;
 
-    }
-    catch(FileNotFoundException e)
-    {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
-    }
-    catch(IOException e)
-    {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -120,43 +112,38 @@ public class StockModelImpl implements StockModel {
   }
 
 
-  private boolean searchStringArray(String[] vals,String ele)
-  {
-    for (String val: vals)
-    {
-      if(val == ele.strip())
-      {
+  private boolean searchStringArray(String[] vals, String ele) {
+    for (String val : vals) {
+      if (val.equals(ele.strip())) {
         return true;
       }
     }
     return false;
-
-  }
-  public boolean validateTicker(String ticker)
-  {
-
-    if (searchStringArray(this.tickerList,ticker))
-    {
-      return true;
-    }
-   return false;
   }
 
+  @Override
+  public boolean validateTicker(String ticker) {
+    return searchStringArray(this.tickerList, ticker);
+  }
 
-  public boolean validateTickerShare(String tickerShare)
-  {
+  @Override
+  public boolean validateTickerShare(String tickerShare) {
     String tickerShareValidation = "[A-Z]+[ ]\\d+";
     return true;
   }
 
-  public String[] getAllPortfoliosFromUser(User user)
-  {
+  @Override
+  public String[] getAllPortfoliosFromUser(User user) {
     String username = user.getUserName();
+    return null;
+  }
+
+  @Override
+  public void dumpTickerShares(User user, String portfolioUUID, String ticker, String shares) {
 
   }
 
-  public void dumpTickerShare(User user,String portfolioUUID, String ticker, String shares)
-  {
+  public void dumpTickerShare(User user, String portfolioUUID, String ticker, String shares) {
     //if portfolio uuid is not there in the folder, then create userid_portfolio.txt
     //with open("filename.txt","r") as f load all text append at the bottom and then save back to
     //filename.txt
