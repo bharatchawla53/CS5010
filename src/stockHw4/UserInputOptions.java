@@ -1,17 +1,18 @@
 package stockHw4;
 
 public enum UserInputOptions {
-  ONE(1),
-  TWO(2),
-  THREE(3),
-  FOUR(4);
-  private final int input;
+  ONE("1"),
+  TWO("2"),
+  THREE("3"),
+  FOUR("4"),
+  FIVE("5");
+  private final String input;
 
-  public int getInput() {
+  public String getInput() {
     return input;
   }
 
-  UserInputOptions(int input) {
+  UserInputOptions(String input) {
     this.input = input;
   }
 

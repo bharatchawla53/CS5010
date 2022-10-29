@@ -65,11 +65,9 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getUsernameFromUser()
-  {
+  public void getUsernameFromUser() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Enter your username:");
-
 
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
@@ -77,8 +75,7 @@ public class StockViewImpl implements StockView {
 
 
   @Override
-  public void getRepeatUsername()
-  {
+  public void getRepeatUsername() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Looks like this user name does not exist, please enter an existing user name:");
 
@@ -88,13 +85,12 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getPortfolioCreatorView()
-  {
+  public void getPortfolioCreatorView() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Let's create your portfolio!");
     opItems.add("Enter your preferred ticker and no of shares you'd like " +
             "to invest in this ticker" +
-            "(Expected Format: (ABC123) (number of shares) ):");
+            "(Expected Format: ABC123,number of shares):");
 
 
     String displayString = formatOutput(opItems);
@@ -102,25 +98,17 @@ public class StockViewImpl implements StockView {
   }
 
 
-
-
-
   @Override
-  public void getViewBuilder(List<String> values)
-  {
+  public void getViewBuilder(List<String> values) {
     String displayString = formatOutput(values);
     System.out.println(displayString);
   }
 
 
-
   @Override
-  public void getDisplayPortfolioHeader()
-  {
+  public void getDisplayPortfolioHeader() {
     List<String> opItems = new ArrayList<>();
-
     opItems.add("Here are your Portfolios!");
-
 
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
@@ -129,8 +117,7 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getDisplayPortfolioInput()
-  {
+  public void getDisplayPortfolioInput() {
     List<String> opItems = new ArrayList<>();
 
     opItems.add("Please enter a Portfolio ID from the above:");
@@ -139,23 +126,34 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getDisplayTotalPortfolioValueFromDate()
-  {
+  public void getDisplayTotalPortfolioValue() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("Please enter a date from which the portfolio value will be calculated:");
+    opItems.add("Please enter a date for which the portfolio value will be calculated on "
+            + "(Expected Date Format: yyyy-MMM-dd): ");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void terminateView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Are you sure you want to exit the application ?");
+    opItems.add("Enter Y/N : ");
+
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }
 
 
-
   @Override
   public void getExistingUserOptions() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("1. Would you like to create a portfolio ?");
+    opItems.add("1. Would you like to create a portfolio with shares of one or more stock ? " +
+            "Once done creating your portfolio, please enter \"DONE\" ");
     opItems.add("2. Would you like to examine the composition of a portfolio ?");
     opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
     opItems.add("4. Would you like to persist a portfolio so that it can be saved and loaded ?");
+    opItems.add("5. Would you like to exit the application ?");
 
     opItems.add("Enter your option: ");
 
@@ -166,8 +164,7 @@ public class StockViewImpl implements StockView {
 
   @Override
 
-  public void getDisplayPortfolioFilePathInput()
-  {
+  public void getDisplayPortfolioFilePathInput() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Enter the Portfolio UUID of the Portfolio you wish to serialize:");
     String displayString = formatOutput(opItems);
@@ -175,8 +172,7 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getDisplayPortfolioFilePathHeader()
-  {
+  public void getDisplayPortfolioFilePathHeader() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Here are your Portfolio's!");
     String displayString = formatOutput(opItems);
@@ -192,9 +188,4 @@ public class StockViewImpl implements StockView {
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }
-
-
-
-
-
 }

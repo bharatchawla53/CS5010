@@ -96,7 +96,7 @@ public class AlphaVantageApi {
     return stockTradedValues;
   }
 
-  private Date dateParser(String date) {
+  Date dateParser(String date) {
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH);
     Date parsedDate = null;
     try {
@@ -117,6 +117,18 @@ public class AlphaVantageApi {
       this.date = date;
       this.openVal = openVal;
       this.closeVal = closeVal;
+    }
+
+    public Date getDate() {
+      return this.date;
+    }
+
+    public String getOpenVal() {
+      return this.openVal;
+    }
+
+    public String getCloseVal() {
+      return this.closeVal;
     }
   }
 }

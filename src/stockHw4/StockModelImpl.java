@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,7 +57,7 @@ public class StockModelImpl implements StockModel {
 
   private void loadTickerList() {
     try {
-      BufferedReader in = new BufferedReader(new FileReader("path/of/text"));
+      BufferedReader in = new BufferedReader(new FileReader("tickers.csv"));
       String str;
 
       List<String> list = new ArrayList<>();
@@ -121,7 +123,7 @@ public class StockModelImpl implements StockModel {
 
   private boolean searchStringArray(String ticker) {
     for (String val : tickerList) {
-      if (val.equals(ticker.strip())) {
+      if (val.split(",")[0].equals(ticker)) {
         return true;
       }
     }
@@ -129,7 +131,7 @@ public class StockModelImpl implements StockModel {
   }
 
   @Override
-  public boolean validateTicker(String ticker) {
+  public boolean isValidTicker(String ticker) {
     return searchStringArray(ticker);
   }
 
@@ -139,10 +141,10 @@ public class StockModelImpl implements StockModel {
             .randomUUID()
             .toString()
             .replace("-", "")
-            .substring(0, 2);
+            .substring(0, 8);
   }
 
-  @Override // TODO why we need this??
+  @Override
   public boolean validateTickerShare(String tickerShare) {
     Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
     Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
@@ -154,7 +156,7 @@ public class StockModelImpl implements StockModel {
     List<String> userPortfolios = new ArrayList<>();
     File folder = new File("./");
 
-    if (folder.listFiles() != null || folder.listFiles().length == 0) {
+    if (folder.listFiles() == null || folder.listFiles().length == 0) {
       return userPortfolios;
     }
 
@@ -163,7 +165,7 @@ public class StockModelImpl implements StockModel {
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
         if (listOfFiles[i].getName().contains(user.getUserName())) {
-          userPortfolios.add(listOfFiles[i].getName());
+          userPortfolios.add(listOfFiles[i].getName().split("_")[1].split("\\.")[0]);
         }
       }
     }
@@ -175,7 +177,7 @@ public class StockModelImpl implements StockModel {
     File folder = new File("./");
     File[] listOfFiles = folder.listFiles();
 
-    if (folder.listFiles() != null || folder.listFiles().length == 0) {
+    if (folder.listFiles() == null || folder.listFiles().length == 0) {
       return false;
     }
 
@@ -201,8 +203,9 @@ public class StockModelImpl implements StockModel {
     return null;
   }
 
-  @Override
-  public void dumpTickerShare(User user, String portfolioUUID, String ticker, String shares) {
+  @Override // TODO consolidate stocks of same name during portfolio creation
+  public boolean dumpTickerShare(User user, String portfolioUUID, String ticker, String shares) {
+    boolean isSuccessful = false;
     //TODO Integrate API and store with Share Value
     String username = user.getUserName();
     String portfolioFileName = username + "_" + portfolioUUID + ".csv";
@@ -211,6 +214,7 @@ public class StockModelImpl implements StockModel {
       try {
         FileWriter fw = new FileWriter(portfolioFileName, true);
         fw.write(ticker + "," + shares + "\n");
+        isSuccessful = true;
         fw.close();
       } catch (IOException e) {
         e.printStackTrace();
@@ -222,6 +226,7 @@ public class StockModelImpl implements StockModel {
           try {
             FileWriter fw = new FileWriter(portfolioFileName, true);
             fw.write(ticker + "," + shares + "\n");
+            isSuccessful = true;
             fw.close();
           } catch (IOException e) {
             e.printStackTrace();
@@ -235,9 +240,8 @@ public class StockModelImpl implements StockModel {
       //with open("filename.txt","r") as f load all text append at the bottom and then save back to
       //filename.txt
       //format of filename.txt - filename is userid_portfolio.txt, with columns ticker and noofshares
-
-
     }
+    return isSuccessful;
   }
 
   @Override
@@ -250,16 +254,13 @@ public class StockModelImpl implements StockModel {
     try {
       BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
 
-      String line = fr.readLine();
-      int i = 0;
-      while (line != null) {
+      String strLine;
 
-        line = fr.readLine();
-        String ticker = line.split(",")[0];
-        String noOfShares = line.split(",")[1];
+      while ((strLine = fr.readLine()) != null) {
+        String ticker = strLine.split(",")[0];
+        String noOfShares = strLine.split(",")[1];
         String tickerNoOfShares = ticker + " " + noOfShares;
         portfolioContents.add(tickerNoOfShares);
-        i += 1;
       }
       return portfolioContents;
     } catch (IOException e) {
@@ -267,19 +268,69 @@ public class StockModelImpl implements StockModel {
     }
   }
 
-  // TODO add method determine the total value of a portfolio on a certain date
+  // TODO need to change code for API limits
   @Override
-  public List<String> calculateTotalValueOfAPortfolio(Date certainDate, User user, String portfolioUUID) {
+  public List<String> calculateTotalValueOfAPortfolio(String certainDate, User user, String portfolioUUID) {
     List<String> totalValueOfPortfolio = new ArrayList<>();
 
     List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
 
-    // check if symbol exists in hash map list else call the api to fetch it
+    for (String content : portfolioContents) {
+      String[] shareDetail = content.split(" ");
+      String symbolCached = checkSymbolExistsInTheMap(shareDetail, dateParser(certainDate));
 
+      if (symbolCached == null) {
+        // call the API
+        getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), shareDetail[0]);
+        symbolCached = checkSymbolExistsInTheMap(shareDetail, dateParser(certainDate));
+      }
+
+      totalValueOfPortfolio.add(symbolCached);
+    }
     return totalValueOfPortfolio;
+  }
+
+  private Date dateParser(String certainDate) {
+    return alphaVantageApi.dateParser(certainDate);
   }
 
   private void getStockDataFromApi(String outputSize, String symbol) {
     stockHashMapList = alphaVantageApi.getStockTradedValue(outputSize, symbol);
+  }
+
+  private boolean isCurrentTimeBeforeNoon() {
+    Date now = new Date();
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+    String formattedDate = formatter.format(now);
+    boolean isTimeBeforeNoon = false;
+    try {
+      if (formatter.parse(formattedDate).before(formatter.parse("12:00"))) {
+        isTimeBeforeNoon = true;
+      }
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    return isTimeBeforeNoon;
+  }
+
+  private String checkSymbolExistsInTheMap(String[] shareDetail, Date certainDate) {
+    String result = null;
+
+    for (HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> symbolMap : stockHashMapList) {
+      if (symbolMap.containsKey(shareDetail[0])) {
+        // iterate to find the stock value on a certain date
+        for (AlphaVantageApi.AlphaDailyTimeSeries timeSeries : symbolMap.get(shareDetail[0])) {
+          if (timeSeries.getDate().equals(certainDate)) {
+            // if its before noon, use open val to compute, else use close val
+            double totalValuePerStock = isCurrentTimeBeforeNoon()
+                    ? Double.parseDouble(shareDetail[1]) * Double.parseDouble(timeSeries.getOpenVal())
+                    : Double.parseDouble(shareDetail[1]) * Double.parseDouble(timeSeries.getCloseVal());
+
+            result = shareDetail[0] + " " + shareDetail[1] + " " + totalValuePerStock;
+          }
+        }
+      }
+    }
+    return result;
   }
 }

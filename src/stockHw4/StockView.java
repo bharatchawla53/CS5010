@@ -1,7 +1,6 @@
 package stockHw4;
 
 import java.io.InputStream;
-import java.util.Date;
 import java.util.List;
 
 //TODO Look into sub views
@@ -9,22 +8,15 @@ public interface StockView {
 
   void getLoginScreenView();
 
-
-
   void getUsernameFromUser();
 
   void getRepeatUsername();
 
-
   void getDisplayPortfolioInput();
-
-
 
   void getDisplayPortfolioFilePathHeader();
 
   void getDisplayPortfolioFilePathInput();
-
-
 
   void getViewBuilder(List<String> values);
 
@@ -42,19 +34,11 @@ public interface StockView {
 
   void getNewUserOptions();
 
-
   void getPortfolioCreatorView();
 
   void getDisplayPortfolioHeader();
 
-  void getDisplayTotalPortfolioValueFromDate();
+  void getDisplayTotalPortfolioValue();
 
-
-
-
-
-
-
-
-
+  void terminateView();
 }
