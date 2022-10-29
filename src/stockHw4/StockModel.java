@@ -1,6 +1,7 @@
 package stockHw4;
 
-import java.util.UUID;
+import java.util.Date;
+import java.util.List;
 
 // processes the input from controller
 public interface StockModel {
@@ -13,7 +14,7 @@ public interface StockModel {
 
   boolean validateTickerShare(String tickerShare);
 
-  String[] getAllPortfoliosFromUser(User user);
+  List<String> getAllPortfoliosFromUser(User user);
 
   void dumpTickerShare(User user, String portfolioUUID, String ticker, String shares);
 
@@ -22,10 +23,11 @@ public interface StockModel {
 
   boolean validatePortfolioUUID(String portfolioUUID, User user);
 
-  String[]  getPortfolioContents(User user, String uuid);
+  List<String> getPortfolioContents(User user, String uuid);
 
 
   User getUserFromUsername(String username);
 
+  List<String> calculateTotalValueOfAPortfolio(Date certainDate, User user, String portfolioUUID);
 
 }

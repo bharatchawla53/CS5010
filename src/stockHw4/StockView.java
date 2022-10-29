@@ -2,6 +2,7 @@ package stockHw4;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 //TODO Look into sub views
 public interface StockView {
@@ -25,7 +26,7 @@ public interface StockView {
 
 
 
-  void getViewBuilder(String[] values);
+  void getViewBuilder(List<String> values);
 
   String getUserInput(InputStream in);
 

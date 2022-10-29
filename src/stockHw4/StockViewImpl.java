@@ -106,14 +106,9 @@ public class StockViewImpl implements StockView {
 
 
   @Override
-  public void getViewBuilder(String[] values)
+  public void getViewBuilder(List<String> values)
   {
-    List<String> opItems = new ArrayList<>();
-    for(String v: values)
-    {
-      opItems.add(v);
-    }
-    String displayString = formatOutput(opItems);
+    String displayString = formatOutput(values);
     System.out.println(displayString);
   }
 
