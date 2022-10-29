@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,15 +20,17 @@ import java.util.regex.Pattern;
 
 public class StockModelImpl implements StockModel {
 
+  private static List<String> tickerList;
+  private final AlphaVantageApi alphaVantageApi;
+  private static List<HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>>> stockHashMapList;
 
-  String[] tickerList = {};
-
-
-
-  public StockModelImpl()
-  {
+  public StockModelImpl() {
+    alphaVantageApi = new AlphaVantageApi();
+    stockHashMapList = new ArrayList<>();
+    tickerList = new ArrayList<>();
     loadTickerList();
   }
+
   @Override
   public User saveUser(User user) {
     // If its valid, persist it to the user file
@@ -49,27 +53,19 @@ public class StockModelImpl implements StockModel {
     return false;
   }
 
-  private void loadTickerList()
-  {
+  private void loadTickerList() {
     try {
       BufferedReader in = new BufferedReader(new FileReader("path/of/text"));
       String str;
 
-      List<String> list = new ArrayList<String>();
+      List<String> list = new ArrayList<>();
       while ((str = in.readLine()) != null) {
         list.add(str);
       }
-
-      String[] stringArr = list.toArray(new String[0]);
-      this.tickerList = stringArr;
-
-    }
-    catch(FileNotFoundException e)
-    {
+      tickerList = list;
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
-    }
-    catch(IOException e)
-    {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -123,104 +119,90 @@ public class StockModelImpl implements StockModel {
     return userSet;
   }
 
-
-  private boolean searchStringArray(String[] vals,String ele)
-  {
-    for (String val: vals)
-    {
-      if(val == ele.strip())
-      {
+  private boolean searchStringArray(String ticker) {
+    for (String val : tickerList) {
+      if (val.equals(ticker.strip())) {
         return true;
       }
     }
     return false;
-
-  }
-  public boolean validateTicker(String ticker)
-  {
-
-    if (searchStringArray(this.tickerList,ticker))
-    {
-      return true;
-    }
-   return false;
   }
 
   @Override
-  public String generateUUID()
-  {
-    return  UUID
+  public boolean validateTicker(String ticker) {
+    return searchStringArray(ticker);
+  }
+
+  @Override
+  public String generateUUID() {
+    return UUID
             .randomUUID()
             .toString()
             .replace("-", "")
-            .substring(0, 8);
+            .substring(0, 2);
   }
 
-  public boolean validateTickerShare(String tickerShare)
-  {
-
+  @Override // TODO why we need this??
+  public boolean validateTickerShare(String tickerShare) {
     Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
-    Matcher Validator = ticketShareValidationPattern.matcher(tickerShare);
-    return Validator.matches();
+    Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
+    return validator.matches();
   }
 
-  public String[] getAllPortfoliosFromUser(User user)
-  {
-    String username = user.getUserName();
+  @Override
+  public List<String> getAllPortfoliosFromUser(User user) {
+    List<String> userPortfolios = new ArrayList<>();
     File folder = new File("./");
+
+    if (folder.listFiles() != null || folder.listFiles().length == 0) {
+      return userPortfolios;
+    }
+
     File[] listOfFiles = folder.listFiles();
-    String[] vals = {};
+
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
-        if(listOfFiles[i].getName().contains(username))
-        {
-          vals[i] = listOfFiles[i].getName();
+        if (listOfFiles[i].getName().contains(user.getUserName())) {
+          userPortfolios.add(listOfFiles[i].getName());
         }
-
       }
     }
-    return vals;
-
+    return userPortfolios;
   }
 
-
-  public boolean validatePortfolioUUID(String portfolioUUID,User user)
-  {
-
+  @Override
+  public boolean validatePortfolioUUID(String portfolioUUID, User user) {
     File folder = new File("./");
     File[] listOfFiles = folder.listFiles();
-    String username = user.getUserName();
+
+    if (folder.listFiles() != null || folder.listFiles().length == 0) {
+      return false;
+    }
+
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
-        if(listOfFiles[i].getName().contains(portfolioUUID) && listOfFiles[i].
-                getName().contains(username));
-        {
+        if (listOfFiles[i].getName().contains(portfolioUUID) &&
+                listOfFiles[i].getName().contains(user.getUserName())) {
           return true;
         }
-
       }
     }
     return false;
-
   }
 
-  public User getUserFromUsername(String username)
-  {
-    Set<User> user_set = getUsers();
-    List<User> user_list = user_set.stream().toList();
-    for(User u: user_list)
-    {
-      if(u.getUserName() == username)
-      {
+  @Override
+  public User getUserFromUsername(String username) {
+    Set<User> userSet = getUsers();
+    for (User u : userSet) {
+      if (u.getUserName().equals(username)) {
         return u;
       }
     }
-
     return null;
   }
 
-
-  public void dumpTickerShare(User user,String portfolioUUID, String ticker, String shares) {
+  @Override
+  public void dumpTickerShare(User user, String portfolioUUID, String ticker, String shares) {
     //TODO Integrate API and store with Share Value
     String username = user.getUserName();
     String portfolioFileName = username + "_" + portfolioUUID + ".csv";
@@ -258,37 +240,46 @@ public class StockModelImpl implements StockModel {
     }
   }
 
-
-
   @Override
-  public String[] getPortfolioContents(User user, String uuid)
-  {
+  public List<String> getPortfolioContents(User user, String uuid) {
     String username = user.getUserName();
     String portfolioFileName = username + "_" + uuid + ".csv";
-    String[] portfolioContents = {};
+    List<String> portfolioContents = new ArrayList<>();
     File f = new File(portfolioFileName);
 
-      try {
-        BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
 
-        String line = fr.readLine();
-        int i = 0;
-        while (line != null)
-        {
+      String line = fr.readLine();
+      int i = 0;
+      while (line != null) {
 
-          line  = fr.readLine();
-          String ticker = line.split(",")[0];
-          String noOfShares = line.split(",")[1];
-          String tickerNoOfShares = ticker + " "+ noOfShares;
-          portfolioContents[i] = tickerNoOfShares;
-          i+=1;
-        }
-        return portfolioContents;
-      } catch (IOException e) {
-        return portfolioContents;
-
+        line = fr.readLine();
+        String ticker = line.split(",")[0];
+        String noOfShares = line.split(",")[1];
+        String tickerNoOfShares = ticker + " " + noOfShares;
+        portfolioContents.add(tickerNoOfShares);
+        i += 1;
       }
+      return portfolioContents;
+    } catch (IOException e) {
+      return portfolioContents;
+    }
+  }
 
+  // TODO add method determine the total value of a portfolio on a certain date
+  @Override
+  public List<String> calculateTotalValueOfAPortfolio(Date certainDate, User user, String portfolioUUID) {
+    List<String> totalValueOfPortfolio = new ArrayList<>();
 
+    List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
+
+    // check if symbol exists in hash map list else call the api to fetch it
+
+    return totalValueOfPortfolio;
+  }
+
+  private void getStockDataFromApi(String outputSize, String symbol) {
+    stockHashMapList = alphaVantageApi.getStockTradedValue(outputSize, symbol);
   }
 }

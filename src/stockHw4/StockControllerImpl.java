@@ -1,5 +1,7 @@
 package stockHw4;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class StockControllerImpl extends StockControllerAbstract {
@@ -105,13 +107,13 @@ public class StockControllerImpl extends StockControllerAbstract {
         input = null;
         invalidInput = true;
         boolean isValidPortfolioUUID = false;
-        String[] PortfolioUser = model.getAllPortfoliosFromUser(this.user);
-        for (String val : PortfolioUser) {
+        List<String> portfolioUser = model.getAllPortfoliosFromUser(this.user);
+        for (String val : portfolioUser) {
           if (Integer.parseInt(val) == Integer.parseInt(input)) {
             isValidPortfolioUUID = true;
           }
         }
-        view.getViewBuilder(PortfolioUser);
+        view.getViewBuilder(portfolioUser);
         view.getDisplayPortfolioInput();
 
         while (invalidInput) {
@@ -136,13 +138,13 @@ public class StockControllerImpl extends StockControllerAbstract {
         input = null;
         invalidInput = true;
         boolean isValidPortfolioUUID = false;
-        String[] PortfolioUser = model.getAllPortfoliosFromUser(this.user);
-        for (String val : PortfolioUser) {
+        List<String> portfolioUser = model.getAllPortfoliosFromUser(this.user);
+        for (String val : portfolioUser) {
           if (Integer.parseInt(val) == Integer.parseInt(input)) {
             isValidPortfolioUUID = true;
           }
         }
-        view.getViewBuilder(PortfolioUser);
+        view.getViewBuilder(portfolioUser);
         view.getDisplayPortfolioFilePathInput();
         while (invalidInput) {
 
@@ -158,10 +160,9 @@ public class StockControllerImpl extends StockControllerAbstract {
             input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
           }
         }
-        String[] portfolioFilePathArray = {};
+
         String portfolioFilePath = this.user.getUserName()+"_"+input+".csv";
-        portfolioFilePathArray[0] = portfolioFilePath;
-        view.getViewBuilder(portfolioFilePathArray);
+        view.getViewBuilder(Collections.singletonList(portfolioFilePath));
 
 
 

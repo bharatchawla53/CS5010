@@ -4,17 +4,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class AlphaVantageApi {
 
   private final String API_KEY = "EHQVGM4192TAX7FI";
   private final String API_URL = "https://www.alphavantage.co/query?";
 
-  private List<HashMap<String, AlphaDailyTimeSeries>> stockTradedValues;
+  private List<HashMap<String, List<AlphaDailyTimeSeries>>> stockTradedValues;
 
+  public AlphaVantageApi() {
+    this.stockTradedValues = new ArrayList<>();
+  }
+
+  // TODO handle API call limits
   public List<HashMap<String, List<AlphaDailyTimeSeries>>> getStockTradedValue(String outputSize, String symbol) {
     URL url;
     try {
@@ -62,19 +71,18 @@ public class AlphaVantageApi {
   }
 
   private List<HashMap<String, List<AlphaDailyTimeSeries>>> parseResponseToObject(String[] response, String outputSize, String symbol) {
-    List<HashMap<String, List<AlphaDailyTimeSeries>>> stockTradedValuesList = new ArrayList<>();
     List<AlphaDailyTimeSeries> timeSeries = new ArrayList<>();
 
     // only need the current date stock price
     if (outputSize.equals(AlphaVantageOutputSize.COMPACT.getInput())) {
       String[] currDailyTimeStock = response[1].split(",");
-      timeSeries.add(new AlphaDailyTimeSeries(currDailyTimeStock[0], currDailyTimeStock[1], currDailyTimeStock[4]));
+      timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]), currDailyTimeStock[1], currDailyTimeStock[4]));
     } else {
       // build the stock price for last 3 years
       // go back upto 3 years which equals to 756 days excluding weekends
-      for (int i = 1; i < 758; i++) {
+      for (int i = 1; i < response.length; i++) {
         String[] currDailyTimeStock = response[i].split(",");
-        timeSeries.add(new AlphaDailyTimeSeries(currDailyTimeStock[0], currDailyTimeStock[1], currDailyTimeStock[4]));
+        timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]), currDailyTimeStock[1], currDailyTimeStock[4]));
       }
     }
 
@@ -83,18 +91,29 @@ public class AlphaVantageApi {
     map.put(symbol, timeSeries);
 
     // add it to the list
-    stockTradedValuesList.add(map);
+    stockTradedValues.add(map);
 
-    return stockTradedValuesList;
+    return stockTradedValues;
   }
 
-  private static class AlphaDailyTimeSeries {
+  private Date dateParser(String date) {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH);
+    Date parsedDate = null;
+    try {
+      parsedDate = formatter.parse(date);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    return parsedDate; 
+  }
 
-    private final String date;
+  static class AlphaDailyTimeSeries {
+
+    private final Date date;
     private final String openVal;
     private final String closeVal;
 
-    public AlphaDailyTimeSeries(String date, String openVal, String closeVal) {
+    public AlphaDailyTimeSeries(Date date, String openVal, String closeVal) {
       this.date = date;
       this.openVal = openVal;
       this.closeVal = closeVal;
