@@ -65,6 +65,29 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
+  public void getUsernameFromUser()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Enter your username:");
+
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+
+  @Override
+  public void getRepeatUsername()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Looks like this user name does not exist, please enter an existing user name:");
+
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
   public void getPortfolioCreatorView()
   {
     List<String> opItems = new ArrayList<>();
@@ -141,6 +164,26 @@ public class StockViewImpl implements StockView {
 
     opItems.add("Enter your option: ");
 
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+
+  @Override
+
+  public void getDisplayPortfolioFilePathInput()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Enter the Portfolio UUID of the Portfolio you wish to serialize:");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getDisplayPortfolioFilePathHeader()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Here are your Portfolio's!");
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }

@@ -10,9 +10,20 @@ public interface StockView {
 
 
 
+  void getUsernameFromUser();
+
+  void getRepeatUsername();
 
 
   void getDisplayPortfolioInput();
+
+
+
+  void getDisplayPortfolioFilePathHeader();
+
+  void getDisplayPortfolioFilePathInput();
+
+
 
   void getViewBuilder(String[] values);
 

@@ -17,12 +17,15 @@ public interface StockModel {
 
   void dumpTickerShare(User user, String portfolioUUID, String ticker, String shares);
 
-  public String generateUUID();
+  String generateUUID();
 
 
-  public boolean validatePortfolioUUID(String portfolioUUID, User user);
+  boolean validatePortfolioUUID(String portfolioUUID, User user);
 
-  public
+  String[]  getPortfolioContents(User user, String uuid);
+
+
+  User getUserFromUsername(String username);
 
 
 }

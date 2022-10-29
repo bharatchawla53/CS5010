@@ -203,8 +203,25 @@ public class StockModelImpl implements StockModel {
     return false;
 
   }
-  public void dumpTickerShare(User user,String portfolioUUID, String ticker, String shares) {
 
+  public User getUserFromUsername(String username)
+  {
+    Set<User> user_set = getUsers();
+    List<User> user_list = user_set.stream().toList();
+    for(User u: user_list)
+    {
+      if(u.getUserName() == username)
+      {
+        return u;
+      }
+    }
+
+    return null;
+  }
+
+
+  public void dumpTickerShare(User user,String portfolioUUID, String ticker, String shares) {
+    //TODO Integrate API and store with Share Value
     String username = user.getUserName();
     String portfolioFileName = username + "_" + portfolioUUID + ".csv";
     File f = new File(portfolioFileName);
@@ -239,5 +256,39 @@ public class StockModelImpl implements StockModel {
 
 
     }
+  }
+
+
+
+  @Override
+  public String[] getPortfolioContents(User user, String uuid)
+  {
+    String username = user.getUserName();
+    String portfolioFileName = username + "_" + uuid + ".csv";
+    String[] portfolioContents = {};
+    File f = new File(portfolioFileName);
+
+      try {
+        BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+
+        String line = fr.readLine();
+        int i = 0;
+        while (line != null)
+        {
+
+          line  = fr.readLine();
+          String ticker = line.split(",")[0];
+          String noOfShares = line.split(",")[1];
+          String tickerNoOfShares = ticker + " "+ noOfShares;
+          portfolioContents[i] = tickerNoOfShares;
+          i+=1;
+        }
+        return portfolioContents;
+      } catch (IOException e) {
+        return portfolioContents;
+
+      }
+
+
   }
 }
