@@ -425,14 +425,15 @@ public class StockModelImpl implements StockModel {
       while ((strLine = fr.readLine()) != null) {
         String ticker = strLine.split(",")[0];
         String noOfShares = strLine.split(",")[1];
-        String tickerNoOfShares = ticker + " " + noOfShares;
+        String stockPrice = strLine.split(",")[2];
+        String tickerNoOfShares = ticker + " " + noOfShares+" "+stockPrice;
         portfolioContents.add(tickerNoOfShares);
       }
       if (f.createNewFile()) {
         try {
           FileWriter fw = new FileWriter(portfolioFileName, true);
           for (String s : portfolioContents) {
-            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "\n");
+            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + s.split(" ")[2]+"\n");
           }
           isSuccessful = true;
 
