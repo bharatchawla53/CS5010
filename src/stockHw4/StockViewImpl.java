@@ -144,6 +144,59 @@ public class StockViewImpl implements StockView {
     System.out.println(displayString);
   }
 
+  @Override
+  public void getDisplaySuccessfulTickerShareDump() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Ticker and Number of Shares added to portfolio! Enter DONE to exit " +
+            "Portfolio Creation or Enter another valid stock to continue");
+
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getDisplayFinishedDumpingPortfolio() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Your portfolio has been created!");
+
+
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getTableViewBuilder(List<String> portfolioContents, List<String> columns) {
+    //TODO abstract seperator and number of fields
+    int sumLenColumn = 0;
+    String tableHeader = "";
+    String ticker;
+    String noOfShares;
+    for(int i =0; i<columns.size();i++)
+    {
+      tableHeader += columns.get(i)+"\t";
+      sumLenColumn+= columns.get(i).length()+2;
+
+    }
+    System.out.println(tableHeader);
+    String rowSep = "";
+    for(int i =0;i<sumLenColumn;i++)
+    {
+     rowSep+=".";
+    }
+    System.out.println(rowSep);
+    for(String row: portfolioContents)
+    {
+      ticker = row.split(" ")[0];
+      noOfShares = row.split(" ")[1];
+      System.out.println(ticker+"\t"+noOfShares);
+      System.out.println(rowSep);
+    }
+
+
+
+  }
+
 
   @Override
   public void getExistingUserOptions() {
@@ -154,6 +207,7 @@ public class StockViewImpl implements StockView {
     opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
     opItems.add("4. Would you like to persist a portfolio so that it can be saved and loaded ?");
     opItems.add("5. Would you like to exit the application ?");
+    opItems.add("6. Would you like to load an external portfolio?");
 
     opItems.add("Enter your option: ");
 
@@ -188,4 +242,33 @@ public class StockViewImpl implements StockView {
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }
+
+  @Override
+  public void getDisplaySavePortfolioFromUser()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Let's save an external portfolio!");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getDisplaySavePortfolioFilePathInput()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Please enter the filepath of the external portfolio:");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+  @Override
+  public void getDisplaySuccessfullPortfolioSave()
+  {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("The external portfolio file has been saved successfully.");
+    String displayString = formatOutput(opItems);
+    System.out.println(displayString);
+  }
+
+
 }

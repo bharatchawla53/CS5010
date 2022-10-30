@@ -146,6 +146,7 @@ public class StockModelImpl implements StockModel {
 
   @Override
   public boolean validateTickerShare(String tickerShare) {
+
     Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
     Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
     return validator.matches();
@@ -332,5 +333,72 @@ public class StockModelImpl implements StockModel {
       }
     }
     return result;
-  }
+
+ }
+
+ @Override
+  public boolean validateUserPortfolioExternal(String filePath, User user)
+ {
+   File f = new File(filePath);
+   boolean isValid = false;
+   Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
+
+
+   try {
+     BufferedReader fr = new BufferedReader(new FileReader(filePath));
+
+     String strLine;
+
+     while ((strLine = fr.readLine()) != null) {
+       Matcher validator = ticketShareValidationPattern.matcher(strLine);
+       isValid = validator.matches();
+
+
+
+     }
+     return isValid;
+   } catch (IOException e) {
+     return false;
+   }
+ }
+
+ public boolean saveExternalUserPortfolio(String filePath, User user)
+ {
+   String username = user.getUserName();
+   String uuid = generateUUID();
+   String portfolioFileName = username + "_" + uuid + ".csv";
+   List<String> portfolioContents = new ArrayList<>();
+   File f = new File(portfolioFileName);
+   boolean isSuccessful = false;
+   try {
+     BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+
+     String strLine;
+
+     while ((strLine = fr.readLine()) != null) {
+       String ticker = strLine.split(",")[0];
+       String noOfShares = strLine.split(",")[1];
+       String tickerNoOfShares = ticker + " " + noOfShares;
+       portfolioContents.add(tickerNoOfShares);
+     }
+     if (f.createNewFile()) {
+       try {
+         FileWriter fw = new FileWriter(portfolioFileName, true);
+         for(String s: portfolioContents) {
+           fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "\n");
+         }
+         isSuccessful = true;
+
+         fw.close();
+         return isSuccessful;
+       } catch (IOException e) {
+         e.printStackTrace();
+       }
+     }
+
+   } catch (IOException e) {
+     return false;
+   }
+   return false;
+ }
 }

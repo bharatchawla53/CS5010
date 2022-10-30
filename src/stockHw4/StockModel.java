@@ -29,4 +29,9 @@ public interface StockModel {
 
   List<String> calculateTotalValueOfAPortfolio(String certainDate, User user, String portfolioUUID);
 
+  boolean validateUserPortfolioExternal(String filePath, User user);
+
+  boolean saveExternalUserPortfolio(String filePath, User user);
+
+
 }

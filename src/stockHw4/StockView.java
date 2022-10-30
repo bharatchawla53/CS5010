@@ -26,6 +26,15 @@ public interface StockView {
 
   void getExistingUserView();
 
+  void getDisplaySavePortfolioFromUser();
+
+
+  void getDisplaySavePortfolioFilePathInput();
+
+  void getDisplaySuccessfullPortfolioSave();
+
+
+
   void getErrorMessageView(String message);
 
   void getNewUserView();
@@ -41,4 +50,10 @@ public interface StockView {
   void getDisplayTotalPortfolioValue();
 
   void terminateView();
+
+  void getDisplaySuccessfulTickerShareDump();
+
+  void getDisplayFinishedDumpingPortfolio();
+
+  void getTableViewBuilder(List<String> portfolioContents, List<String> columns);
 }

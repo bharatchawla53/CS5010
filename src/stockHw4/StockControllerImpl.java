@@ -2,6 +2,7 @@ package stockHw4;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -97,7 +98,10 @@ public class StockControllerImpl extends StockControllerAbstract {
       processUserOptionFour(input);
     } else if (input.equals(UserInputOptions.FIVE.getInput())) {
       terminateApplication(input);
+    } else if (input.equals(UserInputOptions.SIX.getInput())) {
+      processUserOptionSix(input);
     }
+
   }
 
   private void terminateApplication(String input) {
@@ -152,6 +156,7 @@ public class StockControllerImpl extends StockControllerAbstract {
   }
 
   // TODO restrict users from purchasing fractional shares
+  // Fractional Shares dealt with in regex(regex looks for whole numbers only)
   // TODO allow user to create portfolio by providing a file
   private void processUserOptionOne(String input) {
     boolean invalidInput = true;
@@ -167,6 +172,7 @@ public class StockControllerImpl extends StockControllerAbstract {
           invalidInput = false;
         } else {
           if (input.equals("DONE")) {
+            view.getDisplayFinishedDumpingPortfolio();
             invalidInput = false;
             // TODO add a view stating portfolio  is successfully created
           } else {
@@ -181,8 +187,10 @@ public class StockControllerImpl extends StockControllerAbstract {
       if (!input.equals("DONE") && model.dumpTickerShare(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
         // TODO add successful view as well and tell them to enter another stock or enter "DONE" to exit this process
+        view.getDisplaySuccessfulTickerShareDump();
         invalidInput = true;
       } else {
+        view.getDisplayFinishedDumpingPortfolio();
         // TODO add a view for this
       }
     }
@@ -192,7 +200,11 @@ public class StockControllerImpl extends StockControllerAbstract {
     input = getPortfolioIdInput(input);
     //TODO Display all tickershare given user and portfolio uuid
     // TODO add a generic table view
-    view.getViewBuilder(model.getPortfolioContents(this.user, input));
+
+    List<String> columns = new ArrayList<String>();
+    columns.add("Ticker");
+    columns.add("Share");
+    view.getTableViewBuilder(model.getPortfolioContents(this.user, input), columns);
   }
 
   private void processUserOptionThree(String input) {
@@ -250,6 +262,37 @@ public class StockControllerImpl extends StockControllerAbstract {
     String portfolioFilePath = this.user.getUserName() + "_" + input + ".csv";
     view.getViewBuilder(Collections.singletonList(portfolioFilePath));
   }
+
+  private void processUserOptionSix(String input)
+  {
+    boolean invalidInput = true;
+    view.getDisplaySavePortfolioFromUser();
+
+
+
+
+    view.getDisplaySavePortfolioFilePathInput();
+    while (invalidInput) {
+      try {
+        input = view.getUserInput(System.in);
+        if (model.validateUserPortfolioExternal(input, this.user)) {
+          invalidInput = false;
+        }
+      } catch (IllegalArgumentException e) {
+        view.throwErrorMessage("Invalid File Path entered or Structure of File is malformed!");
+        view.getErrorMessageView("Please enter a valid file path:");
+        input = view.getUserInput(System.in);
+      }
+    }
+    boolean successSaveExternalPortfolio = model.saveExternalUserPortfolio(input,this.user);
+    if (successSaveExternalPortfolio)
+    {
+      view.getDisplaySuccessfullPortfolioSave();
+    }
+
+  }
+
+
 
   private boolean processNewUser() {
     boolean invalidUserName = true;
