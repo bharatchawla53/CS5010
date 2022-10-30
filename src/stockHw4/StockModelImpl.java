@@ -149,7 +149,7 @@ public class StockModelImpl implements StockModel {
 
   @Override
   public boolean validateTickerShare(String tickerShare) {
-
+    //TODO check for fractional and negative shares
     Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
     Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
     return validator.matches();
