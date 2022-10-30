@@ -423,21 +423,33 @@ public class StockModelImpl implements StockModel {
     return shareDetail[0] + " " + shareDetail[1] + " " + stockPrice * Double.parseDouble(shareDetail[1]);
   }
 
+
+  private boolean validatePortfolioRow(String row)
+  {
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+");
+    Matcher validator = ticketShareValidationPattern.matcher(row);
+    boolean isValid = validator.matches();
+    return isValid;
+  }
+
   @Override
   public boolean validateUserPortfolioExternal(String filePath, User user) {
     File f = new File(filePath);
-    boolean isValid = false;
-    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+");
+
+
 
     try {
       BufferedReader fr = new BufferedReader(new FileReader(filePath));
       String strLine;
 
       while ((strLine = fr.readLine()) != null) {
-        Matcher validator = ticketShareValidationPattern.matcher(strLine);
-        isValid = validator.matches();
+
+        if(!validatePortfolioRow(strLine))
+        {
+          return false;
+        }
       }
-      return isValid;
+      return true;
     } catch (IOException e) {
       return false;
     }
@@ -456,11 +468,18 @@ public class StockModelImpl implements StockModel {
       String strLine;
 
       while ((strLine = fr.readLine()) != null) {
-        String ticker = strLine.split(",")[0];
-        String noOfShares = strLine.split(",")[1];
-        String stockPrice = strLine.split(",")[2];
-        String tickerNoOfShares = ticker + " " + noOfShares+" "+stockPrice;
-        portfolioContents.add(tickerNoOfShares);
+        //TODO add check for obe while splitting on ,
+        if(validatePortfolioRow(strLine)) {
+            String ticker = strLine.split(",")[0];
+            String noOfShares = strLine.split(",")[1];
+            String stockPrice = strLine.split(",")[2];
+            String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
+            portfolioContents.add(tickerNoOfShares);
+        }
+        else
+        {
+          return null;
+        }
       }
       if (f.createNewFile()) {
         try {

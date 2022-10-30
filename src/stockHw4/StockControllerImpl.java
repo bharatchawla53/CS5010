@@ -62,7 +62,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       } catch (IllegalArgumentException e) {
         view.throwErrorMessage("Invalid user input");
         view.getErrorMessageView("Enter Y/N : ");
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+
       }
     }
     return input;
@@ -96,7 +96,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     } else if (input.equals(UserInputOptions.FOUR.getInput())) {
       processUserOptionFour(input);
     } else if (input.equals(UserInputOptions.FIVE.getInput())) {
-      processUserOptionSix(input);
+      processUserOptionFive(input);
     } else if (input.equals(UserInputOptions.SIX.getInput())) {
       terminateApplication(input);
     }
@@ -116,7 +116,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       } catch (IllegalArgumentException e) {
         view.throwErrorMessage("Invalid input");
         view.getErrorMessageView("Enter Y/N : ");
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+
       }
     }
 
@@ -147,7 +147,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       } catch (IllegalArgumentException e) {
         view.throwErrorMessage("Invalid option!");
         view.getErrorMessageView("Please enter a valid option:");
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+
       }
     }
     return input;
@@ -274,24 +274,30 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getViewBuilder(serializedPortfolioSuccess);
   }
 
-  private void processUserOptionSix(String input) {
+  private void processUserOptionFive(String input) {
     boolean invalidInput = true;
     view.getDisplaySavePortfolioFromUser();
-
+    String pUUID=null;
     view.getDisplaySavePortfolioFilePathInput();
     while (invalidInput) {
       input = view.getUserInput(System.in);
       if (model.validateUserPortfolioExternal(input, this.user)) {
-        invalidInput = false;
-      } else {
+        pUUID = model.saveExternalUserPortfolio(input, this.user);
+        if(pUUID != null)
+        {
+          invalidInput = false;
+        }
+      }
+       else {
         view.throwErrorMessage("Invalid File Path entered or Structure of File is malformed!");
         view.getErrorMessageView("Please enter a valid file path:");
       }
     }
-    String pUUID = model.saveExternalUserPortfolio(input, this.user);
     if (pUUID != null) {
       view.getDisplaySuccessfullPortfolioSave(pUUID);
     }
+
+
   }
 
 
@@ -340,15 +346,16 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     // validate correct portfolio ID is provided
     while (invalidInput) {
-      try {
+
         input = view.getUserInput(System.in);
         if (model.validatePortfolioUUID(input, this.user)) {
           invalidInput = false;
         }
-      } catch (IllegalArgumentException e) {
+
+       else {
         view.throwErrorMessage("Invalid UUID entered!");
         view.getErrorMessageView("Please enter a valid option:");
-        input = view.getUserInput(System.in);
+
       }
     }
     return input;
