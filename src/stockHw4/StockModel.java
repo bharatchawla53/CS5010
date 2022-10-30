@@ -15,15 +15,13 @@ public interface StockModel {
 
   List<String> getAllPortfoliosFromUser(User user);
 
-  boolean dumpTickerShare(User user, String portfolioUUID, String ticker, String shares);
+  boolean dumpTickerShare(User user, String portfolioUUID, String ticker, String noOfShares);
 
   String generateUUID();
-
 
   boolean validatePortfolioUUID(String portfolioUUID, User user);
 
   List<String> getPortfolioContents(User user, String uuid);
-
 
   User getUserFromUsername(String username);
 

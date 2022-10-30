@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class AlphaVantageApi {
 
@@ -78,8 +75,6 @@ public class AlphaVantageApi {
       String[] currDailyTimeStock = response[1].split(",");
       timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]), currDailyTimeStock[1], currDailyTimeStock[4]));
     } else {
-      // build the stock price for last 3 years
-      // go back upto 3 years which equals to 756 days excluding weekends
       for (int i = 1; i < response.length; i++) {
         String[] currDailyTimeStock = response[i].split(",");
         timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]), currDailyTimeStock[1], currDailyTimeStock[4]));
@@ -96,30 +91,23 @@ public class AlphaVantageApi {
     return stockTradedValues;
   }
 
-  Date dateParser(String date) {
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH);
-    Date parsedDate = null;
-    try {
-      parsedDate = formatter.parse(date);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return parsedDate; 
+  LocalDate dateParser(String date) {
+    return LocalDate.parse(date);
   }
 
   static class AlphaDailyTimeSeries {
 
-    private final Date date;
+    private final LocalDate date;
     private final String openVal;
     private final String closeVal;
 
-    public AlphaDailyTimeSeries(Date date, String openVal, String closeVal) {
+    public AlphaDailyTimeSeries(LocalDate date, String openVal, String closeVal) {
       this.date = date;
       this.openVal = openVal;
       this.closeVal = closeVal;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
       return this.date;
     }
 

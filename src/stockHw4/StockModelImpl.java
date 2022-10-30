@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -205,16 +208,23 @@ public class StockModelImpl implements StockModel {
   }
 
   @Override // TODO consolidate stocks of same name during portfolio creation
-  public boolean dumpTickerShare(User user, String portfolioUUID, String ticker, String shares) {
+  public boolean dumpTickerShare(User user, String portfolioUUID, String ticker, String noOfShares) {
     boolean isSuccessful = false;
-    //TODO Integrate API and store with Share Value
     String username = user.getUserName();
     String portfolioFileName = username + "_" + portfolioUUID + ".csv";
     File f = new File(portfolioFileName);
+    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
+
+    if (stockPrice == null) {
+      // call the API
+      getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
+      stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
+    }
+
     if (f.exists() && !f.isDirectory()) {
       try {
         FileWriter fw = new FileWriter(portfolioFileName, true);
-        fw.write(ticker + "," + shares + "\n");
+        fw.write(ticker + "," + noOfShares + "," + stockPrice + "\n");
         isSuccessful = true;
         fw.close();
       } catch (IOException e) {
@@ -226,7 +236,7 @@ public class StockModelImpl implements StockModel {
         if (f.createNewFile()) {
           try {
             FileWriter fw = new FileWriter(portfolioFileName, true);
-            fw.write(ticker + "," + shares + "\n");
+            fw.write(ticker + "," + noOfShares + "," + stockPrice + "\n");
             isSuccessful = true;
             fw.close();
           } catch (IOException e) {
@@ -243,6 +253,18 @@ public class StockModelImpl implements StockModel {
       //format of filename.txt - filename is userid_portfolio.txt, with columns ticker and noofshares
     }
     return isSuccessful;
+  }
+
+  private LocalDate getCurrentDateSkippingWeekends() {
+    LocalDate now = LocalDate.now();
+
+    DayOfWeek dayOfWeek = DayOfWeek.of(now.get(ChronoField.DAY_OF_WEEK));
+    if (dayOfWeek.equals(DayOfWeek.SATURDAY)) {
+      now = now.minusDays(1);
+    } else if (dayOfWeek.equals(DayOfWeek.SUNDAY)) {
+      now = now.minusDays(2);
+    }
+    return now;
   }
 
   @Override
@@ -278,20 +300,21 @@ public class StockModelImpl implements StockModel {
 
     for (String content : portfolioContents) {
       String[] shareDetail = content.split(" ");
-      String symbolCached = checkSymbolExistsInTheMap(shareDetail, dateParser(certainDate));
+      Double stockPrice = getStockPrice(shareDetail, dateParser(certainDate));
 
-      if (symbolCached == null) {
+      if (stockPrice == null) {
         // call the API
         getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), shareDetail[0]);
-        symbolCached = checkSymbolExistsInTheMap(shareDetail, dateParser(certainDate));
+        stockPrice = getStockPrice(shareDetail, dateParser(certainDate));
       }
 
+      String symbolCached = calculateTotalStockWorth(shareDetail, stockPrice);
       totalValueOfPortfolio.add(symbolCached);
     }
     return totalValueOfPortfolio;
   }
 
-  private Date dateParser(String certainDate) {
+  private LocalDate dateParser(String certainDate) {
     return alphaVantageApi.dateParser(certainDate);
   }
 
@@ -314,91 +337,90 @@ public class StockModelImpl implements StockModel {
     return isTimeBeforeNoon;
   }
 
-  private String checkSymbolExistsInTheMap(String[] shareDetail, Date certainDate) {
-    String result = null;
+  private Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
+    Double stockPrice = null;
 
     for (HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> symbolMap : stockHashMapList) {
       if (symbolMap.containsKey(shareDetail[0])) {
         // iterate to find the stock value on a certain date
         for (AlphaVantageApi.AlphaDailyTimeSeries timeSeries : symbolMap.get(shareDetail[0])) {
           if (timeSeries.getDate().equals(certainDate)) {
-            // if its before noon, use open val to compute, else use close val
-            double totalValuePerStock = isCurrentTimeBeforeNoon()
-                    ? Double.parseDouble(shareDetail[1]) * Double.parseDouble(timeSeries.getOpenVal())
-                    : Double.parseDouble(shareDetail[1]) * Double.parseDouble(timeSeries.getCloseVal());
-
-            result = shareDetail[0] + " " + shareDetail[1] + " " + totalValuePerStock;
+            stockPrice = isCurrentTimeBeforeNoon()
+                    ? Double.parseDouble(timeSeries.getOpenVal())
+                    : Double.parseDouble(timeSeries.getCloseVal());
+            break;
           }
         }
       }
     }
-    return result;
+    return stockPrice;
 
- }
+  }
 
- @Override
-  public boolean validateUserPortfolioExternal(String filePath, User user)
- {
-   File f = new File(filePath);
-   boolean isValid = false;
-   Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
+  private String calculateTotalStockWorth(String[] shareDetail, Double stockPrice) {
+    return shareDetail[0] + " " + shareDetail[1] + " " + stockPrice * Double.parseDouble(shareDetail[1]);
+  }
 
-
-   try {
-     BufferedReader fr = new BufferedReader(new FileReader(filePath));
-
-     String strLine;
-
-     while ((strLine = fr.readLine()) != null) {
-       Matcher validator = ticketShareValidationPattern.matcher(strLine);
-       isValid = validator.matches();
+  @Override
+  public boolean validateUserPortfolioExternal(String filePath, User user) {
+    File f = new File(filePath);
+    boolean isValid = false;
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
 
 
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
 
-     }
-     return isValid;
-   } catch (IOException e) {
-     return false;
-   }
- }
+      String strLine;
 
- public boolean saveExternalUserPortfolio(String filePath, User user)
- {
-   String username = user.getUserName();
-   String uuid = generateUUID();
-   String portfolioFileName = username + "_" + uuid + ".csv";
-   List<String> portfolioContents = new ArrayList<>();
-   File f = new File(portfolioFileName);
-   boolean isSuccessful = false;
-   try {
-     BufferedReader fr = new BufferedReader(new FileReader(filePath));
+      while ((strLine = fr.readLine()) != null) {
+        Matcher validator = ticketShareValidationPattern.matcher(strLine);
+        isValid = validator.matches();
 
-     String strLine;
 
-     while ((strLine = fr.readLine()) != null) {
-       String ticker = strLine.split(",")[0];
-       String noOfShares = strLine.split(",")[1];
-       String tickerNoOfShares = ticker + " " + noOfShares;
-       portfolioContents.add(tickerNoOfShares);
-     }
-     if (f.createNewFile()) {
-       try {
-         FileWriter fw = new FileWriter(portfolioFileName, true);
-         for(String s: portfolioContents) {
-           fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "\n");
-         }
-         isSuccessful = true;
+      }
+      return isValid;
+    } catch (IOException e) {
+      return false;
+    }
+  }
 
-         fw.close();
-         return isSuccessful;
-       } catch (IOException e) {
-         e.printStackTrace();
-       }
-     }
+  public boolean saveExternalUserPortfolio(String filePath, User user) {
+    String username = user.getUserName();
+    String uuid = generateUUID();
+    String portfolioFileName = username + "_" + uuid + ".csv";
+    List<String> portfolioContents = new ArrayList<>();
+    File f = new File(portfolioFileName);
+    boolean isSuccessful = false;
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
 
-   } catch (IOException e) {
-     return false;
-   }
-   return false;
- }
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+        String ticker = strLine.split(",")[0];
+        String noOfShares = strLine.split(",")[1];
+        String tickerNoOfShares = ticker + " " + noOfShares;
+        portfolioContents.add(tickerNoOfShares);
+      }
+      if (f.createNewFile()) {
+        try {
+          FileWriter fw = new FileWriter(portfolioFileName, true);
+          for (String s : portfolioContents) {
+            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "\n");
+          }
+          isSuccessful = true;
+
+          fw.close();
+          return isSuccessful;
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+    } catch (IOException e) {
+      return false;
+    }
+    return false;
+  }
 }
