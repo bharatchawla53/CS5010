@@ -184,11 +184,11 @@ public class StockControllerImpl extends StockControllerAbstract {
       if (!input.equals("DONE") && model.dumpTickerShare(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
         // TODO add successful view as well and tell them to enter another stock or enter "DONE" to exit this process
-        view.getDisplaySuccessfulTickerShareDump();
+        view.getDisplaySuccessfulTickerShareDump(portfolioUuid);
         invalidInput = true;
       }
     }
-    view.getDisplayFinishedDumpingPortfolio();
+    view.getDisplayFinishedDumpingPortfolio(portfolioUuid);
   }
 
   private void processUserOptionTwo(String input) {
@@ -227,13 +227,23 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     // calculate total worth of a portfolio
     List<String> totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
+    double totalPortfolioValueSum = 0.0;
+    for(String row: totalValueOfAPortfolio)
+    {
+      System.out.println(row);
+      totalPortfolioValueSum+= Double.parseDouble(row.split(" ")[2]);
+    }
 
     // render it to view
     List<String> columns = new ArrayList<String>();
+    List<String> totalPortfolioValue = new ArrayList<String>();
+
+    totalPortfolioValue.add("The total value of this portfolio is:"+String.valueOf(totalPortfolioValueSum));
     columns.add("Ticker");
     columns.add("Number of shares");
     columns.add("Total Share Value");
     view.getTableViewBuilder(totalValueOfAPortfolio, columns);
+    view.getViewBuilder(totalPortfolioValue);
   }
 
   // TODO add load the file option and test 4 completely

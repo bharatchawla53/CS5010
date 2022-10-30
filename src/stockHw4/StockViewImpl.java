@@ -136,6 +136,11 @@ public class StockViewImpl implements StockView {
     System.out.println(displayString);
   }
 
+
+
+
+
+
   @Override
   public void terminateView() {
     List<String> opItems = new ArrayList<>();
@@ -147,7 +152,7 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getDisplaySuccessfulTickerShareDump() {
+  public void getDisplaySuccessfulTickerShareDump(String uuid) {
     List<String> opItems = new ArrayList<>();
     opItems.add("Ticker and Number of Shares added to portfolio! Enter DONE to exit " +
             "Portfolio Creation or Enter another valid stock to continue");
@@ -158,9 +163,9 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getDisplayFinishedDumpingPortfolio() {
+  public void getDisplayFinishedDumpingPortfolio(String uuid) {
     List<String> opItems = new ArrayList<>();
-    opItems.add("Your portfolio has been created!");
+    opItems.add("Your portfolio has been created! You can find it at "+uuid);
 
 
     String displayString = formatOutput(opItems);

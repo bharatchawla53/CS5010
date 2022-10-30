@@ -206,57 +206,101 @@ public class StockModelImpl implements StockModel {
     }
     return null;
   }
+  private LocalDate getCurrentDateSkippingWeekends() {
+    LocalDate now = LocalDate.now();
+
+    DayOfWeek dayOfWeek = DayOfWeek.of(now.get(ChronoField.DAY_OF_WEEK));
+    if (dayOfWeek.equals(DayOfWeek.SATURDAY)) {
+      now = now.minusDays(1);
+    } else if (dayOfWeek.equals(DayOfWeek.SUNDAY)) {
+      now = now.minusDays(2);
+    }
+    return now;
+  }
+
+
+  private LocalDate getCurrentDateSkippingWeekends(LocalDate date) {
+    LocalDate now = date;
+
+    DayOfWeek dayOfWeek = DayOfWeek.of(now.get(ChronoField.DAY_OF_WEEK));
+    if (dayOfWeek.equals(DayOfWeek.SATURDAY)) {
+      now = now.minusDays(1);
+    } else if (dayOfWeek.equals(DayOfWeek.SUNDAY)) {
+      now = now.minusDays(2);
+    }
+    return now;
+  }
+
+
+
 
   @Override // TODO consolidate stocks of same name during portfolio creation
   public boolean dumpTickerShare(User user, String portfolioUUID, String ticker, String noOfShares) {
     boolean isSuccessful = false;
     String username = user.getUserName();
     String portfolioFileName = username + "_" + portfolioUUID + ".csv";
-    boolean isOverwritten = false;
     File f = new File(portfolioFileName);
-
-    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
-
+    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
+    boolean isOverwritten = false;
     if (stockPrice == null) {
       // call the API
       getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
-      stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
+      stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
     }
 
     if (f.exists() && !f.isDirectory()) {
-      List<String> portfolioContents = getPortfolioContents(user,portfolioUUID);
-      for(int i =0;i< portfolioContents.size();i++)
-      {
-        if(ticker == portfolioContents.get(i).split(",")[0])
+
+        List<String> portfolioContents = getPortfolioContents(user,portfolioUUID);
+        for (int i=0;i<portfolioContents.size();i++)
         {
-          portfolioContents.set(i,ticker + String.valueOf(Integer.parseInt(portfolioContents.get(i).split(",")[1])
-                  +Integer.parseInt(noOfShares))+ portfolioContents.get(i).split(",")[2]);
-          isOverwritten = true;
+          if(portfolioContents.get(i).split(" ")[0].equals(ticker))
+          {
+            String newRow = ticker+","+
+                    String.valueOf(Integer.parseInt(portfolioContents.get(i).split(" ")[1])
+                    +Integer.parseInt(noOfShares))+","+portfolioContents.get(i).split(" ")[2];
+            portfolioContents.set(i,newRow);
+            isOverwritten = true;
+
+          }
+        }
+        if(isOverwritten == true) {
+          try {
+            FileWriter fw = new FileWriter(portfolioFileName,false);
+            for (String row : portfolioContents) {
+              fw.write(row + "\n");
+
+            }
+            isSuccessful = true;
+            fw.close();
+
+
+          }
+          catch(IOException e)
+          {
+            e.printStackTrace();
+          }
+        }
+
+        else
+        {
+          try {
+            FileWriter fw = new FileWriter(portfolioFileName, true);
+            fw.write(ticker + "," + noOfShares + "," + stockPrice + "\n");
+            isSuccessful = true;
+            fw.close();
+          }
+          catch(IOException e) {
+            e.printStackTrace();
+          }
         }
 
 
-      }
-      try {
-        FileWriter fw = new FileWriter(portfolioFileName);
-        for(String row: portfolioContents) {
-          fw.write( row+ "\n");
-        }
-        isSuccessful = true;
-        fw.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      if(!isOverwritten) {
-        try {
-        FileWriter fw = new FileWriter(portfolioFileName, true);
-        fw.write(ticker + "," + noOfShares + "," + stockPrice + "\n");
-        isSuccessful = true;
-        fw.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }}
 
-    } else {
+
+
+      }
+
+     else {
       try {
         if (f.createNewFile()) {
           try {
@@ -280,17 +324,9 @@ public class StockModelImpl implements StockModel {
     return isSuccessful;
   }
 
-  private LocalDate getCurrentDateSkippingWeekends(LocalDate date) {
-    LocalDate now = date;
 
-    DayOfWeek dayOfWeek = DayOfWeek.of(now.get(ChronoField.DAY_OF_WEEK));
-    if (dayOfWeek.equals(DayOfWeek.SATURDAY)) {
-      now = now.minusDays(1);
-    } else if (dayOfWeek.equals(DayOfWeek.SUNDAY)) {
-      now = now.minusDays(2);
-    }
-    return now;
-  }
+
+
 
   @Override
   public List<String> getPortfolioContents(User user, String uuid) {

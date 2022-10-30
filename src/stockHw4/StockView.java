@@ -51,9 +51,13 @@ public interface StockView {
 
   void terminateView();
 
-  void getDisplaySuccessfulTickerShareDump();
+  void getDisplaySuccessfulTickerShareDump(String uuid);
 
-  void getDisplayFinishedDumpingPortfolio();
+  void getDisplayFinishedDumpingPortfolio(String uuid);
 
   void getTableViewBuilder(List<String> rows, List<String> columns);
+
+
+
+
 }
