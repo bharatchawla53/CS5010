@@ -131,7 +131,7 @@ public class StockViewImpl implements StockView {
   public void getDisplayTotalPortfolioValue() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Please enter a date for which the portfolio value will be calculated on "
-            + "(Expected Date Format: yyyy-MMM-dd): ");
+            + "(Expected Date Format: yyyy-MM-dd): ");
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }

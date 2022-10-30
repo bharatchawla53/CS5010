@@ -215,12 +215,12 @@ public class StockModelImpl implements StockModel {
     boolean isOverwritten = false;
     File f = new File(portfolioFileName);
 
-    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
+    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
 
     if (stockPrice == null) {
       // call the API
       getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
-      stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
+      stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
     }
 
     if (f.exists() && !f.isDirectory()) {
@@ -280,8 +280,8 @@ public class StockModelImpl implements StockModel {
     return isSuccessful;
   }
 
-  private LocalDate getCurrentDateSkippingWeekends() {
-    LocalDate now = LocalDate.now();
+  private LocalDate getCurrentDateSkippingWeekends(LocalDate date) {
+    LocalDate now = date;
 
     DayOfWeek dayOfWeek = DayOfWeek.of(now.get(ChronoField.DAY_OF_WEEK));
     if (dayOfWeek.equals(DayOfWeek.SATURDAY)) {
@@ -326,12 +326,12 @@ public class StockModelImpl implements StockModel {
 
     for (String content : portfolioContents) {
       String[] shareDetail = content.split(" ");
-      Double stockPrice = getStockPrice(shareDetail, dateParser(certainDate));
+      Double stockPrice = getStockPrice(shareDetail, getCurrentDateSkippingWeekends(dateParser(certainDate)));
 
       if (stockPrice == null) {
         // call the API
         getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), shareDetail[0]);
-        stockPrice = getStockPrice(shareDetail, dateParser(certainDate));
+        stockPrice = getStockPrice(shareDetail, getCurrentDateSkippingWeekends(dateParser(certainDate)));
       }
 
       String symbolCached = calculateTotalStockWorth(shareDetail, stockPrice);

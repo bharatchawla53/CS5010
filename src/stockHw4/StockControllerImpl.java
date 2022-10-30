@@ -1,7 +1,9 @@
 package stockHw4;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -227,7 +229,11 @@ public class StockControllerImpl extends StockControllerAbstract {
     List<String> totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
 
     // render it to view
-    view.getViewBuilder(totalValueOfAPortfolio);
+    List<String> columns = new ArrayList<String>();
+    columns.add("Ticker");
+    columns.add("Number of shares");
+    columns.add("Total Share Value");
+    view.getTableViewBuilder(totalValueOfAPortfolio, columns);
   }
 
   // TODO add load the file option and test 4 completely
@@ -251,11 +257,11 @@ public class StockControllerImpl extends StockControllerAbstract {
       }
     }
 
-    String portfolioFilePath = this.user.getUserName() + "_" + input + ".csv";
+    // TODO make directory path dynamic
+    String portfolioFilePath = "CS5010/" + this.user.getUserName() + "_" + input + ".csv";
     List<String> serializedPortfolioSuccess = new ArrayList<String>();
-    serializedPortfolioSuccess.add("Your portfolio "+input+" has been serialized! You can find it at: ");
+    serializedPortfolioSuccess.add("Your portfolio " + input + " has been serialized! You can find it at: " + portfolioFilePath);
     view.getViewBuilder(serializedPortfolioSuccess);
-    view.getViewBuilder(Collections.singletonList(portfolioFilePath));
   }
 
   private void processUserOptionSix(String input) {
@@ -339,14 +345,7 @@ public class StockControllerImpl extends StockControllerAbstract {
   }
 
   private boolean isValidDate(String date) {
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH);
-    try {
-      formatter.parse(date);
-    } catch (ParseException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
+    return LocalDate.parse(date) != null;
   }
 }
 
