@@ -74,12 +74,9 @@ public class StockControllerImpl extends StockControllerAbstract {
     while (invalidInput) {
       input = view.getUserInput(System.in);
       if (model.isUserNameExists(input)) {
-        //invalidUserName = false;
         invalidInput = false;
       } else {
         view.throwErrorMessage("This username does not exist! Enter an existing username:");
-        //invalidUserName = true;
-        input = view.getUserInput(System.in);
       }
     }
     return input;
