@@ -262,10 +262,10 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getDisplaySuccessfullPortfolioSave()
+  public void getDisplaySuccessfullPortfolioSave(String pUUID)
   {
     List<String> opItems = new ArrayList<>();
-    opItems.add("The external portfolio file has been saved successfully.");
+    opItems.add("The external portfolio file has been saved successfully.You can find it at "+pUUID);
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
   }

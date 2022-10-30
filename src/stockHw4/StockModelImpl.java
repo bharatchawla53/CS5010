@@ -410,7 +410,7 @@ public class StockModelImpl implements StockModel {
     }
   }
 
-  public boolean saveExternalUserPortfolio(String filePath, User user) {
+  public String saveExternalUserPortfolio(String filePath, User user) {
     String username = user.getUserName();
     String uuid = generateUUID();
     String portfolioFileName = username + "_" + uuid + ".csv";
@@ -437,15 +437,15 @@ public class StockModelImpl implements StockModel {
           isSuccessful = true;
 
           fw.close();
-          return isSuccessful;
+          return uuid;
         } catch (IOException e) {
           e.printStackTrace();
         }
       }
 
     } catch (IOException e) {
-      return false;
+      return null;
     }
-    return false;
+    return null;
   }
 }

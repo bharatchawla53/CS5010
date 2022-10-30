@@ -29,7 +29,7 @@ public interface StockModel {
 
   boolean validateUserPortfolioExternal(String filePath, User user);
 
-  boolean saveExternalUserPortfolio(String filePath, User user);
+  String saveExternalUserPortfolio(String filePath, User user);
 
 
 }

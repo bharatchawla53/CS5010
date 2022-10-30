@@ -281,10 +281,10 @@ public class StockControllerImpl extends StockControllerAbstract {
         input = view.getUserInput(System.in);
       }
     }
-    boolean successSaveExternalPortfolio = model.saveExternalUserPortfolio(input,this.user);
-    if (successSaveExternalPortfolio)
+    String pUUID = model.saveExternalUserPortfolio(input,this.user);
+    if (pUUID != null)
     {
-      view.getDisplaySuccessfullPortfolioSave();
+      view.getDisplaySuccessfullPortfolioSave(pUUID);
     }
 
   }

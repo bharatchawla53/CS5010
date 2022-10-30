@@ -31,7 +31,7 @@ public interface StockView {
 
   void getDisplaySavePortfolioFilePathInput();
 
-  void getDisplaySuccessfullPortfolioSave();
+  void getDisplaySuccessfullPortfolioSave(String pUUID);
 
 
 
