@@ -94,11 +94,10 @@ public class StockControllerImpl extends StockControllerAbstract {
     } else if (input.equals(UserInputOptions.FOUR.getInput())) {
       processUserOptionFour(input);
     } else if (input.equals(UserInputOptions.FIVE.getInput())) {
-      terminateApplication(input);
-    } else if (input.equals(UserInputOptions.SIX.getInput())) {
       processUserOptionSix(input);
+    } else if (input.equals(UserInputOptions.SIX.getInput())) {
+      terminateApplication(input);
     }
-
   }
 
   private void terminateApplication(String input) {
@@ -169,7 +168,6 @@ public class StockControllerImpl extends StockControllerAbstract {
           invalidInput = false;
         } else {
           if (input.equals("DONE")) {
-            view.getDisplayFinishedDumpingPortfolio();
             invalidInput = false;
             // TODO add a view stating portfolio  is successfully created
           } else {
@@ -186,11 +184,9 @@ public class StockControllerImpl extends StockControllerAbstract {
         // TODO add successful view as well and tell them to enter another stock or enter "DONE" to exit this process
         view.getDisplaySuccessfulTickerShareDump();
         invalidInput = true;
-      } else {
-        view.getDisplayFinishedDumpingPortfolio();
-        // TODO add a view for this
       }
     }
+    view.getDisplayFinishedDumpingPortfolio();
   }
 
   private void processUserOptionTwo(String input) {
@@ -200,7 +196,8 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     List<String> columns = new ArrayList<String>();
     columns.add("Ticker");
-    columns.add("Share");
+    columns.add("Number of shares");
+    columns.add("Share Price");
     view.getTableViewBuilder(model.getPortfolioContents(this.user, input), columns);
   }
 
@@ -241,18 +238,16 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     List<String> portfolioUser = model.getAllPortfoliosFromUser(this.user);
 
-    view.getViewBuilder(portfolioUser);
+    view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
+    //view.getViewBuilder(portfolioUser);
     view.getDisplayPortfolioFilePathInput();
     while (invalidInput) {
-      try {
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
-        if (model.validatePortfolioUUID(input, this.user)) {
-          invalidInput = false;
-        }
-      } catch (IllegalArgumentException e) {
+      input = view.getUserInput(System.in);
+      if (model.validatePortfolioUUID(input, this.user)) {
+        invalidInput = false;
+      } else {
         view.throwErrorMessage("Invalid UUID entered!");
         view.getErrorMessageView("Please enter a valid option:");
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
       }
     }
 
@@ -260,35 +255,25 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getViewBuilder(Collections.singletonList(portfolioFilePath));
   }
 
-  private void processUserOptionSix(String input)
-  {
+  private void processUserOptionSix(String input) {
     boolean invalidInput = true;
     view.getDisplaySavePortfolioFromUser();
 
-
-
-
     view.getDisplaySavePortfolioFilePathInput();
     while (invalidInput) {
-      try {
-        input = view.getUserInput(System.in);
-        if (model.validateUserPortfolioExternal(input, this.user)) {
-          invalidInput = false;
-        }
-      } catch (IllegalArgumentException e) {
+      input = view.getUserInput(System.in);
+      if (model.validateUserPortfolioExternal(input, this.user)) {
+        invalidInput = false;
+      } else {
         view.throwErrorMessage("Invalid File Path entered or Structure of File is malformed!");
         view.getErrorMessageView("Please enter a valid file path:");
-        input = view.getUserInput(System.in);
       }
     }
-    String pUUID = model.saveExternalUserPortfolio(input,this.user);
-    if (pUUID != null)
-    {
+    String pUUID = model.saveExternalUserPortfolio(input, this.user);
+    if (pUUID != null) {
       view.getDisplaySuccessfullPortfolioSave(pUUID);
     }
-
   }
-
 
 
   private boolean processNewUser() {
@@ -330,7 +315,8 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     List<String> portfolioUser = model.getAllPortfoliosFromUser(this.user);
 
-    view.getViewBuilder(portfolioUser);
+    view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
+    //view.getViewBuilder(portfolioUser);
     view.getDisplayPortfolioInput();
 
     // validate correct portfolio ID is provided

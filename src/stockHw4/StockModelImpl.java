@@ -307,7 +307,8 @@ public class StockModelImpl implements StockModel {
       while ((strLine = fr.readLine()) != null) {
         String ticker = strLine.split(",")[0];
         String noOfShares = strLine.split(",")[1];
-        String tickerNoOfShares = ticker + " " + noOfShares;
+        String stockPrice = strLine.split(",")[2];
+        String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
         portfolioContents.add(tickerNoOfShares);
       }
       return portfolioContents;
@@ -390,19 +391,15 @@ public class StockModelImpl implements StockModel {
   public boolean validateUserPortfolioExternal(String filePath, User user) {
     File f = new File(filePath);
     boolean isValid = false;
-    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
-
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+");
 
     try {
       BufferedReader fr = new BufferedReader(new FileReader(filePath));
-
       String strLine;
 
       while ((strLine = fr.readLine()) != null) {
         Matcher validator = ticketShareValidationPattern.matcher(strLine);
         isValid = validator.matches();
-
-
       }
       return isValid;
     } catch (IOException e) {
@@ -433,7 +430,7 @@ public class StockModelImpl implements StockModel {
         try {
           FileWriter fw = new FileWriter(portfolioFileName, true);
           for (String s : portfolioContents) {
-            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + s.split(" ")[2]+"\n");
+            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "," + s.split(" ")[2]+"\n");
           }
           isSuccessful = true;
 

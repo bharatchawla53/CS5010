@@ -2,6 +2,8 @@ package stockHw4;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -108,7 +110,7 @@ public class StockViewImpl implements StockView {
   @Override
   public void getDisplayPortfolioHeader() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("Here are your Portfolios!");
+    opItems.add("Here are your Portfolios:");
 
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
@@ -166,35 +168,22 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getTableViewBuilder(List<String> portfolioContents, List<String> columns) {
-    //TODO abstract seperator and number of fields
-    int sumLenColumn = 0;
-    String tableHeader = "";
-    String ticker;
-    String noOfShares;
-    for(int i =0; i<columns.size();i++)
-    {
-      tableHeader += columns.get(i)+"\t";
-      sumLenColumn+= columns.get(i).length()+2;
+  public void getTableViewBuilder(List<String> rows, List<String> columns) {
+    CommandLineTable commandLineTable = new CommandLineTable();
+    commandLineTable.setShowVerticalLines(true);
+    commandLineTable.setHeaders(columns);
 
-    }
-    System.out.println(tableHeader);
-    String rowSep = "";
-    for(int i =0;i<sumLenColumn;i++)
-    {
-     rowSep+=".";
-    }
-    System.out.println(rowSep);
-    for(String row: portfolioContents)
-    {
-      ticker = row.split(" ")[0];
-      noOfShares = row.split(" ")[1];
-      System.out.println(ticker+"\t"+noOfShares);
-      System.out.println(rowSep);
+    for(String row : rows) {
+      String[] splitRow = row.split(" ");
+
+      if (splitRow.length == 1) {
+        commandLineTable.addRow(splitRow[0]);
+      } else {
+        commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2]);
+      }
     }
 
-
-
+    commandLineTable.print();
   }
 
 
@@ -205,9 +194,9 @@ public class StockViewImpl implements StockView {
             "Once done creating your portfolio, please enter \"DONE\" ");
     opItems.add("2. Would you like to examine the composition of a portfolio ?");
     opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
-    opItems.add("4. Would you like to persist a portfolio so that it can be saved and loaded ?");
-    opItems.add("5. Would you like to exit the application ?");
-    opItems.add("6. Would you like to load an external portfolio?");
+    opItems.add("4. Would you like to persist a portfolio so that it can be saved ?");
+    opItems.add("5. Would you like to load an external portfolio?");
+    opItems.add("6. Would you like to exit the application ?");
 
     opItems.add("Enter your option: ");
 
@@ -271,4 +260,84 @@ public class StockViewImpl implements StockView {
   }
 
 
+  private class CommandLineTable {
+    private static final String HORIZONTAL_SEP = "-";
+    private String verticalSep;
+    private String joinSep;
+    private List<String> headers;
+    private List<String[]> rows = new ArrayList<>();
+    private boolean rightAlign;
+
+    public CommandLineTable() {
+      setShowVerticalLines(false);
+    }
+
+    public void setRightAlign(boolean rightAlign) {
+      this.rightAlign = rightAlign;
+    }
+
+    public void setShowVerticalLines(boolean showVerticalLines) {
+      verticalSep = showVerticalLines ? "|" : "";
+      joinSep = showVerticalLines ? "+" : " ";
+    }
+
+    public void setHeaders(List<String> headers) {
+      this.headers = headers;
+    }
+
+    public void addRow(String... cells) {
+      rows.add(cells);
+    }
+
+    public void print() {
+      int[] maxWidths = headers != null ?
+              headers.stream().mapToInt(String::length).toArray() : null;
+
+      for (String[] cells : rows) {
+        if (maxWidths == null) {
+          maxWidths = new int[cells.length];
+        }
+        if (cells.length != maxWidths.length) {
+          throw new IllegalArgumentException("Number of row-cells and headers should be consistent");
+        }
+        for (int i = 0; i < cells.length; i++) {
+          maxWidths[i] = Math.max(maxWidths[i], cells[i].length());
+        }
+      }
+
+      if (headers != null) {
+        printLine(maxWidths);
+        printRow(headers, maxWidths);
+        printLine(maxWidths);
+      }
+      for (String[] cells : rows) {
+        printRow(Arrays.asList(cells), maxWidths);
+      }
+      if (headers != null) {
+        printLine(maxWidths);
+      }
+    }
+
+    private void printLine(int[] columnWidths) {
+      for (int i = 0; i < columnWidths.length; i++) {
+        String line = String.join("", Collections.nCopies(columnWidths[i] +
+                verticalSep.length() + 1, HORIZONTAL_SEP));
+        System.out.print(joinSep + line + (i == columnWidths.length - 1 ? joinSep : ""));
+      }
+      System.out.println();
+    }
+
+    private void printRow(List<String> cells, int[] maxWidths) {
+      for (int i = 0; i < cells.size(); i++) {
+        String s = cells.get(i);
+        String verStrTemp = i == cells.size() - 1 ? verticalSep : "";
+        if (rightAlign) {
+          System.out.printf("%s %" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+        } else {
+          System.out.printf("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+        }
+      }
+      System.out.println();
+    }
+  }
 }

@@ -55,5 +55,5 @@ public interface StockView {
 
   void getDisplayFinishedDumpingPortfolio();
 
-  void getTableViewBuilder(List<String> portfolioContents, List<String> columns);
+  void getTableViewBuilder(List<String> rows, List<String> columns);
 }
