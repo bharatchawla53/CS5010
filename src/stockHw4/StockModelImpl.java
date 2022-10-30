@@ -212,7 +212,9 @@ public class StockModelImpl implements StockModel {
     boolean isSuccessful = false;
     String username = user.getUserName();
     String portfolioFileName = username + "_" + portfolioUUID + ".csv";
+    boolean isOverwritten = false;
     File f = new File(portfolioFileName);
+
     Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends());
 
     if (stockPrice == null) {
@@ -222,14 +224,37 @@ public class StockModelImpl implements StockModel {
     }
 
     if (f.exists() && !f.isDirectory()) {
+      List<String> portfolioContents = getPortfolioContents(user,portfolioUUID);
+      for(int i =0;i< portfolioContents.size();i++)
+      {
+        if(ticker == portfolioContents.get(i).split(",")[0])
+        {
+          portfolioContents.set(i,ticker + String.valueOf(Integer.parseInt(portfolioContents.get(i).split(",")[1])
+                  +Integer.parseInt(noOfShares))+ portfolioContents.get(i).split(",")[2]);
+          isOverwritten = true;
+        }
+
+
+      }
       try {
+        FileWriter fw = new FileWriter(portfolioFileName);
+        for(String row: portfolioContents) {
+          fw.write( row+ "\n");
+        }
+        isSuccessful = true;
+        fw.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      if(!isOverwritten) {
+        try {
         FileWriter fw = new FileWriter(portfolioFileName, true);
         fw.write(ticker + "," + noOfShares + "," + stockPrice + "\n");
         isSuccessful = true;
         fw.close();
       } catch (IOException e) {
         e.printStackTrace();
-      }
+      }}
 
     } else {
       try {
