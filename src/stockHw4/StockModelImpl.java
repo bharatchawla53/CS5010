@@ -371,7 +371,7 @@ public class StockModelImpl implements StockModel {
    File f = new File(portfolioFileName);
    boolean isSuccessful = false;
    try {
-     BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+     BufferedReader fr = new BufferedReader(new FileReader(filePath));
 
      String strLine;
 
