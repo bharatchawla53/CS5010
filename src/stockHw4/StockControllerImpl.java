@@ -252,6 +252,9 @@ public class StockControllerImpl extends StockControllerAbstract {
     }
 
     String portfolioFilePath = this.user.getUserName() + "_" + input + ".csv";
+    List<String> serializedPortfolioSuccess = new ArrayList<String>();
+    serializedPortfolioSuccess.add("Your portfolio "+input+" has been serialized! You can find it at: ");
+    view.getViewBuilder(serializedPortfolioSuccess);
     view.getViewBuilder(Collections.singletonList(portfolioFilePath));
   }
 
