@@ -1,14 +1,12 @@
 package stockHw4;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public class StockControllerImpl extends StockControllerAbstract {
@@ -165,8 +163,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       // validate the user provided ticker/share combination
       while (invalidInput) {
         input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
-        model.validateTickerShare(input);
-        if (model.isValidTicker(input.split(",")[0])) {
+        if (model.validateTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
           invalidInput = false;
         } else {
           if (input.equals("DONE")) {
@@ -174,14 +171,14 @@ public class StockControllerImpl extends StockControllerAbstract {
             // TODO add a view stating portfolio  is successfully created
           } else {
             view.throwErrorMessage("Invalid input!");
-            view.getErrorMessageView("Please enter a valid ticker/share combination: ");
+            view.getErrorMessageView("Please enter a valid ticker/share (no fractional shares) combination : ");
           }
         }
       }
       // received correct combination from user to add share to their portfolio
 
       // TODO find a way to avoid Index out of bounds exception
-      if (!input.equals("DONE") && model.dumpTickerShare(this.user, portfolioUuid,
+      if (!input.equals("DONE") && model.saveStock(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
         // TODO add successful view as well and tell them to enter another stock or enter "DONE" to exit this process
         view.getDisplaySuccessfulTickerShareDump(portfolioUuid);
@@ -204,10 +201,6 @@ public class StockControllerImpl extends StockControllerAbstract {
   }
 
   private void processUserOptionThree(String input) {
-    // present the list of portfolios
-    // get the portfolio id
-    // then get date
-    // then compute
     boolean invalidInput = true;
     String portfolioId = getPortfolioIdInput(input);
 
@@ -226,24 +219,39 @@ public class StockControllerImpl extends StockControllerAbstract {
     }
 
     // calculate total worth of a portfolio
-    List<String> totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
+    Map<Integer, List<String>> totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
+
     double totalPortfolioValueSum = 0.0;
-    for(String row: totalValueOfAPortfolio)
-    {
-      System.out.println(row);
-      totalPortfolioValueSum+= Double.parseDouble(row.split(" ")[2]);
+    // check if list length matches with expected length returned by model to indicate if the entire portfolio has been processed
+    for (Map.Entry<Integer, List<String>> entry : totalValueOfAPortfolio.entrySet()) {
+      if (entry.getKey() != entry.getValue().size()) {
+        
+        for (int i = 0; i <= 100; i++) {
+          if (i != 100) {
+            // call the model again to fetch remaining ones
+            totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
+          }
+          view.progressBar(i);
+          try {
+            Thread.sleep( 600);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+
+      }
+
+      for (String row : totalValueOfAPortfolio.values().stream().findFirst().get()) {
+        totalPortfolioValueSum += Double.parseDouble(row.split(" ")[2]);
+      }
+
+      List<String> columns = new ArrayList<String>();
+      columns.add("Ticker");
+      columns.add("Number of shares");
+      columns.add("Total Share Value");
+      view.getTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
+      view.getViewBuilder(Collections.singletonList("The total value of this portfolio is: " + totalPortfolioValueSum));
     }
-
-    // render it to view
-    List<String> columns = new ArrayList<String>();
-    List<String> totalPortfolioValue = new ArrayList<String>();
-
-    totalPortfolioValue.add("The total value of this portfolio is:"+String.valueOf(totalPortfolioValueSum));
-    columns.add("Ticker");
-    columns.add("Number of shares");
-    columns.add("Total Share Value");
-    view.getTableViewBuilder(totalValueOfAPortfolio, columns);
-    view.getViewBuilder(totalPortfolioValue);
   }
 
   // TODO add load the file option and test 4 completely
@@ -252,7 +260,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     boolean invalidInput = true;
     view.getDisplayPortfolioFilePathHeader();
 
-    List<String> portfolioUser = model.getAllPortfoliosFromUser(this.user);
+    List<String> portfolioUser = model.getPortfoliosForUser(this.user);
 
     view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
     //view.getViewBuilder(portfolioUser);
@@ -281,7 +289,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getDisplaySavePortfolioFilePathInput();
     while (invalidInput) {
       input = view.getUserInput(System.in);
-      if (model.validateUserPortfolioExternal(input, this.user)) {
+      if (model.validateUserPortfolioExternal(input)) {
         pUUID = model.saveExternalUserPortfolio(input, this.user);
         if(pUUID != null)
         {
@@ -338,7 +346,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     boolean invalidInput = true;
     view.getDisplayPortfolioHeader();
 
-    List<String> portfolioUser = model.getAllPortfoliosFromUser(this.user);
+    List<String> portfolioUser = model.getPortfoliosForUser(this.user);
 
     view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
     //view.getViewBuilder(portfolioUser);

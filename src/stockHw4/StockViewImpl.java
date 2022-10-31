@@ -47,11 +47,6 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getExistingUserView() {
-
-  }
-
-  @Override
   public void getErrorMessageView(String message) {
     System.out.println(message);
   }
@@ -228,16 +223,6 @@ public class StockViewImpl implements StockView {
   }
 
   @Override
-  public void getNewUserOptions() {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("1. Would you like to create a portfolio ?");
-    opItems.add("Enter your option: ");
-
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
   public void getDisplaySavePortfolioFromUser()
   {
     List<String> opItems = new ArrayList<>();
@@ -262,6 +247,17 @@ public class StockViewImpl implements StockView {
     opItems.add("The external portfolio file has been saved successfully.You can find it at "+pUUID);
     String displayString = formatOutput(opItems);
     System.out.println(displayString);
+  }
+
+  @Override
+  public void progressBar(int index){
+    char[] animationChars = new char[]{'|', '/', '-', '\\'};
+
+    if (index != 100) {
+      System.out.print("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
+    } else {
+      System.out.println("Processing: Done!");
+    }
   }
 
 

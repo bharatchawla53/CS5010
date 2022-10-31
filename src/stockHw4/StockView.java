@@ -24,24 +24,19 @@ public interface StockView {
 
   void throwErrorMessage(String message);
 
-  void getExistingUserView();
-
   void getDisplaySavePortfolioFromUser();
-
 
   void getDisplaySavePortfolioFilePathInput();
 
   void getDisplaySuccessfullPortfolioSave(String pUUID);
 
-
+  void progressBar(int index);
 
   void getErrorMessageView(String message);
 
   void getNewUserView();
 
   void getExistingUserOptions();
-
-  void getNewUserOptions();
 
   void getPortfolioCreatorView();
 
@@ -56,8 +51,5 @@ public interface StockView {
   void getDisplayFinishedDumpingPortfolio(String uuid);
 
   void getTableViewBuilder(List<String> rows, List<String> columns);
-
-
-
 
 }
