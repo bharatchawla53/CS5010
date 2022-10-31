@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The AlphaVantageApi class represents the third party API call to retrieve stock data.
+ */
 public class AlphaVantageApi {
 
   private final String API_KEY = "EHQVGM4192TAX7FI";
@@ -16,11 +19,21 @@ public class AlphaVantageApi {
 
   private List<HashMap<String, List<AlphaDailyTimeSeries>>> stockTradedValues;
 
+  /**
+   * Constructs an empty AlphaVantageApi constructor which initializes stockTradedValues.
+   */
   public AlphaVantageApi() {
     this.stockTradedValues = new ArrayList<>();
   }
 
-  // TODO handle API call limits
+  /**
+   * Given the output size and stock, it retrieved the data from the third-party.
+   *
+   * @param outputSize based on size, it returns the 100 data points or full-length of 20+ years of
+   *                   historical data.
+   * @param symbol     the name of the stock.
+   * @return a list of map of stock with its list of historical data.
+   */
   public List<HashMap<String, List<AlphaDailyTimeSeries>>> getStockTradedValue(String outputSize, String symbol) {
     URL url;
     try {
@@ -64,9 +77,23 @@ public class AlphaVantageApi {
       throw new IllegalArgumentException("No price data found for " + symbol);
     }
 
-    return parseResponseToObject(output.toString().split("\n"), outputSize, symbol);
+    // return what we have calculated so far to process in the view while we attempt to compute again the remaining ones
+    if (output.toString().contains("5 calls per minute")) {
+      return stockTradedValues;
+    } else {
+      return parseResponseToObject(output.toString().split("\n"), outputSize, symbol);
+    }
   }
 
+  /**
+   * It parses the API JSON response to a list of map of stock with it's list of historical data.
+   *
+   * @param response   an array of JSON response from the API.
+   * @param outputSize based on size, it parses the 100 data points or full-length of 20+ years of *
+   *                   historical data.
+   * @param symbol     the name of the stock.
+   * @return a list of map of stock with its list of historical data.
+   */
   private List<HashMap<String, List<AlphaDailyTimeSeries>>> parseResponseToObject(String[] response, String outputSize, String symbol) {
     List<AlphaDailyTimeSeries> timeSeries = new ArrayList<>();
 
@@ -81,40 +108,70 @@ public class AlphaVantageApi {
       }
     }
 
-    // create a hashmap
-    HashMap<String, List<AlphaDailyTimeSeries>> map = new HashMap<>();
-    map.put(symbol, timeSeries);
-
     // add it to the list
-    stockTradedValues.add(map);
+    stockTradedValues.add(new HashMap<>() {{
+      put(symbol, timeSeries);
+    }});
 
     return stockTradedValues;
   }
 
+  /**
+   * Given a string date, it parses to LocalDate.
+   *
+   * @param date string date to be parsed.
+   * @return parsed LocalDate.
+   */
   LocalDate dateParser(String date) {
     return LocalDate.parse(date);
   }
 
+  /**
+   * The AlphaDailyTimeSeries package-private class represents the object to map the fields received
+   * from third-party API.
+   */
   static class AlphaDailyTimeSeries {
 
     private final LocalDate date;
     private final String openVal;
     private final String closeVal;
 
+    /**
+     * Creates an AlphaDailyTimeSeries constructor.
+     *
+     * @param date     stock data for that particular day.
+     * @param openVal  open value of stock for the given date.
+     * @param closeVal close value of stock for the given date.
+     */
     public AlphaDailyTimeSeries(LocalDate date, String openVal, String closeVal) {
       this.date = date;
       this.openVal = openVal;
       this.closeVal = closeVal;
     }
 
+    /**
+     * Returns the date.
+     *
+     * @return date.
+     */
     public LocalDate getDate() {
       return this.date;
     }
 
+    /**
+     * Returns the open value of stock.
+     *
+     * @return openVal.
+     */
     public String getOpenVal() {
       return this.openVal;
     }
 
+    /**
+     * Returns the close value of stock.
+     *
+     * @return closeVal.
+     */
     public String getCloseVal() {
       return this.closeVal;
     }
