@@ -105,12 +105,12 @@ public interface StockModel {
   Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate, User user, String portfolioUUID);
 
   /**
-   * It validates if the filepath provided is correct.
+   * It validates if the filepath provided is correct and the contents of it are in right sequence.
    *
    * @param filePath input received from the user.
    * @return true if it's a valid path, false, otherwise.
    */
-  boolean validateUserPortfolioExternalPath(String filePath);
+  boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath);
 
   /**
    * It saves a user provided portfolio file.

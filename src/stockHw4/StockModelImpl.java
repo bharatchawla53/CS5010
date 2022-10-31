@@ -141,49 +141,38 @@ public class StockModelImpl implements StockModel {
   @Override
   public boolean saveStock(User user, String portfolioUUID, String ticker, String noOfShares) {
     boolean isSuccessful = false;
-    String username = user.getUserName();
-    String portfolioFileName = username + "_" + portfolioUUID + ".csv";
-    File f = new File(portfolioFileName);
-    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
     boolean isOverwritten = false;
+
+    String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
+    File f = new File(portfolioFileName);
+
+    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
     if (stockPrice == null) {
-      // call the API
-      getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
-      if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
-        try {
-          Thread.sleep(60 * 1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
-      }
-      stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
+      stockPrice = getStockPrice(ticker, noOfShares);
     }
 
     if (f.exists() && !f.isDirectory()) {
-
       List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
       for (int i = 0; i < portfolioContents.size(); i++) {
         if (portfolioContents.get(i).split(" ")[0].equals(ticker)) {
-          String newRow = ticker + "," +
-                  String.valueOf(Integer.parseInt(portfolioContents.get(i).split(" ")[1])
-                          + Integer.parseInt(noOfShares)) + "," + portfolioContents.get(i).split(" ")[2];
+          String newRow = ticker
+                  + ","
+                  + (Integer.parseInt(portfolioContents.get(i).split(" ")[1])
+                  + Integer.parseInt(noOfShares))
+                  + ","
+                  + portfolioContents.get(i).split(" ")[2];
           portfolioContents.set(i, newRow);
           isOverwritten = true;
-
         }
       }
-      if (isOverwritten == true) {
+      if (isOverwritten) {
         try {
           FileWriter fw = new FileWriter(portfolioFileName, false);
           for (String row : portfolioContents) {
             fw.write(row + "\n");
-
           }
           isSuccessful = true;
           fw.close();
-
-
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -216,17 +205,13 @@ public class StockModelImpl implements StockModel {
     return isSuccessful;
   }
 
-
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
-    String username = user.getUserName();
-    String portfolioFileName = username + "_" + portfolioUUID + ".csv";
+    String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
     List<String> portfolioContents = new ArrayList<>();
-    File f = new File(portfolioFileName);
 
     try {
       BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
-
       String strLine;
 
       while ((strLine = fr.readLine()) != null) {
@@ -273,7 +258,7 @@ public class StockModelImpl implements StockModel {
   }
 
   @Override
-  public boolean validateUserPortfolioExternalPath(String filePath) {
+  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath) {
     File f = new File(filePath);
     try {
       BufferedReader fr = new BufferedReader(new FileReader(filePath));
@@ -293,19 +278,16 @@ public class StockModelImpl implements StockModel {
 
   @Override
   public String saveExternalUserPortfolio(String filePath, User user) {
-    String username = user.getUserName();
     String uuid = generateUUID();
-    String portfolioFileName = username + "_" + uuid + ".csv";
+    String portfolioFileName = user.getUserName() + "_" + uuid + ".csv";
     List<String> portfolioContents = new ArrayList<>();
     File f = new File(portfolioFileName);
-    boolean isSuccessful = false;
     try {
       BufferedReader fr = new BufferedReader(new FileReader(filePath));
 
       String strLine;
 
       while ((strLine = fr.readLine()) != null) {
-        //TODO add check for obe while splitting on ,
         if (validatePortfolioRow(strLine)) {
           String ticker = strLine.split(",")[0];
           String noOfShares = strLine.split(",")[1];
@@ -322,7 +304,6 @@ public class StockModelImpl implements StockModel {
           for (String s : portfolioContents) {
             fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "," + s.split(" ")[2] + "\n");
           }
-          isSuccessful = true;
 
           fw.close();
           return uuid;
@@ -335,6 +316,29 @@ public class StockModelImpl implements StockModel {
       return null;
     }
     return null;
+  }
+
+  /**
+   * It gets the total stock price for a given ticker.
+   *
+   * @param ticker     the symbol to calculate the stock price on.
+   * @param noOfShares number of shares for that ticker.
+   * @return stock price.
+   */
+  private Double getStockPrice(String ticker, String noOfShares) {
+    Double stockPrice;
+    // call the API
+    getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
+    if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
+      try {
+        Thread.sleep(60 * 1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
+    }
+    stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
+    return stockPrice;
   }
 
   /**

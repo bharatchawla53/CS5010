@@ -1,17 +1,21 @@
 package stockHw4;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
-
-import jdk.jfr.StackTrace;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -55,11 +59,14 @@ public class StockModelTest {
     assertNotNull(actualUser);
     assertEquals(user.getUserName(), actualUser.getUserName());
     assertNotNull(actualUser.getId());
+
+    // delete user for testing
+    removeUser(user);
   }
 
   @Test
   public void testSaveUserForExistingUser() {
-    User user = User.builder().userName("test").build();
+    User user = User.builder().userName("test3").build();
     User actualUser = stockModel.saveUser(user);
 
     assertNull(actualUser);
@@ -67,7 +74,7 @@ public class StockModelTest {
 
   @Test
   public void testUserNameDoesExists() {
-    boolean userNameExists = stockModel.isUserNameExists("test");
+    boolean userNameExists = stockModel.isUserNameExists("test1");
 
     assertTrue(userNameExists);
   }
@@ -139,7 +146,7 @@ public class StockModelTest {
     List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
     assertNotNull(portfoliosForUser);
-    assertEquals(1, portfoliosForUser.size());
+    assertEquals(2, portfoliosForUser.size());
   }
 
   @Test
@@ -156,9 +163,17 @@ public class StockModelTest {
     User user = User.builder().userName("test").build();
     List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
-    assertEquals(1, portfoliosForUser.size());
+    assertEquals(2, portfoliosForUser.size());
 
-    boolean validPortfolioId = stockModel.validatePortfolioUUID(portfoliosForUser.get(0), user);
+    String portfolioUuid = null;
+    for (String portfolioId : portfoliosForUser) {
+      if (!portfolioId.equals("3cf39b8a")) {
+        portfolioUuid = portfolioId;
+        break;
+      }
+    }
+
+    boolean validPortfolioId = stockModel.validatePortfolioUUID(portfolioUuid, user);
 
     assertTrue(validPortfolioId);
   }
@@ -177,7 +192,7 @@ public class StockModelTest {
 
   @Test
   public void testGetUserFromUsername() {
-    User user = stockModel.getUserFromUsername("test");
+    User user = stockModel.getUserFromUsername("test1");
 
     assertNotNull(user);
     assertNotNull(user.getId());
@@ -193,26 +208,255 @@ public class StockModelTest {
 
   @Test
   public void testSaveStock() {
+    User user = User.builder().userName("test").build();
+    String portfolioUUID = stockModel.generateUUID();
 
+    boolean isSaved = stockModel.saveStock(user, portfolioUUID, "AAPL", "20");
+    assertTrue(isSaved);
+
+    List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+    assertEquals(1, result.size());
+
+    // only for testing
+    deleteFileOnlyForTesting(portfolioUUID, user);
+  }
+
+  @Test
+  public void testSaveMultipleStocks() {
+    User user = User.builder().userName("test").build();
+    String portfolioUUID = stockModel.generateUUID();
+
+    boolean isStock1Saved = stockModel.saveStock(user, portfolioUUID, "AAPL", "20");
+    assertTrue(isStock1Saved);
+    boolean isStock2Saved = stockModel.saveStock(user, portfolioUUID, "DAL", "10");
+    assertTrue(isStock2Saved);
+    boolean isStock3Saved = stockModel.saveStock(user, portfolioUUID, "MRO", "30");
+    assertTrue(isStock3Saved);
+
+    List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+    assertEquals(3, result.size());
+
+    // only for testing
+    deleteFileOnlyForTesting(portfolioUUID, user);
+  }
+
+  @Test
+  public void testSaveStocksConsolidation() {
+    User user = User.builder().userName("test").build();
+    String portfolioUUID = stockModel.generateUUID();
+
+    boolean isStock1Saved = stockModel.saveStock(user, portfolioUUID, "AAPL", "20");
+    assertTrue(isStock1Saved);
+    boolean isStock2Saved = stockModel.saveStock(user, portfolioUUID, "AAPL", "10");
+    assertTrue(isStock2Saved);
+    boolean isStock3Saved = stockModel.saveStock(user, portfolioUUID, "AAPL", "40");
+    assertTrue(isStock3Saved);
+
+    List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+    assertEquals(1, result.size());
+
+    // only for testing
+    deleteFileOnlyForTesting(portfolioUUID, user);
   }
 
   @Test
   public void testGetPortfolioContents() {
+    User user = User.builder().userName("test").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+    assertEquals(2, portfoliosForUser.size());
+
+    String portfolioUuid = null;
+    for (String portfolioId : portfoliosForUser) {
+      if (!portfolioId.equals("3cf39b8a")) {
+        portfolioUuid = portfolioId;
+        break;
+      }
+    }
+
+    List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUuid);
+
+    assertNotNull(portfolioContents);
+    assertEquals(2, portfolioContents.size());
+  }
+
+  @Test
+  public void testGetPortfolioContentsNoneExists() {
+    User user = User.builder().userName("test1").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+    assertEquals(0, portfoliosForUser.size());
+
+    List<String> portfolioContents = stockModel.getPortfolioContents(user, "ran123");
+
+    assertEquals(0, portfolioContents.size());
+  }
+
+  @Test
+  public void testCalculateTotalValueOfAPortfolioUnderApiLimit() {
+    User user = User.builder().userName("test").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+    assertEquals(2, portfoliosForUser.size());
+
+    String portfolioUuid = null;
+    for (String portfolioId : portfoliosForUser) {
+      if (!portfolioId.equals("3cf39b8a")) {
+        portfolioUuid = portfolioId;
+        break;
+      }
+    }
+
+    Map<Integer, List<String>> result = stockModel
+            .calculateTotalValueOfAPortfolio("2022-10-30", user, portfolioUuid);
+
+
+    assertNotNull(result);
+    for (Map.Entry<Integer, List<String>> entry : result.entrySet()) {
+      Integer key = entry.getKey();
+      int size = entry.getValue().size();
+      assertEquals(String.valueOf(key), String.valueOf(size));
+    }
+  }
+
+  @Test
+  public void testCalculateTotalValueOfAPortfolioOverApiLimit() {
+    User user = User.builder().userName("test").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+    assertEquals(2, portfoliosForUser.size());
+
+    String portfolioUuid = null;
+    for (String portfolioId : portfoliosForUser) {
+      if (portfolioId.equals("3cf39b8a")) {
+        portfolioUuid = portfolioId;
+        break;
+      }
+    }
+
+    Map<Integer, List<String>> result = stockModel
+            .calculateTotalValueOfAPortfolio("2022-10-30", user, portfolioUuid);
+
+
+    assertNotNull(result);
+
+    for (Map.Entry<Integer, List<String>> entry : result.entrySet()) {
+      Integer key = entry.getKey();
+      int size = entry.getValue().size();
+      assertNotEquals(String.valueOf(key), String.valueOf(size));
+    }
 
   }
 
   @Test
-  public void testCalculateTotalValueOfAPortfolio() {
+  public void testValidUserPortfolioExternalPathAndContentsStructure() {
+    String userFilePath = "testUserLoadFile.csv";
+    boolean validFilePath = stockModel.validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
 
+    assertTrue(validFilePath);
   }
 
   @Test
-  public void testValidateUserPortfolioExternalPath() {
+  public void testInvalidUserPortfolioExternalPath() {
+    String userFilePath = "random.csv";
+    boolean validFilePath = stockModel.validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
 
+    assertFalse(validFilePath);
+  }
+
+  @Test
+  public void testInvalidUserPortfolioExternalContentsStructure() {
+    String userFilePath = "testUserLoadInvalidFile.csv";
+    boolean validFilePath = stockModel.validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
+
+    assertFalse(validFilePath);
   }
 
   @Test
   public void testSaveExternalUserPortfolio() {
+    User user = User.builder().userName("test").build();
+    String userFilePath = "testUserLoadFile.csv";
+    String portfolioIdSavedTo = stockModel.saveExternalUserPortfolio(userFilePath, user);
 
+    assertNotNull(portfolioIdSavedTo);
+
+    List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioIdSavedTo);
+    assertNotNull(portfolioContents);
+    assertNotEquals(0, portfolioContents.size());
+
+    // only for testing this action needs to be performed
+    deleteFileOnlyForTesting(portfolioIdSavedTo, user);
+  }
+
+  @Test
+  public void testSaveExternalUserPortfolioInvalidStructure() {
+    User user = User.builder().userName("test").build();
+    String userFilePath = "testUserLoadInvalidFile.csv";
+    String portfolioIdSavedTo = stockModel.saveExternalUserPortfolio(userFilePath, user);
+
+    assertNull(portfolioIdSavedTo);
+  }
+
+  @Test
+  public void testSaveExternalUserPortfolioInvalidFilePath() {
+    User user = User.builder().userName("test").build();
+    String userFilePath = "random.csv";
+    String portfolioIdSavedTo = stockModel.saveExternalUserPortfolio(userFilePath, user);
+
+    assertNull(portfolioIdSavedTo);
+  }
+
+  private void removeUser(User user) {
+    String lineToRemove = user.getId() + "," + user.getUserName();
+    try {
+      File inFile = new File("users.csv");
+      if (!inFile.isFile()) {
+        System.out.println("Parameter is not an existing file");
+        return;
+      }
+
+      //Construct the new file that will later be renamed to the original filename.
+      File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+
+      BufferedReader br = new BufferedReader(new FileReader("users.csv"));
+      PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+
+      String line = null;
+
+      //Read from the original file and write to the new
+      //unless content matches data to be removed.
+      while ((line = br.readLine()) != null) {
+
+        if (!line.trim().equals(lineToRemove)) {
+          pw.println(line);
+          pw.flush();
+        }
+      }
+      pw.close();
+      br.close();
+
+      //Delete the original file
+      if (!inFile.delete()) {
+        System.out.println("Could not delete file");
+        return;
+      }
+
+      //Rename the new file to the filename the original file had.
+      if (!tempFile.renameTo(inFile))
+        System.out.println("Could not rename file");
+
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  private void deleteFileOnlyForTesting(String portfolioUuid, User user) {
+    String portfolioFileName = user.getUserName() + "_" + portfolioUuid + ".csv";
+    File f = new File(portfolioFileName);
+    if (f.delete()) {
+      return;
+    }
   }
 }
