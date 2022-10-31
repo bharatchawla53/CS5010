@@ -33,13 +33,6 @@ public class StockModelTest {
     stockModel = new StockModelImpl();
   }
 
-  @AfterClass
-  public static void cleanUp() {
-    // TODO
-    // delete users from the file
-    // delete other data which is being persisted
-  }
-
   @Test
   public void testSaveUser() {
     User user = User.builder().userName("test").build();
