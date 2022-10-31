@@ -25,23 +25,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class StockModelTest {
 
-  //private static AlphaVantageApi alphaVantageApi;
   private static StockModel stockModel;
-  //private static List<HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>>> hashMapList;
   private final static String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
 
   @BeforeClass
   public static void setUp() {
-    //alphaVantageApi = new AlphaVantageApi();
     stockModel = new StockModelImpl();
-
-/*    alphaVantageApi.getStockTradedValue(AlphaVantageOutputSize.COMPACT.getInput(), tickers[0]);
-    alphaVantageApi.getStockTradedValue(AlphaVantageOutputSize.COMPACT.getInput(), tickers[1]);
-    alphaVantageApi.getStockTradedValue(AlphaVantageOutputSize.COMPACT.getInput(), tickers[2]);
-    alphaVantageApi.getStockTradedValue(AlphaVantageOutputSize.COMPACT.getInput(), tickers[3]);
-    alphaVantageApi.getStockTradedValue(AlphaVantageOutputSize.FULL.getInput(), tickers[4]);
-    hashMapList = alphaVantageApi
-            .getStockTradedValue(AlphaVantageOutputSize.COMPACT.getInput(), tickers[5]);*/
   }
 
   @AfterClass
