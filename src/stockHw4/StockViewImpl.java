@@ -7,22 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-// displays cmd GUI and relevant texts, and validation is done here
-// TODO see if we can dispatch using New User vs Existing User
+/**
+ * The StockViewImpl class represents user portfolio's features user interface.
+ */
 public class StockViewImpl implements StockView {
-
-  public StockViewImpl() {
-  }
-
-  private String formatOutput(List<String> outputStrings) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("///");
-    for (String e : outputStrings) {
-      sb.append("\n");
-      sb.append(e);
-    }
-    return sb.toString();
-  }
 
   @Override
   public void getLoginScreenView() {
@@ -31,24 +19,77 @@ public class StockViewImpl implements StockView {
     opItems.add("Are you a existing user or would you like to create a new user ?");
     opItems.add("Enter Y/N : ");
 
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
+    print(formatOutput(opItems));
   }
 
   @Override
-  public String getUserInput(InputStream in) {
+  public void getUsernameInputView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Enter your username: ");
+
+    print(formatOutput(opItems));
+  }
+
+  @Override
+  public void getPortfolioIdInputView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Please enter a Portfolio ID from the above: ");
+
+    print(formatOutput(opItems));
+  }
+
+  @Override
+  public void getPortfolioFilePathHeaderView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Here are your Portfolio's!");
+
+    print(formatOutput(opItems));
+  }
+
+  @Override
+  public void getPortfolioFilePathInputView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Enter the Portfolio UUID of the Portfolio you wish to serialize: ");
+
+    print(formatOutput(opItems));
+  }
+
+  @Override
+  public void getBuilderView(List<String> values) {
+    print(formatOutput(values));
+  }
+
+  @Override
+  public String getUserInputView(InputStream in) {
     Scanner scanner = new Scanner(in);
     return scanner.next();
   }
 
   @Override
-  public void throwErrorMessage(String message) {
-    System.out.println(message);
+  public void getSavePortfolioFromUserView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Let's save an external portfolio!");
+
+    print(formatOutput(opItems));
   }
 
   @Override
-  public void getErrorMessageView(String message) {
-    System.out.println(message);
+  public void getSavePortfolioFilePathInputView() {
+    List<String> opItems = new ArrayList<>();
+    opItems.add("Please enter the filepath of the external portfolio:");
+
+    print(formatOutput(opItems));
+  }
+
+  @Override
+  public void getProgressBarView(int index) {
+    char[] animationChars = new char[]{'|', '/', '-', '\\'};
+
+    if (index != 100) {
+      System.out.print("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
+    } else {
+      print("Processing: Done!");
+    }
   }
 
   @Override
@@ -57,84 +98,52 @@ public class StockViewImpl implements StockView {
     opItems.add("Get started with your portfolio account ");
     opItems.add("Please enter an username and can't be longer than 8 characters: ");
 
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
+    print(formatOutput(opItems));
   }
 
   @Override
-  public void getUsernameFromUser() {
+  public void getUserOptionsView() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("Enter your username:");
+    opItems.add("1. Would you like to create a portfolio with shares of one or more stock ? " +
+            "Once done creating your portfolio, please enter \"DONE\" ");
+    opItems.add("2. Would you like to examine the composition of a portfolio ?");
+    opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
+    opItems.add("4. Would you like to persist a portfolio so that it can be saved ?");
+    opItems.add("5. Would you like to load an external portfolio?");
+    opItems.add("6. Would you like to exit the application ?");
+    opItems.add("Enter your option: ");
 
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-
-  @Override
-  public void getRepeatUsername() {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Looks like this user name does not exist, please enter an existing user name:");
-
-
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
+    print(formatOutput(opItems));
   }
 
   @Override
   public void getPortfolioCreatorView() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Let's create your portfolio!");
-    opItems.add("Enter your preferred ticker and no of shares you'd like " +
-            "to invest in this ticker" +
-            "(Expected Format: ABC123,number of shares):");
+    opItems.add("Enter your preferred ticker and no of shares you'd like "
+            + "to invest in this ticker "
+            + "(Expected Format: ABC123,number of shares): ");
 
 
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
+    print(formatOutput(opItems));
   }
 
-
   @Override
-  public void getViewBuilder(List<String> values) {
-    String displayString = formatOutput(values);
-    System.out.println(displayString);
-  }
-
-
-  @Override
-  public void getDisplayPortfolioHeader() {
+  public void getPortfolioHeaderView() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Here are your Portfolios:");
 
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-
-
+    print(formatOutput(opItems));
   }
 
   @Override
-  public void getDisplayPortfolioInput() {
-    List<String> opItems = new ArrayList<>();
-
-    opItems.add("Please enter a Portfolio ID from the above:");
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplayTotalPortfolioValue() {
+  public void getTotalPortfolioValueView() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Please enter a date for which the portfolio value will be calculated on "
             + "(Expected Date Format: yyyy-MM-dd): ");
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
+
+    print(formatOutput(opItems));
   }
-
-
-
-
-
 
   @Override
   public void terminateView() {
@@ -142,29 +151,7 @@ public class StockViewImpl implements StockView {
     opItems.add("Are you sure you want to exit the application ?");
     opItems.add("Enter Y/N : ");
 
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplaySuccessfulTickerShareDump(String uuid) {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Ticker and Number of Shares added to portfolio! Enter DONE to exit " +
-            "Portfolio Creation or Enter another valid stock to continue");
-
-
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplayFinishedDumpingPortfolio(String uuid) {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Your portfolio has been created! You can find it at "+uuid);
-
-
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
+    print(formatOutput(opItems));
   }
 
   @Override
@@ -173,7 +160,7 @@ public class StockViewImpl implements StockView {
     commandLineTable.setShowVerticalLines(true);
     commandLineTable.setHeaders(columns);
 
-    for(String row : rows) {
+    for (String row : rows) {
       String[] splitRow = row.split(" ");
 
       if (splitRow.length == 1) {
@@ -186,80 +173,19 @@ public class StockViewImpl implements StockView {
     commandLineTable.print();
   }
 
-
-  @Override
-  public void getExistingUserOptions() {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("1. Would you like to create a portfolio with shares of one or more stock ? " +
-            "Once done creating your portfolio, please enter \"DONE\" ");
-    opItems.add("2. Would you like to examine the composition of a portfolio ?");
-    opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
-    opItems.add("4. Would you like to persist a portfolio so that it can be saved ?");
-    opItems.add("5. Would you like to load an external portfolio?");
-    opItems.add("6. Would you like to exit the application ?");
-
-    opItems.add("Enter your option: ");
-
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-
-  @Override
-
-  public void getDisplayPortfolioFilePathInput() {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Enter the Portfolio UUID of the Portfolio you wish to serialize:");
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplayPortfolioFilePathHeader() {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Here are your Portfolio's!");
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplaySavePortfolioFromUser()
-  {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Let's save an external portfolio!");
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplaySavePortfolioFilePathInput()
-  {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("Please enter the filepath of the external portfolio:");
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void getDisplaySuccessfullPortfolioSave(String pUUID)
-  {
-    List<String> opItems = new ArrayList<>();
-    opItems.add("The external portfolio file has been saved successfully.You can find it at "+pUUID);
-    String displayString = formatOutput(opItems);
-    System.out.println(displayString);
-  }
-
-  @Override
-  public void progressBar(int index){
-    char[] animationChars = new char[]{'|', '/', '-', '\\'};
-
-    if (index != 100) {
-      System.out.print("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
-    } else {
-      System.out.println("Processing: Done!");
+  private String formatOutput(List<String> outputStrings) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("///");
+    for (String e : outputStrings) {
+      sb.append("\n");
+      sb.append(e);
     }
+    return sb.toString();
   }
 
+  private void print(String output) {
+    System.out.println(output);
+  }
 
   private class CommandLineTable {
     private static final String HORIZONTAL_SEP = "-";

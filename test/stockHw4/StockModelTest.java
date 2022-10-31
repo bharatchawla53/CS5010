@@ -1,5 +1,7 @@
 package stockHw4;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -36,6 +38,13 @@ public class StockModelTest {
     alphaVantageApi.getStockTradedValue(AlphaVantageOutputSize.FULL.getInput(), tickers[4]);
     hashMapList = alphaVantageApi
             .getStockTradedValue(AlphaVantageOutputSize.COMPACT.getInput(), tickers[5]);*/
+  }
+
+  @AfterClass
+  public static void cleanUp() {
+    // TODO
+    // delete users from the file
+    // delete other data which is being persisted
   }
 
   @Test
@@ -126,17 +135,60 @@ public class StockModelTest {
 
   @Test
   public void testGetPortfoliosForUser() {
+    User user = User.builder().userName("test").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
+    assertNotNull(portfoliosForUser);
+    assertEquals(1, portfoliosForUser.size());
   }
 
   @Test
-  public void testValidatePortfolioUUID() {
+  public void testGetZeroPortfoliosForUser() {
+    User user = User.builder().userName("test2").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
+    assertNotNull(portfoliosForUser);
+    assertEquals(0, portfoliosForUser.size());
+  }
+
+  @Test
+  public void testValidPortfolioUUID() {
+    User user = User.builder().userName("test").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+    assertEquals(1, portfoliosForUser.size());
+
+    boolean validPortfolioId = stockModel.validatePortfolioUUID(portfoliosForUser.get(0), user);
+
+    assertTrue(validPortfolioId);
+  }
+
+  @Test
+  public void testInValidPortfolioUUID() {
+    User user = User.builder().userName("test5").build();
+    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+    assertEquals(0, portfoliosForUser.size());
+
+    boolean validPortfolioId = stockModel.validatePortfolioUUID("ran2324", user);
+
+    assertFalse(validPortfolioId);
   }
 
   @Test
   public void testGetUserFromUsername() {
+    User user = stockModel.getUserFromUsername("test");
 
+    assertNotNull(user);
+    assertNotNull(user.getId());
+    assertNotNull(user.getUserName());
+  }
+
+  @Test
+  public void testGetUserFromInvalidUsername() {
+    User user = stockModel.getUserFromUsername("test5");
+
+    assertNull(user);
   }
 
   @Test

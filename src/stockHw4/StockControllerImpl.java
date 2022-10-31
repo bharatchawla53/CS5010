@@ -53,14 +53,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate the user login input
     while (invalidInput) {
       try {
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
         if (UserInput.valueOf(input).name().equals(input)) {
           invalidInput = false;
         }
       } catch (IllegalArgumentException e) {
-        view.throwErrorMessage("Invalid user input");
-        view.getErrorMessageView("Enter Y/N : ");
-
+        view.getBuilderView(Arrays.asList("Invalid user input", "Enter Y/N : "));
       }
     }
     return input;
@@ -69,14 +67,14 @@ public class StockControllerImpl extends StockControllerAbstract {
   private String getValidUserNameInput(String input) {
     boolean invalidInput = true;
 
-    view.getUsernameFromUser();
+    view.getUsernameInputView();
     // validate the username input and check if it already exists in our records
     while (invalidInput) {
-      input = view.getUserInput(System.in);
+      input = view.getUserInputView(System.in);
       if (model.isUserNameExists(input)) {
         invalidInput = false;
       } else {
-        view.throwErrorMessage("This username does not exist! Enter an existing username:");
+        view.getBuilderView(Collections.singletonList("This username does not exist! Enter an existing username:"));
       }
     }
     return input;
@@ -107,14 +105,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate the user input
     while (invalidInput) {
       try {
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
         if (UserInput.valueOf(input).name().equals(input)) {
           invalidInput = false;
         }
       } catch (IllegalArgumentException e) {
-        view.throwErrorMessage("Invalid input");
-        view.getErrorMessageView("Enter Y/N : ");
-
+        view.getBuilderView(Arrays.asList("Invalid input", "Enter Y/N : "));
       }
     }
 
@@ -127,11 +123,11 @@ public class StockControllerImpl extends StockControllerAbstract {
   private String getUserOptionsInput(String input) {
     boolean invalidInput = true;
 
-    view.getExistingUserOptions();
+    view.getUserOptionsView();
     // validate the user options input
     while (invalidInput) {
       try {
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
 
         String finalInput = input;
         Optional<UserInputOptions> userInputOption = Arrays.stream(UserInputOptions.values())
@@ -143,9 +139,7 @@ public class StockControllerImpl extends StockControllerAbstract {
         }
 
       } catch (IllegalArgumentException e) {
-        view.throwErrorMessage("Invalid option!");
-        view.getErrorMessageView("Please enter a valid option:");
-
+        view.getBuilderView(Arrays.asList("Invalid option!", "Please enter a valid option:"));
       }
     }
     return input;
@@ -162,7 +156,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     while (!input.equals("DONE")) {
       // validate the user provided ticker/share combination
       while (invalidInput) {
-        input = view.getUserInput(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
         if (model.validateTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
           invalidInput = false;
         } else {
@@ -170,8 +164,7 @@ public class StockControllerImpl extends StockControllerAbstract {
             invalidInput = false;
             // TODO add a view stating portfolio  is successfully created
           } else {
-            view.throwErrorMessage("Invalid input!");
-            view.getErrorMessageView("Please enter a valid ticker/share (no fractional shares) combination : ");
+            view.getBuilderView(Arrays.asList("Invalid input!", "Please enter a valid ticker/share (no fractional shares) combination : "));
           }
         }
       }
@@ -181,11 +174,12 @@ public class StockControllerImpl extends StockControllerAbstract {
       if (!input.equals("DONE") && model.saveStock(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
         // TODO add successful view as well and tell them to enter another stock or enter "DONE" to exit this process
-        view.getDisplaySuccessfulTickerShareDump(portfolioUuid);
+        view.getBuilderView(Collections.singletonList("Ticker and number of shares added to portfolio! Enter DONE to exit " +
+                "Portfolio Creation or enter another valid stock to continue"));
         invalidInput = true;
       }
     }
-    view.getDisplayFinishedDumpingPortfolio(portfolioUuid);
+    view.getBuilderView(Collections.singletonList("Your portfolio has been created! You can find it at" + portfolioUuid));
   }
 
   private void processUserOptionTwo(String input) {
@@ -204,17 +198,15 @@ public class StockControllerImpl extends StockControllerAbstract {
     boolean invalidInput = true;
     String portfolioId = getPortfolioIdInput(input);
 
-    view.getDisplayTotalPortfolioValue();
+    view.getTotalPortfolioValueView();
 
     // validate date is in correct format
     while (invalidInput) {
-      input = view.getUserInput(System.in);
+      input = view.getUserInputView(System.in);
       if (isValidDate(input)) {
         invalidInput = false;
       } else {
-        view.throwErrorMessage("Invalid date format entered!");
-        view.getErrorMessageView("Please enter a valid date:");
-        input = view.getUserInput(System.in);
+        view.getBuilderView(Arrays.asList("Invalid date format entered!", "Please enter a valid date: "));
       }
     }
 
@@ -231,7 +223,7 @@ public class StockControllerImpl extends StockControllerAbstract {
             // call the model again to fetch remaining ones
             totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
           }
-          view.progressBar(i);
+          view.getProgressBarView(i);
           try {
             Thread.sleep( 600);
           } catch (InterruptedException e) {
@@ -250,7 +242,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       columns.add("Number of shares");
       columns.add("Total Share Value");
       view.getTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
-      view.getViewBuilder(Collections.singletonList("The total value of this portfolio is: " + totalPortfolioValueSum));
+      view.getBuilderView(Collections.singletonList("The total value of this portfolio is: " + totalPortfolioValueSum));
     }
   }
 
@@ -258,20 +250,19 @@ public class StockControllerImpl extends StockControllerAbstract {
   // TODO add subviews whether to save it or load a file to create a portfolio
   private void processUserOptionFour(String input) {
     boolean invalidInput = true;
-    view.getDisplayPortfolioFilePathHeader();
+    view.getPortfolioFilePathHeaderView();
 
     List<String> portfolioUser = model.getPortfoliosForUser(this.user);
 
     view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
     //view.getViewBuilder(portfolioUser);
-    view.getDisplayPortfolioFilePathInput();
+    view.getPortfolioFilePathInputView();
     while (invalidInput) {
-      input = view.getUserInput(System.in);
+      input = view.getUserInputView(System.in);
       if (model.validatePortfolioUUID(input, this.user)) {
         invalidInput = false;
       } else {
-        view.throwErrorMessage("Invalid UUID entered!");
-        view.getErrorMessageView("Please enter a valid option:");
+        view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please enter a valid portfolio ID: "));
       }
     }
 
@@ -279,16 +270,16 @@ public class StockControllerImpl extends StockControllerAbstract {
     String portfolioFilePath = "CS5010/" + this.user.getUserName() + "_" + input + ".csv";
     List<String> serializedPortfolioSuccess = new ArrayList<String>();
     serializedPortfolioSuccess.add("Your portfolio " + input + " has been serialized! You can find it at: " + portfolioFilePath);
-    view.getViewBuilder(serializedPortfolioSuccess);
+    view.getBuilderView(serializedPortfolioSuccess);
   }
 
   private void processUserOptionFive(String input) {
     boolean invalidInput = true;
-    view.getDisplaySavePortfolioFromUser();
+    view.getSavePortfolioFromUserView();
     String pUUID=null;
-    view.getDisplaySavePortfolioFilePathInput();
+    view.getSavePortfolioFilePathInputView();
     while (invalidInput) {
-      input = view.getUserInput(System.in);
+      input = view.getUserInputView(System.in);
       if (model.validateUserPortfolioExternalPath(input)) {
         pUUID = model.saveExternalUserPortfolio(input, this.user);
         if(pUUID != null)
@@ -297,15 +288,12 @@ public class StockControllerImpl extends StockControllerAbstract {
         }
       }
        else {
-        view.throwErrorMessage("Invalid File Path entered or Structure of File is malformed!");
-        view.getErrorMessageView("Please enter a valid file path:");
+         view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of File is malformed!", "Please enter a valid file path: "));
       }
     }
     if (pUUID != null) {
-      view.getDisplaySuccessfullPortfolioSave(pUUID);
+      view.getBuilderView(Collections.singletonList("The external portfolio file has been saved successfully. You can find it at :" + pUUID));
     }
-
-
   }
 
 
@@ -316,11 +304,10 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     view.getNewUserView();
     while (invalidUserName) {
-      input = view.getUserInput(System.in);
+      input = view.getUserInputView(System.in);
       while (input.length() > 8) {
-        view.throwErrorMessage("Username can't be longer than 8 characters");
-        view.getErrorMessageView("Please enter a valid username");
-        input = view.getUserInput(System.in);
+        view.getBuilderView(Arrays.asList("Username can't be longer than 8 characters", "Please enter a valid username: "));
+        input = view.getUserInputView(System.in);
 
       }
       // get username and then attempt to save it
@@ -332,8 +319,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       if (user1 != null) {
         invalidUserName = false;
       } else { // means invalid username meaning already exists
-        view.throwErrorMessage("Username already exists");
-        view.getErrorMessageView("Please try another valid username");
+        view.getBuilderView(Arrays.asList("Username already exists", "Please try another valid username"));
       }
     }
 
@@ -344,26 +330,24 @@ public class StockControllerImpl extends StockControllerAbstract {
 
   private String getPortfolioIdInput(String input) {
     boolean invalidInput = true;
-    view.getDisplayPortfolioHeader();
+    view.getPortfolioHeaderView();
 
     List<String> portfolioUser = model.getPortfoliosForUser(this.user);
 
     view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
     //view.getViewBuilder(portfolioUser);
-    view.getDisplayPortfolioInput();
+    view.getPortfolioIdInputView();
 
     // validate correct portfolio ID is provided
     while (invalidInput) {
 
-        input = view.getUserInput(System.in);
+        input = view.getUserInputView(System.in);
         if (model.validatePortfolioUUID(input, this.user)) {
           invalidInput = false;
         }
 
        else {
-        view.throwErrorMessage("Invalid UUID entered!");
-        view.getErrorMessageView("Please enter a valid option:");
-
+         view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please enter a valid option:"));
       }
     }
     return input;

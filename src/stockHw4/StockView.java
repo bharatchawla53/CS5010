@@ -3,53 +3,43 @@ package stockHw4;
 import java.io.InputStream;
 import java.util.List;
 
-//TODO Look into sub views
+/**
+ * This interface represents a StockView that defines the view operations listed below for user interface.
+ */
+
 public interface StockView {
 
   void getLoginScreenView();
 
-  void getUsernameFromUser();
+  void getUsernameInputView();
 
-  void getRepeatUsername();
+  void getPortfolioIdInputView();
 
-  void getDisplayPortfolioInput();
+  void getPortfolioFilePathHeaderView();
 
-  void getDisplayPortfolioFilePathHeader();
+  void getPortfolioFilePathInputView();
 
-  void getDisplayPortfolioFilePathInput();
+  void getBuilderView(List<String> values);
 
-  void getViewBuilder(List<String> values);
+  String getUserInputView(InputStream in);
 
-  String getUserInput(InputStream in);
+  void getSavePortfolioFromUserView();
 
-  void throwErrorMessage(String message);
+  void getSavePortfolioFilePathInputView();
 
-  void getDisplaySavePortfolioFromUser();
-
-  void getDisplaySavePortfolioFilePathInput();
-
-  void getDisplaySuccessfullPortfolioSave(String pUUID);
-
-  void progressBar(int index);
-
-  void getErrorMessageView(String message);
+  void getProgressBarView(int index);
 
   void getNewUserView();
 
-  void getExistingUserOptions();
+  void getUserOptionsView();
 
   void getPortfolioCreatorView();
 
-  void getDisplayPortfolioHeader();
+  void getPortfolioHeaderView();
 
-  void getDisplayTotalPortfolioValue();
+  void getTotalPortfolioValueView();
 
   void terminateView();
 
-  void getDisplaySuccessfulTickerShareDump(String uuid);
-
-  void getDisplayFinishedDumpingPortfolio(String uuid);
-
   void getTableViewBuilder(List<String> rows, List<String> columns);
-
 }

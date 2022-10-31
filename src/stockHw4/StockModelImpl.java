@@ -99,7 +99,7 @@ public class StockModelImpl implements StockModel {
 
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
-        if (listOfFiles[i].getName().contains(user.getUserName())) {
+        if (listOfFiles[i].getName().split("_")[0].equals(user.getUserName())) {
           userPortfolios.add(listOfFiles[i].getName().split("_")[1].split("\\.")[0]);
         }
       }
@@ -119,7 +119,7 @@ public class StockModelImpl implements StockModel {
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
         if (listOfFiles[i].getName().contains(portfolioUUID) &&
-                listOfFiles[i].getName().contains(user.getUserName())) {
+                listOfFiles[i].getName().split("_")[0].equals(user.getUserName())) {
           return true;
         }
       }
@@ -218,9 +218,9 @@ public class StockModelImpl implements StockModel {
 
 
   @Override
-  public List<String> getPortfolioContents(User user, String uuid) {
+  public List<String> getPortfolioContents(User user, String portfolioUUID) {
     String username = user.getUserName();
-    String portfolioFileName = username + "_" + uuid + ".csv";
+    String portfolioFileName = username + "_" + portfolioUUID + ".csv";
     List<String> portfolioContents = new ArrayList<>();
     File f = new File(portfolioFileName);
 
