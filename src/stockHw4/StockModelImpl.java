@@ -81,7 +81,7 @@ public class StockModelImpl implements StockModel {
 
   @Override
   public boolean validateTickerShare(String tickerShare) {
-    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[ ]\\d+");
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+");
     Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
     return validator.matches();
   }
@@ -273,7 +273,7 @@ public class StockModelImpl implements StockModel {
   }
 
   @Override
-  public boolean validateUserPortfolioExternal(String filePath) {
+  public boolean validateUserPortfolioExternalPath(String filePath) {
     File f = new File(filePath);
     try {
       BufferedReader fr = new BufferedReader(new FileReader(filePath));

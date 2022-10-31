@@ -110,7 +110,7 @@ public interface StockModel {
    * @param filePath input received from the user.
    * @return true if it's a valid path, false, otherwise.
    */
-  boolean validateUserPortfolioExternal(String filePath);
+  boolean validateUserPortfolioExternalPath(String filePath);
 
   /**
    * It saves a user provided portfolio file.

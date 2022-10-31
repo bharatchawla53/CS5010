@@ -289,7 +289,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getDisplaySavePortfolioFilePathInput();
     while (invalidInput) {
       input = view.getUserInput(System.in);
-      if (model.validateUserPortfolioExternal(input)) {
+      if (model.validateUserPortfolioExternalPath(input)) {
         pUUID = model.saveExternalUserPortfolio(input, this.user);
         if(pUUID != null)
         {
