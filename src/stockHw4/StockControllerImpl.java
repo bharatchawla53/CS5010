@@ -9,12 +9,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The StockControllerImpl class represents as a mediator between model and view.
+ */
 public class StockControllerImpl extends StockControllerAbstract {
   private final StockModel model;
   private final StockView view;
   private User user;
   private Boolean isUserOperationSuccessful;
 
+  /**
+   * Constructs a StockControllerImpl constructor and initializes model and view.
+   *
+   * @param model StockModel that controller talks to.
+   * @param view StockView that controller talk to.
+   */
   public StockControllerImpl(StockModel model, StockView view) {
     this.model = model;
     this.view = view;
