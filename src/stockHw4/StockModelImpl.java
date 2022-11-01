@@ -118,9 +118,11 @@ public class StockModelImpl implements StockModel {
 
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
-        if (listOfFiles[i].getName().contains(portfolioUUID) &&
-                listOfFiles[i].getName().split("_")[0].equals(user.getUserName())) {
-          return true;
+        if (listOfFiles[i].getName().contains(".csv") && listOfFiles[i].getName().contains("_")) {
+          if (listOfFiles[i].getName().split("_")[1].split("\\.")[0].equals(portfolioUUID) &&
+                  listOfFiles[i].getName().split("_")[0].equals(user.getUserName())) {
+            return true;
+          }
         }
       }
     }

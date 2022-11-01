@@ -202,7 +202,6 @@ public class StockControllerImpl extends StockControllerAbstract {
         } else {
           if (input.equals("DONE")) {
             invalidInput = false;
-            // TODO add a view stating portfolio  is successfully created
           } else {
             view.getBuilderView(Arrays.asList("Invalid input!", "Please enter a valid ticker/share (no fractional shares) combination : "));
           }
@@ -210,16 +209,14 @@ public class StockControllerImpl extends StockControllerAbstract {
       }
       // received correct combination from user to add share to their portfolio
 
-      // TODO find a way to avoid Index out of bounds exception
       if (!input.equals("DONE") && model.saveStock(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
-        // TODO add successful view as well and tell them to enter another stock or enter "DONE" to exit this process
         view.getBuilderView(Collections.singletonList("Ticker and number of shares added to portfolio! Enter DONE to exit " +
                 "Portfolio Creation or enter another valid stock to continue"));
         invalidInput = true;
       }
     }
-    view.getBuilderView(Collections.singletonList("Your portfolio has been created! You can find it at" + portfolioUuid));
+    view.getBuilderView(Collections.singletonList("Your portfolio has been created! You can find it at : " + portfolioUuid));
   }
 
   /**
@@ -230,8 +227,6 @@ public class StockControllerImpl extends StockControllerAbstract {
    */
   private void processUserOptionTwo(String input) {
     input = getPortfolioIdInput(input);
-    //TODO Display all tickershare given user and portfolio uuid
-    // TODO add a generic table view
 
     List<String> columns = new ArrayList<String>();
     columns.add("Ticker");
@@ -298,9 +293,6 @@ public class StockControllerImpl extends StockControllerAbstract {
     }
   }
 
-  // TODO add load the file option and test 4 completely
-  // TODO add subviews whether to save it or load a file to create a portfolio
-
   /**
    * It processes the UserOptions.FOUR and allows them to save a portfolio, and keeps prompting
    * until successful sequence of input is received.
@@ -354,7 +346,8 @@ public class StockControllerImpl extends StockControllerAbstract {
         view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of File is malformed!", "Please enter a valid file path: "));
       }
     }
-    view.getBuilderView(Collections.singletonList("The external portfolio file has been saved successfully. You can find it at :" + pUUID));
+    view.getBuilderView(Collections.singletonList("The external portfolio file has been saved successfully. " +
+            "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv"));
   }
 
   /**
@@ -417,6 +410,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       if (model.validatePortfolioUUID(input, this.user)) {
         invalidInput = false;
       } else {
+        view.getTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
         view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please enter a valid option:"));
       }
     }
