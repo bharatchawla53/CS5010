@@ -1,4 +1,5 @@
 package stockHw4;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,76 +56,68 @@ public class StockViewTest {
   }
 
 
-  private String ConsoleOpDialogCreator(List<String> consoleOp)
-  {
+  private String ConsoleOpDialogCreator(List<String> consoleOp) {
     String consoleOpDialog = "";
-    for(String line: consoleOp)
-    {
-      consoleOpDialog+=line;
+    for (String line : consoleOp) {
+      consoleOpDialog += line;
     }
     return consoleOpDialog;
   }
 
   @Test
-  public void testGetLoginScreenView()
-  {
+  public void testGetLoginScreenView() {
     stockView.getLoginScreenView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Welcome to the portfolio manager\n");
     consoleOp.add("Are you a existing user or would you like to create a new user ?\n");
     consoleOp.add("Enter Y/N : \n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testGetUsernameInputView()
-  {
+  public void testGetUsernameInputView() {
     stockView.getUsernameInputView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Enter your username: \n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testGetPortfolioIdInputView()
-  {
+  public void testGetPortfolioIdInputView() {
     stockView.getPortfolioIdInputView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Please enter a Portfolio ID from the above: \n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testGetPortfolioFilePathHeaderView()
-  {
+  public void testGetPortfolioFilePathHeaderView() {
     stockView.getPortfolioFilePathHeaderView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Here are your Portfolio's!\n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testGetPortfolioFilePathInputView()
-  {
+  public void testGetPortfolioFilePathInputView() {
     stockView.getPortfolioFilePathInputView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Enter the Portfolio UUID of the Portfolio you wish to serialize: \n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testGetBuilderView()
-  {
+  public void testGetBuilderView() {
     //TODO fuzyy testing
     List<String> randomStrings = new ArrayList<String>();
     randomStrings.add("fmdslsaKLSKLAkslAKLSA");
@@ -139,47 +132,43 @@ public class StockViewTest {
     consoleOp.add("fmdsfdsikfdslAKLSA\n");
     consoleOp.add("fmdslsaKLSKfsuosfidAKLSA\n");
 
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testUserInputView()
-  {
+  public void testUserInputView() {
     //TODO fuzzy testing
     String userInput = "ABCDE";
     InputStream in = new ByteArrayInputStream(userInput.getBytes());
     String val = stockView.getUserInputView(in);
-    assertEquals(val,userInput);
+    assertEquals(val, userInput);
 
   }
 
   @Test
-  public void testGetSavePortfolioFromUserView()
-  {
+  public void testGetSavePortfolioFromUserView() {
     stockView.getSavePortfolioFromUserView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Let's save an external portfolio!\n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
 
   @Test
-  public void testGetSavePortfolioFilePathInputView()
-  {
+  public void testGetSavePortfolioFilePathInputView() {
     stockView.getSavePortfolioFilePathInputView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Please enter the filepath of the external portfolio:\n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
   @Test
-  public void testGetNewUserView()
-  {
+  public void testGetNewUserView() {
     stockView.getNewUserView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
@@ -187,12 +176,11 @@ public class StockViewTest {
     consoleOp.add("Please enter an username and can't be longer than 8 characters: \n");
 
 
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
   @Test
-  public void testGetUserOptionsView()
-  {
+  public void testGetUserOptionsView() {
     stockView.getUserOptionsView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
@@ -206,13 +194,12 @@ public class StockViewTest {
     consoleOp.add("Enter your option: \n");
 
 
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
 
   @Test
-  public void testGetPortfolioCreatorView()
-  {
+  public void testGetPortfolioCreatorView() {
     stockView.getPortfolioCreatorView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
@@ -220,68 +207,86 @@ public class StockViewTest {
     consoleOp.add("Enter your preferred ticker and no of shares you'd like "
             + "to invest in this ticker "
             + "(Expected Format: ABC123,number of shares): \n");
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
   @Test
-  public void testGetPortfolioHeaderView()
-  {
+  public void testGetPortfolioHeaderView() {
     stockView.getPortfolioHeaderView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Here are your Portfolios:\n");
 
 
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
   @Test
-  public void testGetTotalPortfolioValueView()
-  {
+  public void testGetTotalPortfolioValueView() {
     stockView.getTotalPortfolioValueView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Please enter a date for which the portfolio value will be calculated on "
             + "(Expected Date Format: yyyy-MM-dd): \n");
 
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
 
   @Test
-  public void testTerminateView()
-  {
+  public void testTerminateView() {
     stockView.terminateView();
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Are you sure you want to exit the application ?\n");
     consoleOp.add("Enter Y/N : \n");
 
-    assertEquals(outContent.toString(),ConsoleOpDialogCreator(consoleOp));
+    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
 
+  @Test
+  public void testCommandLineTable()
+  {
+    String s = "+--------+------------------+-------------+\n" +
+            "| Ticker | Number of shares | Share Price |\n" +
+            "+--------+------------------+-------------+\n" +
+            "| MSFT   | 45               | 235.87      |\n" +
+            "| GOOG   | 10               | 96.58       |\n" +
+            "| AAPL   | 15               | 155.74      |\n" +
+            "| DAL    | 10               | 34.67       |\n" +
+            "+--------+------------------+-------------+\n";
 
+    List<String> columns = new ArrayList<String>();
+    columns.add("Ticker");
+    columns.add("Number of shares");
+    columns.add("Share Price");
+    List<String> rows = new ArrayList<String>();
+    rows.add("MSFT 45 235.87");
+    rows.add("GOOG 10 96.58");
+    rows.add("AAPL 15 155.74");
+    rows.add("DAL 10 34.67");
+    stockView.getTableViewBuilder(rows, columns);
+    assertEquals(outContent.toString(), s);
+  }
 
+  @Test
+  public void testProgressBar() {
+    char[] animationChars = new char[]{'|', '/', '-', '\\'};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i <= 100; i++) {
+      stockView.getProgressBarView(i);
+      if (i != 100) {
+        sb.append("Calculating your portfolio worth: ")
+                .append(i)
+                .append("% ")
+                .append(animationChars[i % 4])
+                .append("\r");
+      } else {
+        sb.append("Processing: Done!" + "\n");
+      }
+      assertEquals(outContent.toString(), sb.toString());
+    }
+  }
 }
