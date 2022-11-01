@@ -1,5 +1,8 @@
 package stockHw4;
 
+/**
+ * This enum represents the values for allowed user input options.
+ */
 public enum UserInputOptions {
   ONE("1"),
   TWO("2"),

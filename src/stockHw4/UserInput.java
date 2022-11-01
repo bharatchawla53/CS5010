@@ -1,5 +1,8 @@
 package stockHw4;
 
+/**
+ * This enum represents the values for allowed user input.
+ */
 public enum UserInput {
   Y("YES"),
   N("NO");

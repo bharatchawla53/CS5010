@@ -1,5 +1,8 @@
 package stockHw4;
 
+/**
+ * This enum represents the values for output size accepted by third-party API.
+ */
 public enum AlphaVantageOutputSize {
   COMPACT("compact"),
   FULL("full");
@@ -10,7 +13,7 @@ public enum AlphaVantageOutputSize {
     return input;
   }
 
-  AlphaVantageOutputSize (String input) {
+  AlphaVantageOutputSize(String input) {
     this.input = input;
   }
 }

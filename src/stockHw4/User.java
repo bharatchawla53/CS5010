@@ -2,14 +2,28 @@ package stockHw4;
 
 import java.util.UUID;
 
+/**
+ * The User class represents a user object which contains user id and username.
+ */
 public class User {
   private final String id;
   private final String userName;
 
+  /**
+   * Returns a new UserBuilder object.
+   *
+   * @return UserBuilder object.
+   */
   public static UserBuilder builder() {
     return new UserBuilder();
   }
 
+  /**
+   * Constructs a user object given id and username.
+   *
+   * @param id       user id.
+   * @param userName username.
+   */
   public User(String id, String userName) {
     this.id = id;
     this.userName = userName;
@@ -23,11 +37,18 @@ public class User {
     return this.userName;
   }
 
+  /**
+   * The UserBuilder class represents individual operations to set id and username.
+   */
   public static class UserBuilder {
     private String id;
     private String userName;
 
-    public UserBuilder() {}
+    /**
+     * Constructs an empty UserBuilder object.
+     */
+    public UserBuilder() {
+    }
 
     private void userId() {
       this.id = UUID

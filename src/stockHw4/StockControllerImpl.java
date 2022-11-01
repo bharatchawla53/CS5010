@@ -22,7 +22,7 @@ public class StockControllerImpl extends StockControllerAbstract {
    * Constructs a StockControllerImpl constructor and initializes model and view.
    *
    * @param model StockModel that controller talks to.
-   * @param view StockView that controller talk to.
+   * @param view  StockView that controller talk to.
    */
   public StockControllerImpl(StockModel model, StockView view) {
     this.model = model;
@@ -43,17 +43,23 @@ public class StockControllerImpl extends StockControllerAbstract {
       this.user = model.getUserFromUsername(input);
 
       while (this.isUserOperationSuccessful) {
-        keepPromotingUserForOptionsOnceAOperationIsDone(input);
+        keepPromptingUserForOptionsOnceAOperationIsDone(input);
       }
     } else {
       if (processNewUser()) {
         while (this.isUserOperationSuccessful) {
-          keepPromotingUserForOptionsOnceAOperationIsDone(input);
+          keepPromptingUserForOptionsOnceAOperationIsDone(input);
         }
       }
     }
   }
 
+  /**
+   * It gets the login screen input from the user whether they are existing user or not, and it
+   * keeps prompting the user until valid input is received.
+   *
+   * @return input received from the user.
+   */
   private String getLoginScreenInput() {
     boolean invalidInput = true;
     String input = null;
@@ -73,6 +79,13 @@ public class StockControllerImpl extends StockControllerAbstract {
     return input;
   }
 
+  /**
+   * Get's the valid username input for the existing users. It keeps prompting the user until valid
+   * input is received.
+   *
+   * @param input input received from the user.
+   * @return input received from the user.
+   */
   private String getValidUserNameInput(String input) {
     boolean invalidInput = true;
 
@@ -89,7 +102,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     return input;
   }
 
-  private void keepPromotingUserForOptionsOnceAOperationIsDone(String input) {
+  /**
+   * It keeps prompting the user options once the selected operation was successful.
+   *
+   * @param input input received from the user.
+   */
+  private void keepPromptingUserForOptionsOnceAOperationIsDone(String input) {
     input = getUserOptionsInput(input);
 
     if (input.equals(UserInputOptions.ONE.getInput())) {
@@ -107,6 +125,11 @@ public class StockControllerImpl extends StockControllerAbstract {
     }
   }
 
+  /**
+   * It terminates the application if valid input is provided.
+   *
+   * @param input input received from the user.
+   */
   private void terminateApplication(String input) {
     boolean invalidInput = true;
     view.terminateView();
@@ -129,6 +152,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     }
   }
 
+  /**
+   * It validates the user options input and keeps prompting until successful input is received.
+   *
+   * @param input input received from the user.
+   * @return input received from the user.
+   */
   private String getUserOptionsInput(String input) {
     boolean invalidInput = true;
 
@@ -146,7 +175,6 @@ public class StockControllerImpl extends StockControllerAbstract {
         if (userInputOption.isPresent()) {
           invalidInput = false;
         }
-
       } catch (IllegalArgumentException e) {
         view.getBuilderView(Arrays.asList("Invalid option!", "Please enter a valid option:"));
       }
@@ -154,9 +182,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     return input;
   }
 
-  // TODO restrict users from purchasing fractional shares
-  // Fractional Shares dealt with in regex(regex looks for whole numbers only)
-  // TODO allow user to create portfolio by providing a file
+  /**
+   * It processes the UserOptions.ONE and allows them to create a portfolio with one or more stocks,
+   * and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processUserOptionOne(String input) {
     boolean invalidInput = true;
 
@@ -191,6 +222,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getBuilderView(Collections.singletonList("Your portfolio has been created! You can find it at" + portfolioUuid));
   }
 
+  /**
+   * It processes the UserOptions.TWO and allows them to examine the composition of a portfolio, and
+   * keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processUserOptionTwo(String input) {
     input = getPortfolioIdInput(input);
     //TODO Display all tickershare given user and portfolio uuid
@@ -203,6 +240,12 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getTableViewBuilder(model.getPortfolioContents(this.user, input), columns);
   }
 
+  /**
+   * It processes the UserOptions.THREE and allows them to determine the total value of a portfolio,
+   * and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processUserOptionThree(String input) {
     boolean invalidInput = true;
     String portfolioId = getPortfolioIdInput(input);
@@ -226,7 +269,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     // check if list length matches with expected length returned by model to indicate if the entire portfolio has been processed
     for (Map.Entry<Integer, List<String>> entry : totalValueOfAPortfolio.entrySet()) {
       if (entry.getKey() != entry.getValue().size()) {
-        
+
         for (int i = 0; i <= 100; i++) {
           if (i != 100) {
             // call the model again to fetch remaining ones
@@ -234,7 +277,7 @@ public class StockControllerImpl extends StockControllerAbstract {
           }
           view.getProgressBarView(i);
           try {
-            Thread.sleep( 600);
+            Thread.sleep(600);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
@@ -257,6 +300,13 @@ public class StockControllerImpl extends StockControllerAbstract {
 
   // TODO add load the file option and test 4 completely
   // TODO add subviews whether to save it or load a file to create a portfolio
+
+  /**
+   * It processes the UserOptions.FOUR and allows them to save a portfolio, and keeps prompting
+   * until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processUserOptionFour(String input) {
     boolean invalidInput = true;
     view.getPortfolioFilePathHeaderView();
@@ -282,30 +332,37 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getBuilderView(serializedPortfolioSuccess);
   }
 
+  /**
+   * It processes the UserOptions.FIVE and allows them to load an external portfolio, and keeps
+   * prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processUserOptionFive(String input) {
     boolean invalidInput = true;
     view.getSavePortfolioFromUserView();
-    String pUUID=null;
+    String pUUID = null;
     view.getSavePortfolioFilePathInputView();
     while (invalidInput) {
       input = view.getUserInputView(System.in);
       if (model.validateUserPortfolioExternalPathAndContentsStructure(input)) {
         pUUID = model.saveExternalUserPortfolio(input, this.user);
-        if(pUUID != null)
-        {
+        if (pUUID != null) {
           invalidInput = false;
         }
-      }
-       else {
-         view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of File is malformed!", "Please enter a valid file path: "));
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of File is malformed!", "Please enter a valid file path: "));
       }
     }
-    if (pUUID != null) {
-      view.getBuilderView(Collections.singletonList("The external portfolio file has been saved successfully. You can find it at :" + pUUID));
-    }
+    view.getBuilderView(Collections.singletonList("The external portfolio file has been saved successfully. You can find it at :" + pUUID));
   }
 
-
+  /**
+   * It processes the view for new user creation and validates username and other inputs for a
+   * successful response.
+   *
+   * @return true if process was successful, false, otherwise.
+   */
   private boolean processNewUser() {
     boolean invalidUserName = true;
     String input;
@@ -336,7 +393,13 @@ public class StockControllerImpl extends StockControllerAbstract {
     return true;
   }
 
-
+  /**
+   * It validates the portfolio ID recieved from the user, and keeps prompting until successful
+   * input is received.
+   *
+   * @param input input received from the user.
+   * @return input received from the user.
+   */
   private String getPortfolioIdInput(String input) {
     boolean invalidInput = true;
     view.getPortfolioHeaderView();
@@ -350,18 +413,22 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate correct portfolio ID is provided
     while (invalidInput) {
 
-        input = view.getUserInputView(System.in);
-        if (model.validatePortfolioUUID(input, this.user)) {
-          invalidInput = false;
-        }
-
-       else {
-         view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please enter a valid option:"));
+      input = view.getUserInputView(System.in);
+      if (model.validatePortfolioUUID(input, this.user)) {
+        invalidInput = false;
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please enter a valid option:"));
       }
     }
     return input;
   }
 
+  /**
+   * It validates if the date provided by the user is a valid sequence.
+   *
+   * @param date String date input received from the user.
+   * @return true if it's a valid date, false, otherwise.
+   */
   private boolean isValidDate(String date) {
     return LocalDate.parse(date) != null;
   }
