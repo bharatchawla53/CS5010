@@ -1,7 +1,6 @@
 package stockHw4;
 
-import java.io.InputStream;
-import java.io.PrintStream;
+
 
 /**
  * Demonstrates a command-line-based Stock application.
