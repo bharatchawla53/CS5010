@@ -216,7 +216,7 @@ public class StockControllerImpl extends StockControllerAbstract {
         invalidInput = true;
       }
     }
-    view.getBuilderView(Collections.singletonList("Your portfolio has been created! You can find it at : " + portfolioUuid));
+    view.getBuilderView(Collections.singletonList("---Your portfolio has been created! You can find it at : " + portfolioUuid + "---"));
   }
 
   /**
@@ -289,7 +289,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       columns.add("Number of shares");
       columns.add("Total Share Value");
       view.getTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
-      view.getBuilderView(Collections.singletonList("The total value of this portfolio is: " + totalPortfolioValueSum));
+      view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: " + totalPortfolioValueSum + "---"));
     }
   }
 
@@ -319,9 +319,7 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     // TODO make directory path dynamic
     String portfolioFilePath = "CS5010/" + this.user.getUserName() + "_" + input + ".csv";
-    List<String> serializedPortfolioSuccess = new ArrayList<String>();
-    serializedPortfolioSuccess.add("Your portfolio " + input + " has been serialized! You can find it at: " + portfolioFilePath);
-    view.getBuilderView(serializedPortfolioSuccess);
+    view.getBuilderView(Collections.singletonList("---Your portfolio " + input + " has been serialized! You can find it at: " + portfolioFilePath + "---"));
   }
 
   /**
@@ -346,8 +344,8 @@ public class StockControllerImpl extends StockControllerAbstract {
         view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of File is malformed!", "Please enter a valid file path: "));
       }
     }
-    view.getBuilderView(Collections.singletonList("The external portfolio file has been saved successfully. " +
-            "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv"));
+    view.getBuilderView(Collections.singletonList("---The external portfolio file has been saved successfully. " +
+            "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---" ));
   }
 
   /**
