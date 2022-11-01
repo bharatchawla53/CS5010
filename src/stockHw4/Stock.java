@@ -1,5 +1,8 @@
 package stockHw4;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+
 /**
  * Demonstrates a command-line-based Stock application.
  */
@@ -13,7 +16,8 @@ public class Stock {
     // create the view
     StockView view = new StockViewImpl();
     // create the controller
-    StockController controller = new StockControllerImpl(model, view);
+    StockController controller = new StockControllerImpl(model, view,
+            System.in, System.out);
     // hand over the control of the app to the controller
     controller.start();
 

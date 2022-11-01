@@ -1,5 +1,7 @@
 package stockHw4;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +18,9 @@ public class StockControllerImpl extends StockControllerAbstract {
   private final StockModel model;
   private final StockView view;
   private User user;
+
+  final InputStream in;
+  final PrintStream out;
   private Boolean isUserOperationSuccessful;
 
   /**
@@ -24,8 +29,10 @@ public class StockControllerImpl extends StockControllerAbstract {
    * @param model StockModel that controller talks to.
    * @param view  StockView that controller talk to.
    */
-  public StockControllerImpl(StockModel model, StockView view) {
+  public StockControllerImpl(StockModel model, StockView view, InputStream in, PrintStream out) {
     this.model = model;
+    this.in = in;
+    this.out = out;
     this.view = view;
     this.isUserOperationSuccessful = true;
   }
@@ -68,7 +75,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate the user login input
     while (invalidInput) {
       try {
-        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(this.in).toUpperCase(Locale.ROOT);
         if (UserInput.valueOf(input).name().equals(input)) {
           invalidInput = false;
         }
@@ -92,7 +99,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getUsernameInputView();
     // validate the username input and check if it already exists in our records
     while (invalidInput) {
-      input = view.getUserInputView(System.in);
+      input = view.getUserInputView(this.in);
       if (model.isUserNameExists(input)) {
         invalidInput = false;
       } else {
@@ -137,7 +144,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate the user input
     while (invalidInput) {
       try {
-        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(this.in).toUpperCase(Locale.ROOT);
         if (UserInput.valueOf(input).name().equals(input)) {
           invalidInput = false;
         }
@@ -165,7 +172,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate the user options input
     while (invalidInput) {
       try {
-        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(this.in).toUpperCase(Locale.ROOT);
 
         String finalInput = input;
         Optional<UserInputOptions> userInputOption = Arrays.stream(UserInputOptions.values())
@@ -196,7 +203,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     while (!input.equals("DONE")) {
       // validate the user provided ticker/share combination
       while (invalidInput) {
-        input = view.getUserInputView(System.in).toUpperCase(Locale.ROOT);
+        input = view.getUserInputView(this.in).toUpperCase(Locale.ROOT);
         if (model.validateTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
           invalidInput = false;
         } else {
@@ -249,7 +256,7 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     // validate date is in correct format
     while (invalidInput) {
-      input = view.getUserInputView(System.in);
+      input = view.getUserInputView(this.in);
       if (isValidDate(input)) {
         invalidInput = false;
       } else {
@@ -309,7 +316,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     //view.getViewBuilder(portfolioUser);
     view.getPortfolioFilePathInputView();
     while (invalidInput) {
-      input = view.getUserInputView(System.in);
+      input = view.getUserInputView(this.in);
       if (model.validatePortfolioUUID(input, this.user)) {
         invalidInput = false;
       } else {
@@ -334,7 +341,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     String pUUID = null;
     view.getSavePortfolioFilePathInputView();
     while (invalidInput) {
-      input = view.getUserInputView(System.in);
+      input = view.getUserInputView(this.in);
       if (model.validateUserPortfolioExternalPathAndContentsStructure(input)) {
         pUUID = model.saveExternalUserPortfolio(input, this.user);
         if (pUUID != null) {
@@ -361,10 +368,10 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     view.getNewUserView();
     while (invalidUserName) {
-      input = view.getUserInputView(System.in);
+      input = view.getUserInputView(this.in);
       while (input.length() > 8) {
         view.getBuilderView(Arrays.asList("Username can't be longer than 8 characters", "Please enter a valid username: "));
-        input = view.getUserInputView(System.in);
+        input = view.getUserInputView(this.in);
 
       }
       // get username and then attempt to save it
@@ -404,7 +411,7 @@ public class StockControllerImpl extends StockControllerAbstract {
     // validate correct portfolio ID is provided
     while (invalidInput) {
 
-      input = view.getUserInputView(System.in);
+      input = view.getUserInputView(this.in);
       if (model.validatePortfolioUUID(input, this.user)) {
         invalidInput = false;
       } else {
