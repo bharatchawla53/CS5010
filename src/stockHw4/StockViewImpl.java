@@ -175,7 +175,7 @@ public class StockViewImpl implements StockView {
 
   private String formatOutput(List<String> outputStrings) {
     StringBuilder sb = new StringBuilder();
-    sb.append("///");
+    sb.append("\n");
     for (String e : outputStrings) {
       sb.append("\n");
       sb.append(e);
