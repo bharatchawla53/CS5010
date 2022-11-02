@@ -1,4 +1,4 @@
-package stockHw4.model;
+package stockhw4.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,8 @@ public class AlphaVantageApi {
    * @param symbol     the name of the stock.
    * @return a list of map of stock with its list of historical data.
    */
-  public List<HashMap<String, List<AlphaDailyTimeSeries>>> getStockTradedValue(String outputSize, String symbol) {
+  public List<HashMap<String, List<AlphaDailyTimeSeries>>>
+  getStockTradedValue(String outputSize, String symbol) {
     URL url;
     try {
       /*
@@ -76,7 +77,8 @@ public class AlphaVantageApi {
       throw new IllegalArgumentException("No price data found for " + symbol);
     }
 
-    // return what we have calculated so far to process in the view while we attempt to compute again the remaining ones
+    // return what we have calculated so far to process in the view
+    // while we attempt to compute again the remaining ones
     if (output.toString().contains("5 calls per minute")) {
       return stockTradedValues;
     } else {
@@ -93,24 +95,25 @@ public class AlphaVantageApi {
    * @param symbol     the name of the stock.
    * @return a list of map of stock with its list of historical data.
    */
-  private List<HashMap<String, List<AlphaDailyTimeSeries>>> parseResponseToObject(String[] response, String outputSize, String symbol) {
+  private List<HashMap<String, List<AlphaDailyTimeSeries>>>
+  parseResponseToObject(String[] response, String outputSize, String symbol) {
     List<AlphaDailyTimeSeries> timeSeries = new ArrayList<>();
 
     // only need the current date stock price
     if (outputSize.equals(AlphaVantageOutputSize.COMPACT.getInput())) {
       String[] currDailyTimeStock = response[1].split(",");
-      timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]), currDailyTimeStock[1], currDailyTimeStock[4]));
+      timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]),
+              currDailyTimeStock[1], currDailyTimeStock[4]));
     } else {
       for (int i = 1; i < response.length; i++) {
         String[] currDailyTimeStock = response[i].split(",");
-        timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]), currDailyTimeStock[1], currDailyTimeStock[4]));
+        timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]),
+                currDailyTimeStock[1], currDailyTimeStock[4]));
       }
     }
 
     // add it to the list
-    stockTradedValues.add(new HashMap<>() {{
-      put(symbol, timeSeries);
-    }});
+    stockTradedValues.add(new HashMap<>() {{ put(symbol, timeSeries); }});
 
     return stockTradedValues;
   }

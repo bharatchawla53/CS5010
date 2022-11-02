@@ -1,13 +1,13 @@
-package stockHw4;
+package stockhw4;
 
 import java.io.InputStreamReader;
 
-import stockHw4.controller.StockController;
-import stockHw4.controller.StockControllerImpl;
-import stockHw4.model.StockModel;
-import stockHw4.model.StockModelImpl;
-import stockHw4.view.StockView;
-import stockHw4.view.StockViewImpl;
+import stockhw4.controller.StockController;
+import stockhw4.controller.StockControllerImpl;
+import stockhw4.model.StockModel;
+import stockhw4.model.StockModelImpl;
+import stockhw4.view.StockView;
+import stockhw4.view.StockViewImpl;
 
 /**
  * Demonstrates a command-line-based Stock application.

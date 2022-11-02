@@ -1,4 +1,4 @@
-package stockHw4.model;
+package stockhw4.model;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 public class StockModelTest {
 
   private static StockModel stockModel;
-  private final static String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
+  private static final String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
 
   @BeforeClass
   public static void setUp() {
@@ -334,7 +334,8 @@ public class StockModelTest {
   @Test
   public void testValidUserPortfolioExternalPathAndContentsStructure() {
     String userFilePath = "testUserLoadFile.csv";
-    boolean validFilePath = stockModel.validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
+    boolean validFilePath = stockModel
+            .validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
 
     assertTrue(validFilePath);
   }
@@ -342,7 +343,8 @@ public class StockModelTest {
   @Test
   public void testInvalidUserPortfolioExternalPath() {
     String userFilePath = "random.csv";
-    boolean validFilePath = stockModel.validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
+    boolean validFilePath = stockModel
+            .validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
 
     assertFalse(validFilePath);
   }
@@ -350,7 +352,8 @@ public class StockModelTest {
   @Test
   public void testInvalidUserPortfolioExternalContentsStructure() {
     String userFilePath = "testUserLoadInvalidFile.csv";
-    boolean validFilePath = stockModel.validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
+    boolean validFilePath = stockModel
+            .validateUserPortfolioExternalPathAndContentsStructure(userFilePath);
 
     assertFalse(validFilePath);
   }
@@ -359,7 +362,8 @@ public class StockModelTest {
   public void testSaveExternalUserPortfolio() {
     User user = User.builder().userName("test").build();
     String userFilePath = "testUserLoadFile.csv";
-    String portfolioIdSavedTo = stockModel.saveExternalUserPortfolio(userFilePath, user);
+    String portfolioIdSavedTo = stockModel
+            .saveExternalUserPortfolio(userFilePath, user);
 
     assertNotNull(portfolioIdSavedTo);
 
@@ -425,8 +429,9 @@ public class StockModelTest {
       }
 
       //Rename the new file to the filename the original file had.
-      if (!tempFile.renameTo(inFile))
+      if (!tempFile.renameTo(inFile)) {
         System.out.println("Could not rename file");
+      }
 
     } catch (IOException ex) {
       ex.printStackTrace();

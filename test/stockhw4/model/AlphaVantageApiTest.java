@@ -1,4 +1,4 @@
-package stockHw4.model;
+package stockhw4.model;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,8 +19,11 @@ public class AlphaVantageApiTest {
 
   private static AlphaVantageApi alphaVantageApi;
   private static List<HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>>> hashMapList;
-  private final static String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
+  private static final String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
 
+  /**
+   * It caches the API result for testing purposes.
+   */
   @BeforeClass
   public static void setUp() {
     alphaVantageApi = new AlphaVantageApi();
@@ -39,7 +42,8 @@ public class AlphaVantageApiTest {
     assertNotNull(hashMapList);
     assertEquals(5, hashMapList.size());
 
-    for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(0).entrySet()) {
+    for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry
+            : hashMapList.get(0).entrySet()) {
       assertEquals(tickers[0], entry.getKey());
       assertNotNull(entry.getValue());
     }
@@ -50,7 +54,8 @@ public class AlphaVantageApiTest {
     assertNotNull(hashMapList);
     assertEquals(5, hashMapList.size());
 
-    for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(4).entrySet()) {
+    for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry
+            : hashMapList.get(4).entrySet()) {
       assertEquals("DAL", entry.getKey());
       assertNotNull(entry.getValue());
     }
@@ -62,7 +67,8 @@ public class AlphaVantageApiTest {
     assertEquals(5, hashMapList.size());
 
     for (int i = 0; i < hashMapList.size(); i++) {
-      for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(i).entrySet()) {
+      for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry
+              : hashMapList.get(i).entrySet()) {
         assertEquals(tickers[i], entry.getKey());
         assertNotNull(entry.getValue());
       }

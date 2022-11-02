@@ -1,4 +1,4 @@
-package stockHw4.view;
+package stockhw4.view;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ public interface StockView {
   void terminateView();
 
   /**
-   * Method to build a view that renders a table given a List of rows, and List of columns
+   * Method to build a view that renders a table given a List of rows, and List of columns.
    *
    * @param rows    the rows the table must render apart from the header row.
    * @param columns the columns that the table must render.

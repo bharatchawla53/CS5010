@@ -1,4 +1,4 @@
-package stockHw4.model;
+package stockhw4.model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -120,8 +120,8 @@ public class StockModelImpl implements StockModel {
     for (int i = 0; i < listOfFiles.length; i++) {
       if (listOfFiles[i].isFile()) {
         if (listOfFiles[i].getName().contains(".csv") && listOfFiles[i].getName().contains("_")) {
-          if (listOfFiles[i].getName().split("_")[1].split("\\.")[0].equals(portfolioUUID) &&
-                  listOfFiles[i].getName().split("_")[0].equals(user.getUserName())) {
+          if (listOfFiles[i].getName().split("_")[1].split("\\.")[0].equals(portfolioUUID)
+                  && listOfFiles[i].getName().split("_")[0].equals(user.getUserName())) {
             return true;
           }
         }
@@ -232,33 +232,32 @@ public class StockModelImpl implements StockModel {
   }
 
   @Override
-  public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate, User user, String portfolioUUID) {
+  public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
+                            User user, String portfolioUUID) {
     List<String> totalValueOfPortfolio = new ArrayList<>();
 
     List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
 
     for (String content : portfolioContents) {
       String[] shareDetail = content.split(",");
-      Double stockPrice = getStockPrice(shareDetail, getCurrentDateSkippingWeekends(dateParser(certainDate)));
+      Double stockPrice = getStockPrice(shareDetail,
+              getCurrentDateSkippingWeekends(dateParser(certainDate)));
 
       if (stockPrice == null) {
         // call the API
         getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), shareDetail[0]);
         if (stockHashMapList.stream().noneMatch(map -> map.containsKey(shareDetail[0]))) {
-          return new HashMap<>() {{
-            put(portfolioContents.size(), totalValueOfPortfolio);
-          }};
+          return new HashMap<>() {{put(portfolioContents.size(), totalValueOfPortfolio);}};
         }
 
-        stockPrice = getStockPrice(shareDetail, getCurrentDateSkippingWeekends(dateParser(certainDate)));
+        stockPrice = getStockPrice(shareDetail,
+                getCurrentDateSkippingWeekends(dateParser(certainDate)));
       }
 
       String symbolCached = calculateTotalStockWorth(shareDetail, stockPrice);
       totalValueOfPortfolio.add(symbolCached);
     }
-    return new HashMap<>() {{
-      put(totalValueOfPortfolio.size(), totalValueOfPortfolio);
-    }};
+    return new HashMap<>() {{put(totalValueOfPortfolio.size(), totalValueOfPortfolio);}};
   }
 
   @Override
@@ -320,6 +319,32 @@ public class StockModelImpl implements StockModel {
       return null;
     }
     return null;
+  }
+
+  /**
+   * It returns a stock price for a given stock on a certain date.
+   *
+   * @param shareDetail an array containing stock symbol and number of shares.
+   * @param certainDate the date for retrieving stock price on.
+   * @return the stock price.
+   */
+  private Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
+    Double stockPrice = null;
+
+    for (HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> symbolMap : stockHashMapList) {
+      if (symbolMap.containsKey(shareDetail[0])) {
+        // iterate to find the stock value on a certain date
+        for (AlphaVantageApi.AlphaDailyTimeSeries timeSeries : symbolMap.get(shareDetail[0])) {
+          if (timeSeries.getDate().equals(certainDate)) {
+            stockPrice = isCurrentTimeBeforeNoon()
+                    ? Double.parseDouble(timeSeries.getOpenVal())
+                    : Double.parseDouble(timeSeries.getCloseVal());
+            break;
+          }
+        }
+      }
+    }
+    return stockPrice;
   }
 
   /**
@@ -419,32 +444,6 @@ public class StockModelImpl implements StockModel {
   }
 
   /**
-   * It returns a stock price for a given stock on a certain date.
-   *
-   * @param shareDetail an array containing stock symbol and number of shares.
-   * @param certainDate the date for retrieving stock price on.
-   * @return the stock price.
-   */
-  private Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
-    Double stockPrice = null;
-
-    for (HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> symbolMap : stockHashMapList) {
-      if (symbolMap.containsKey(shareDetail[0])) {
-        // iterate to find the stock value on a certain date
-        for (AlphaVantageApi.AlphaDailyTimeSeries timeSeries : symbolMap.get(shareDetail[0])) {
-          if (timeSeries.getDate().equals(certainDate)) {
-            stockPrice = isCurrentTimeBeforeNoon()
-                    ? Double.parseDouble(timeSeries.getOpenVal())
-                    : Double.parseDouble(timeSeries.getCloseVal());
-            break;
-          }
-        }
-      }
-    }
-    return stockPrice;
-  }
-
-  /**
    * It builds a string with stock symbol, number of shares, and the total price for that stock.
    *
    * @param shareDetail an array containing stock symbol and number of shares.
@@ -452,7 +451,8 @@ public class StockModelImpl implements StockModel {
    * @return a string of symbol, number of shares, and total price.
    */
   private String calculateTotalStockWorth(String[] shareDetail, Double stockPrice) {
-    return shareDetail[0] + "," + shareDetail[1] + "," + stockPrice * Double.parseDouble(shareDetail[1]);
+    return shareDetail[0] + "," + shareDetail[1] + ","
+            + stockPrice * Double.parseDouble(shareDetail[1]);
   }
 
   /**

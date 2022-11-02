@@ -1,4 +1,4 @@
-package stockHw4.model;
+package stockhw4.model;
 
 import java.util.List;
 import java.util.Map;
@@ -102,7 +102,8 @@ public interface StockModel {
    * @param portfolioUUID the unique ID of the portfolio.
    * @return map of expected contents of a portfolio with the list of how many are processed.
    */
-  Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate, User user, String portfolioUUID);
+  Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
+                           User user, String portfolioUUID);
 
   /**
    * It validates if the filepath provided is correct and the contents of it are in right sequence.

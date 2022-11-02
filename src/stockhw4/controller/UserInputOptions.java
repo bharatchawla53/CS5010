@@ -1,4 +1,4 @@
-package stockHw4.controller;
+package stockhw4.controller;
 
 /**
  * This enum represents the values for allowed user input options.

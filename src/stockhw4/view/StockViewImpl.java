@@ -1,4 +1,4 @@
-package stockHw4.view;
+package stockhw4.view;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,7 +91,8 @@ public class StockViewImpl implements StockView {
 
     if (index != 100) {
       try {
-        out.append("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
+        out.append("Calculating your portfolio worth: "
+                + index + "% " + animationChars[index % 4] + "\r");
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -116,10 +117,11 @@ public class StockViewImpl implements StockView {
   @Override
   public void getUserOptionsView() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("1. Would you like to create a portfolio with shares of one or more stock ? " +
-            "Once done creating your portfolio, please enter \"DONE\" ");
+    opItems.add("1. Would you like to create a portfolio with shares of one or more stock ? "
+            + "Once done creating your portfolio, please enter \"DONE\" ");
     opItems.add("2. Would you like to examine the composition of a portfolio ?");
-    opItems.add("3. Would you like to determine the total value of a portfolio on a certain date ?");
+    opItems.add("3. Would you like to determine the total value of a portfolio on a "
+            + "certain date ?");
     opItems.add("4. Would you like to persist a portfolio so that it can be saved ?");
     opItems.add("5. Would you like to load an external portfolio?");
     opItems.add("6. Would you like to exit the application ?");
@@ -266,15 +268,16 @@ public class StockViewImpl implements StockView {
      * It prints the data in table view.
      */
     public void print() {
-      int[] maxWidths = headers != null ?
-              headers.stream().mapToInt(String::length).toArray() : null;
+      int[] maxWidths = headers != null
+              ? headers.stream().mapToInt(String::length).toArray() : null;
 
       for (String[] cells : rows) {
         if (maxWidths == null) {
           maxWidths = new int[cells.length];
         }
         if (cells.length != maxWidths.length) {
-          throw new IllegalArgumentException("Number of row-cells and headers should be consistent");
+          throw new IllegalArgumentException("Number of row-cells and headers should "
+                  + "be consistent");
         }
         for (int i = 0; i < cells.length; i++) {
           maxWidths[i] = Math.max(maxWidths[i], cells[i].length());
@@ -301,8 +304,8 @@ public class StockViewImpl implements StockView {
      */
     private void printLine(int[] columnWidths) {
       for (int i = 0; i < columnWidths.length; i++) {
-        String line = String.join("", Collections.nCopies(columnWidths[i] +
-                verticalSep.length() + 1, HORIZONTAL_SEP));
+        String line = String.join("", Collections.nCopies(columnWidths[i]
+                + verticalSep.length() + 1, HORIZONTAL_SEP));
         try {
           out.append(joinSep).append(line).append(i == columnWidths.length - 1 ? joinSep : "");
         } catch (IOException e) {

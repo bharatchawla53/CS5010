@@ -1,4 +1,4 @@
-package stockHw4.model;
+package stockhw4.model;
 
 import java.util.UUID;
 
@@ -43,12 +43,6 @@ public class User {
   public static class UserBuilder {
     private String id;
     private String userName;
-
-    /**
-     * Constructs an empty UserBuilder object.
-     */
-    public UserBuilder() {
-    }
 
     private void userId() {
       this.id = UUID

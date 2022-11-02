@@ -1,4 +1,4 @@
-package stockHw4.controller;
+package stockhw4.controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,15 +15,18 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import stockHw4.model.StockModel;
-import stockHw4.model.User;
-import stockHw4.view.StockView;
+import stockhw4.model.StockModel;
+import stockhw4.model.User;
+import stockhw4.view.StockView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class for stock controller.
+ */
 public class StockControllerTest {
   /**
-   * The StockModelImpl class represents user portfolio's and features supported for it.
+   * The MockStockModelImpl class represents user portfolio's and features supported for it.
    */
   public static class MockStockModelImpl implements StockModel {
     private StringBuilder log;
@@ -55,10 +58,7 @@ public class StockControllerTest {
 
     @Override
     public boolean isValidTicker(String ticker) {
-      if (ticker != null) {
-        return true;
-      }
-      return false;
+      return ticker != null;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class StockControllerTest {
     @Override
     public boolean validatePortfolioUUID(String portfolioUUID, User user) {
       if (portfolioUUID != null && user != null && (portfolioUUID.equals("23f")
-      || portfolioUUID.equals("546fg"))) {
+              || portfolioUUID.equals("546fg"))) {
         log.append(portfolioUUID).append(" ");
         return true;
       }
@@ -111,10 +111,7 @@ public class StockControllerTest {
 
     @Override
     public boolean saveStock(User user, String portfolioUUID, String ticker, String noOfShares) {
-      if (user != null && portfolioUUID != null && ticker != null && noOfShares != null) {
-        return true;
-      }
-      return false;
+      return user != null && portfolioUUID != null && ticker != null && noOfShares != null;
     }
 
     @Override
@@ -133,14 +130,10 @@ public class StockControllerTest {
           if (!log.toString().contains("2022-10-20")) {
             log.append(certainDate).append(" ");
           }
-          return new HashMap<>() {{
-            put(1, Collections.singletonList("AMZN,10,0.00 "));
-          }};
+          return new HashMap<>() {{put(1, Collections.singletonList("AMZN,10,0.00 "));}};
         } else {
           log.append(certainDate).append(" ").append("executed once ");
-          return new HashMap<>() {{
-            put(2, Collections.singletonList("AMZN,10,0.00 "));
-          }};
+          return new HashMap<>() {{put(2, Collections.singletonList("AMZN,10,0.00 "));}};
         }
 
       }
@@ -165,6 +158,9 @@ public class StockControllerTest {
     }
   }
 
+  /**
+   * The MockStockViewImpl class represents user portfolio's view.
+   */
   public static class MockStockViewImpl implements StockView {
 
     private final StringBuffer out;
@@ -345,8 +341,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony DAL,10 AMZN,15 ", sb.toString());
-    assertEquals("login screen new user user options portfolio creator builder view " +
-                    "builder view builder view user options terminate builder view ",
+    assertEquals("login screen new user user options portfolio creator builder view "
+                    + "builder view builder view user options terminate builder view ",
             out.toString());
   }
 
@@ -357,8 +353,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony AMZN,15 ", sb.toString());
-    assertEquals("login screen new user user options portfolio creator builder view " +
-                    "builder view builder view user options terminate builder view ",
+    assertEquals("login screen new user user options portfolio creator builder view "
+                    + "builder view builder view user options terminate builder view ",
             out.toString());
   }
 
@@ -369,8 +365,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony AMZN,15 ", sb.toString());
-    assertEquals("login screen new user user options portfolio creator builder view " +
-                    "builder view builder view user options terminate builder view ",
+    assertEquals("login screen new user user options portfolio creator builder view "
+                    + "builder view builder view user options terminate builder view ",
             out.toString());
   }
 
@@ -381,8 +377,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f ", sb.toString());
-    assertEquals("login screen new user user options portfolio header table builder " +
-                    "portfolio id input table builder user options builder view terminate builder view ",
+    assertEquals("login screen new user user options portfolio header table builder "
+                    + "portfolio id input table builder user options builder view terminate builder view ",
             out.toString());
   }
 
@@ -393,9 +389,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f 2022-10-20 ", sb.toString());
-    assertEquals("login screen new user user options portfolio header table builder portfolio " +
-                    "id input table builder builder view total portfolio value table builder builder " +
-                    "view user options builder view terminate builder view ",
+    assertEquals("login screen new user user options portfolio header table builder portfolio "
+                    + "id input table builder builder view total portfolio value table builder builder "
+                    + "view user options builder view terminate builder view ",
             out.toString());
   }
 
@@ -406,9 +402,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f 2022-10-20 ", sb.toString());
-    assertEquals("login screen new user user options portfolio header table " +
-                    "builder portfolio id input total portfolio value table builder builder view " +
-                    "user options builder view terminate builder view ",
+    assertEquals("login screen new user user options portfolio header table "
+                    + "builder portfolio id input total portfolio value table builder builder view "
+                    + "user options builder view terminate builder view ",
             out.toString());
   }
 
@@ -426,9 +422,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 546fg 2022-10-20 executed once ", sb.toString());
-    assertEquals("login screen new user user options portfolio header table builder portfolio " +
-                    "id input total portfolio value progress bar table builder builder view user options " +
-                    "builder view builder view builder view terminate builder view ",
+    assertEquals("login screen new user user options portfolio header table builder portfolio "
+                    + "id input total portfolio value progress bar table builder builder view user options "
+                    + "builder view builder view builder view terminate builder view ",
             out.toString());
   }
 
@@ -439,9 +435,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f ", sb.toString());
-    assertEquals("login screen new user user options portfolio file path header table " +
-                    "builder portfolio file path input builder view user options builder view " +
-                    "terminate builder view ",
+    assertEquals("login screen new user user options portfolio file path header table "
+                    + "builder portfolio file path input builder view user options builder view "
+                    + "terminate builder view ",
             out.toString());
   }
 
@@ -452,9 +448,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f ", sb.toString());
-    assertEquals("login screen new user user options portfolio file path header table " +
-                    "builder portfolio file path input builder view builder view user options " +
-                    "builder view terminate builder view ",
+    assertEquals("login screen new user user options portfolio file path header table "
+                    + "builder portfolio file path input builder view builder view user options "
+                    + "builder view terminate builder view ",
             out.toString());
   }
 
@@ -465,8 +461,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony /test.csv ", sb.toString());
-    assertEquals("login screen new user user options save portfolio save portfolio " +
-                    "file path builder view user options builder view builder view terminate builder view ",
+    assertEquals("login screen new user user options save portfolio save portfolio "
+                    + "file path builder view user options builder view builder view "
+                    + "terminate builder view ",
             out.toString());
   }
 
@@ -477,8 +474,9 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony /test.csv ", sb.toString());
-    assertEquals("login screen new user user options save portfolio save portfolio file path " +
-                    "builder view builder view user options builder view builder view terminate builder view ",
+    assertEquals("login screen new user user options save portfolio save portfolio file path "
+                    + "builder view builder view user options builder view builder view "
+                    + "terminate builder view ",
             out.toString());
   }
 
@@ -500,7 +498,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony ", sb.toString());
-    assertEquals("login screen new user user options terminate builder view builder view builder view ",
+    assertEquals("login screen new user user options terminate builder view builder "
+                    + "view builder view ",
             out.toString());
   }
 
