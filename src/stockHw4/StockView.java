@@ -1,6 +1,5 @@
 package stockHw4;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -8,7 +7,6 @@ import java.util.List;
  */
 
 public interface StockView {
-
 
   /**
    * Method for loading a login screen.
@@ -41,13 +39,6 @@ public interface StockView {
    * @param values the List of values to be displayed, is of type string.
    */
   void getBuilderView(List<String> values);
-
-  /***
-   * Method to collect input from the user.
-   * @param in the InputStream object to get input from.
-   * @return entered user input as String.
-   */
-  String getUserInputView(InputStream in);
 
   /***
    * Method to load greeting prompt when user wants to a portfolio.

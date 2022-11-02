@@ -2,28 +2,18 @@ package stockHw4;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
-
-import java.io.InputStream;
 import java.io.PrintStream;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static org.junit.Assert.assertEquals;
-
 
 /**
  * Test class for StockViewImpl
  */
-
 public class StockViewTest {
   private static StockView stockView;
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -44,8 +34,8 @@ public class StockViewTest {
     System.setErr(originalErr);
   }
 
-  @BeforeClass
-  public static void setUp() {
+  @Before
+  public void setUp() {
     stockView = new StockViewImpl();
   }
 
@@ -127,16 +117,6 @@ public class StockViewTest {
     consoleOp.add("fmdslsaKLSKfsuosfidAKLSA\n");
 
     assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
-
-  }
-
-  @Test
-  public void testUserInputView() {
-    //TODO fuzzy testing
-    String userInput = "ABCDE";
-    InputStream in = new ByteArrayInputStream(userInput.getBytes());
-    String val = stockView.getUserInputView(in);
-    assertEquals(val, userInput);
 
   }
 

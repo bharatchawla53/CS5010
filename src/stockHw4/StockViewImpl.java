@@ -1,16 +1,21 @@
 package stockHw4;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * The StockViewImpl class represents user portfolio's features user interface.
  */
 public class StockViewImpl implements StockView {
+
+  private final Appendable out;
+
+  public StockViewImpl(Appendable out) {
+    this.out = out;
+  }
 
   @Override
   public void getLoginScreenView() {
@@ -57,12 +62,6 @@ public class StockViewImpl implements StockView {
   @Override
   public void getBuilderView(List<String> values) {
     print(formatOutput(values));
-  }
-
-  @Override
-  public String getUserInputView(InputStream in) {
-    Scanner scanner = new Scanner(in);
-    return scanner.next();
   }
 
   @Override
@@ -183,7 +182,11 @@ public class StockViewImpl implements StockView {
   }
 
   private void print(String output) {
-    System.out.println(output);
+    try {
+      this.out.append(String.format("%s\n", output));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private class CommandLineTable {
