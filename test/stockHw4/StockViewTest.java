@@ -1,14 +1,9 @@
 package stockHw4;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.Reader;
-import java.io.StringReader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,28 +14,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class StockViewTest {
   private static StockView stockView;
-
-  //StringBuffer out = new StringBuffer();
-
-
-  //final Reader in = new StringReader("+ 3 4 + 8 9 q");
-
   final Appendable out = new StringBuffer();
-
-  //ByteArrayOutputStream os = new ByteArrayOutputStream();
-  //PrintStream ps = new PrintStream(os);
-  //private final PrintStream originalOut = System.out;
-  //private final PrintStream originalErr = System.err;
 
 
   @Before
   public void setUp() {
     stockView = new StockViewImpl(out);
-
-
   }
-
-
   private String ConsoleOpDialogCreator(List<String> consoleOp) {
     String consoleOpDialog = "";
     for (String line : consoleOp) {

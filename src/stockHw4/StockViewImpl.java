@@ -180,7 +180,7 @@ public class StockViewImpl implements StockView {
         commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2]);
       }
     }
-    //this.out.append(commandLineTable.print());
+
     commandLineTable.print();
   }
 
@@ -294,7 +294,7 @@ public class StockViewImpl implements StockView {
           {
             e.printStackTrace();
           }
-          //System.out.printf("%s %" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+
         } else {
           String sfmt = String.format("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
           try {
@@ -304,7 +304,7 @@ public class StockViewImpl implements StockView {
           {
             e.printStackTrace();
           }
-          //System.out.printf("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+
         }
       }
       try {
