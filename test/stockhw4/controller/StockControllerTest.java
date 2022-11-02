@@ -130,12 +130,18 @@ public class StockControllerTest {
           if (!log.toString().contains("2022-10-20")) {
             log.append(certainDate).append(" ");
           }
-          return new HashMap<>() {{ put(1, Collections.singletonList("AMZN,10,0.00 "));
-          }};
+          return new HashMap<>() {
+            {
+              put(1, Collections.singletonList("AMZN,10,0.00 "));
+            }
+          };
         } else {
           log.append(certainDate).append(" ").append("executed once ");
-          return new HashMap<>() {{ put(2, Collections.singletonList("AMZN,10,0.00 "));
-          }};
+          return new HashMap<>() {
+            {
+              put(2, Collections.singletonList("AMZN,10,0.00 "));
+            }
+          };
         }
 
       }
