@@ -130,10 +130,12 @@ public class StockControllerTest {
           if (!log.toString().contains("2022-10-20")) {
             log.append(certainDate).append(" ");
           }
-          return new HashMap<>() {{put(1, Collections.singletonList("AMZN,10,0.00 "));}};
+          return new HashMap<>() {{ put(1, Collections.singletonList("AMZN,10,0.00 "));
+          }};
         } else {
           log.append(certainDate).append(" ").append("executed once ");
-          return new HashMap<>() {{put(2, Collections.singletonList("AMZN,10,0.00 "));}};
+          return new HashMap<>() {{ put(2, Collections.singletonList("AMZN,10,0.00 "));
+          }};
         }
 
       }
@@ -378,7 +380,8 @@ public class StockControllerTest {
 
     assertEquals("tony 23f ", sb.toString());
     assertEquals("login screen new user user options portfolio header table builder "
-                    + "portfolio id input table builder user options builder view terminate builder view ",
+                    + "portfolio id input table builder user options builder view "
+                    + "terminate builder view ",
             out.toString());
   }
 
@@ -390,7 +393,8 @@ public class StockControllerTest {
 
     assertEquals("tony 23f 2022-10-20 ", sb.toString());
     assertEquals("login screen new user user options portfolio header table builder portfolio "
-                    + "id input table builder builder view total portfolio value table builder builder "
+                    + "id input table builder builder view total portfolio value "
+                    + "table builder builder "
                     + "view user options builder view terminate builder view ",
             out.toString());
   }
@@ -423,7 +427,8 @@ public class StockControllerTest {
 
     assertEquals("tony 546fg 2022-10-20 executed once ", sb.toString());
     assertEquals("login screen new user user options portfolio header table builder portfolio "
-                    + "id input total portfolio value progress bar table builder builder view user options "
+                    + "id input total portfolio value progress bar table builder "
+                    + "builder view user options "
                     + "builder view builder view builder view terminate builder view ",
             out.toString());
   }
@@ -487,7 +492,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony ", sb.toString());
-    assertEquals("login screen new user user options terminate user options terminate builder view ",
+    assertEquals("login screen new user user options terminate user "
+                    + "options terminate builder view ",
             out.toString());
   }
 

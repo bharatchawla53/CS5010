@@ -33,8 +33,8 @@ public class AlphaVantageApi {
    * @param symbol     the name of the stock.
    * @return a list of map of stock with its list of historical data.
    */
-  public List<HashMap<String, List<AlphaDailyTimeSeries>>>
-  getStockTradedValue(String outputSize, String symbol) {
+  public List<HashMap<String, List<AlphaDailyTimeSeries>>> getStockTradedValue(String outputSize,
+                                       String symbol) {
     URL url;
     try {
       /*
@@ -95,8 +95,8 @@ public class AlphaVantageApi {
    * @param symbol     the name of the stock.
    * @return a list of map of stock with its list of historical data.
    */
-  private List<HashMap<String, List<AlphaDailyTimeSeries>>>
-  parseResponseToObject(String[] response, String outputSize, String symbol) {
+  private List<HashMap<String, List<AlphaDailyTimeSeries>>> parseResponseToObject(String[] response,
+                             String outputSize, String symbol) {
     List<AlphaDailyTimeSeries> timeSeries = new ArrayList<>();
 
     // only need the current date stock price
@@ -113,7 +113,8 @@ public class AlphaVantageApi {
     }
 
     // add it to the list
-    stockTradedValues.add(new HashMap<>() {{ put(symbol, timeSeries); }});
+    stockTradedValues.add(new HashMap<>() {{ put(symbol, timeSeries);
+    }});
 
     return stockTradedValues;
   }

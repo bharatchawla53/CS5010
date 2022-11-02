@@ -247,7 +247,8 @@ public class StockModelImpl implements StockModel {
         // call the API
         getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), shareDetail[0]);
         if (stockHashMapList.stream().noneMatch(map -> map.containsKey(shareDetail[0]))) {
-          return new HashMap<>() {{put(portfolioContents.size(), totalValueOfPortfolio);}};
+          return new HashMap<>() {{ put(portfolioContents.size(), totalValueOfPortfolio);
+          }};
         }
 
         stockPrice = getStockPrice(shareDetail,
@@ -257,7 +258,8 @@ public class StockModelImpl implements StockModel {
       String symbolCached = calculateTotalStockWorth(shareDetail, stockPrice);
       totalValueOfPortfolio.add(symbolCached);
     }
-    return new HashMap<>() {{put(totalValueOfPortfolio.size(), totalValueOfPortfolio);}};
+    return new HashMap<>() {{ put(totalValueOfPortfolio.size(), totalValueOfPortfolio);
+    }};
   }
 
   @Override

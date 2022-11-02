@@ -19,7 +19,8 @@ public class AlphaVantageApiTest {
 
   private static AlphaVantageApi alphaVantageApi;
   private static List<HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>>> hashMapList;
-  private static final String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
+  private static final String[] tickers = new String[]{"AAPL", "MSFT",
+          "TSLA", "MRO", "DAL", "AMZN"};
 
   /**
    * It caches the API result for testing purposes.

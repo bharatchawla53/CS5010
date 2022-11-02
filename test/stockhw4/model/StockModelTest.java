@@ -25,7 +25,8 @@ import static org.junit.Assert.assertTrue;
 public class StockModelTest {
 
   private static StockModel stockModel;
-  private static final String[] tickers = new String[]{"AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
+  private static final String[] tickers = new String[]{"AAPL", "MSFT",
+          "TSLA", "MRO", "DAL", "AMZN"};
 
   @BeforeClass
   public static void setUp() {

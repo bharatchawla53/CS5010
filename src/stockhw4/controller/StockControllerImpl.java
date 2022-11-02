@@ -103,8 +103,8 @@ public class StockControllerImpl implements StockController {
       if (model.isUserNameExists(input)) {
         invalidInput = false;
       } else {
-        view.getBuilderView(Collections.singletonList("This username does not exist! " +
-                "Enter an existing username:"));
+        view.getBuilderView(Collections.singletonList("This username does not exist! "
+                + "Enter an existing username:"));
       }
     }
     return input;
@@ -156,8 +156,8 @@ public class StockControllerImpl implements StockController {
 
     if (input.equals(UserInput.Y.name())) {
       this.isUserOperationSuccessful = false;
-      view.getBuilderView(Collections.singletonList("You have exited the " +
-              "application successfully."));
+      view.getBuilderView(Collections.singletonList("You have exited the "
+              + "application successfully."));
     }
   }
 
@@ -211,8 +211,8 @@ public class StockControllerImpl implements StockController {
           if (input.equals("DONE")) {
             invalidInput = false;
           } else {
-            view.getBuilderView(Arrays.asList("Invalid input!", "Please enter a " +
-                    "valid ticker/share (no fractional shares) combination : "));
+            view.getBuilderView(Arrays.asList("Invalid input!", "Please enter a "
+                    + "valid ticker/share (no fractional shares) combination : "));
           }
         }
       }
@@ -220,7 +220,8 @@ public class StockControllerImpl implements StockController {
 
       if (!input.equals("DONE") && model.saveStock(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
-        view.getBuilderView(Collections.singletonList("Ticker and number of shares added to portfolio! "
+        view.getBuilderView(Collections.singletonList("Ticker and number of shares added "
+                + "to portfolio! "
                 + "Enter DONE to exit "
                 + "Portfolio Creation or enter another valid stock to continue"));
         invalidInput = true;
@@ -329,15 +330,16 @@ public class StockControllerImpl implements StockController {
       if (model.validatePortfolioUUID(input, this.user)) {
         invalidInput = false;
       } else {
-        view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please " +
-                "enter a valid portfolio ID: "));
+        view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please "
+                + "enter a valid portfolio ID: "));
       }
     }
 
     String portfolioFilePath = this.user.getUserName() + "_" + input + ".csv";
     view.getBuilderView(Collections.singletonList("---Your portfolio " + input + " has been "
-            +"serialized! You can find it at: " + portfolioFilePath + "---"));
+            + "serialized! You can find it at: " + portfolioFilePath + "---"));
   }
+
   /**
    * It processes the UserOptions.FIVE and allows them to load an external portfolio, and keeps
    * prompting until successful sequence of input is received.
@@ -362,8 +364,8 @@ public class StockControllerImpl implements StockController {
       }
     }
     view.getBuilderView(Collections.singletonList("---The external portfolio file has "
-            +"been saved successfully. " +
-            "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---"));
+            + "been saved successfully. "
+            + "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---"));
   }
 
   /**

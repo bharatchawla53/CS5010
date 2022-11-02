@@ -14,6 +14,10 @@ import stockhw4.view.StockViewImpl;
  */
 public class Stock {
 
+  /**
+   * Application initializer.
+   * @param args command line arguments.
+   */
   public static void main(String[] args) {
     System.out.println("Stock app started");
 
