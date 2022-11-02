@@ -153,7 +153,8 @@ public class StockControllerImpl extends StockControllerAbstract {
 
     if (input.equals(UserInput.Y.name())) {
       this.isUserOperationSuccessful = false;
-      System.exit(0);
+      view.getBuilderView(Collections.singletonList("You have exited the application successfully."));
+      //System.exit(0);
     }
   }
 
@@ -169,20 +170,19 @@ public class StockControllerImpl extends StockControllerAbstract {
     view.getUserOptionsView();
     // validate the user options input
     while (invalidInput) {
-      try {
-        input = getUserInputView().toUpperCase(Locale.ROOT);
+      input = getUserInputView().toUpperCase(Locale.ROOT);
 
-        String finalInput = input;
-        Optional<UserInputOptions> userInputOption = Arrays.stream(UserInputOptions.values())
-                .filter(u -> finalInput.equals(u.getInput()))
-                .findFirst();
+      String finalInput = input;
+      Optional<UserInputOptions> userInputOption = Arrays.stream(UserInputOptions.values())
+              .filter(u -> finalInput.equals(u.getInput()))
+              .findFirst();
 
-        if (userInputOption.isPresent()) {
-          invalidInput = false;
-        }
-      } catch (IllegalArgumentException e) {
+      if (userInputOption.isPresent()) {
+        invalidInput = false;
+      } else {
         view.getBuilderView(Arrays.asList("Invalid option!", "Please enter a valid option:"));
       }
+
     }
     return input;
   }
@@ -286,7 +286,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       }
 
       for (String row : totalValueOfAPortfolio.values().stream().findFirst().get()) {
-        totalPortfolioValueSum += Double.parseDouble(row.split(" ")[2]);
+        totalPortfolioValueSum += Double.parseDouble(row.split(",")[2]);
       }
 
       List<String> columns = new ArrayList<String>();
@@ -322,8 +322,7 @@ public class StockControllerImpl extends StockControllerAbstract {
       }
     }
 
-    // TODO make directory path dynamic
-    String portfolioFilePath = "CS5010/" + this.user.getUserName() + "_" + input + ".csv";
+    String portfolioFilePath = this.user.getUserName() + "_" + input + ".csv";
     view.getBuilderView(Collections.singletonList("---Your portfolio " + input + " has been serialized! You can find it at: " + portfolioFilePath + "---"));
   }
 

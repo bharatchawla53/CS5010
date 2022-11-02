@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Date;
@@ -148,7 +149,8 @@ public class StockModelImpl implements StockModel {
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
     File f = new File(portfolioFileName);
 
-    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
+    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares},
+            getCurrentDateSkippingWeekends(checkCallIsWithinMarketHours()));
     if (stockPrice == null) {
       stockPrice = getStockPrice(ticker, noOfShares);
     }
@@ -156,13 +158,13 @@ public class StockModelImpl implements StockModel {
     if (f.exists() && !f.isDirectory()) {
       List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
       for (int i = 0; i < portfolioContents.size(); i++) {
-        if (portfolioContents.get(i).split(" ")[0].equals(ticker)) {
+        if (portfolioContents.get(i).split(",")[0].equals(ticker)) {
           String newRow = ticker
                   + ","
-                  + (Integer.parseInt(portfolioContents.get(i).split(" ")[1])
+                  + (Integer.parseInt(portfolioContents.get(i).split(",")[1])
                   + Integer.parseInt(noOfShares))
                   + ","
-                  + portfolioContents.get(i).split(" ")[2];
+                  + portfolioContents.get(i).split(",")[2];
           portfolioContents.set(i, newRow);
           isOverwritten = true;
         }
@@ -220,7 +222,7 @@ public class StockModelImpl implements StockModel {
         String ticker = strLine.split(",")[0];
         String noOfShares = strLine.split(",")[1];
         String stockPrice = strLine.split(",")[2];
-        String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
+        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice;
         portfolioContents.add(tickerNoOfShares);
       }
       return portfolioContents;
@@ -236,7 +238,7 @@ public class StockModelImpl implements StockModel {
     List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
 
     for (String content : portfolioContents) {
-      String[] shareDetail = content.split(" ");
+      String[] shareDetail = content.split(",");
       Double stockPrice = getStockPrice(shareDetail, getCurrentDateSkippingWeekends(dateParser(certainDate)));
 
       if (stockPrice == null) {
@@ -339,7 +341,8 @@ public class StockModelImpl implements StockModel {
       }
       getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
     }
-    stockPrice = getStockPrice(new String[]{ticker, noOfShares}, getCurrentDateSkippingWeekends(LocalDate.now()));
+    stockPrice = getStockPrice(new String[]{ticker, noOfShares},
+            getCurrentDateSkippingWeekends(checkCallIsWithinMarketHours()));
     return stockPrice;
   }
 
@@ -385,6 +388,37 @@ public class StockModelImpl implements StockModel {
   }
 
   /**
+   * Checks if the current date is within market hours, otherwise, it uses the previous day for
+   * computing stock price.
+   *
+   * @return LocalDate
+   */
+  private LocalDate checkCallIsWithinMarketHours() {
+    LocalDate date = null;
+
+    Date now = new Date();
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+    String formattedDate = formatter.format(now);
+    boolean isWithinMarketHours = true;
+    try {
+      if (formatter.parse(formattedDate).after(formatter.parse("24:00"))
+              || formatter.parse(formattedDate).before(formatter.parse("08:00"))) {
+        isWithinMarketHours = false;
+      }
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    date = now.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+    if (!isWithinMarketHours) {
+      date = date.minusDays(1);
+    }
+
+    return date;
+  }
+
+  /**
    * It returns a stock price for a given stock on a certain date.
    *
    * @param shareDetail an array containing stock symbol and number of shares.
@@ -418,7 +452,7 @@ public class StockModelImpl implements StockModel {
    * @return a string of symbol, number of shares, and total price.
    */
   private String calculateTotalStockWorth(String[] shareDetail, Double stockPrice) {
-    return shareDetail[0] + " " + shareDetail[1] + " " + stockPrice * Double.parseDouble(shareDetail[1]);
+    return shareDetail[0] + "," + shareDetail[1] + "," + stockPrice * Double.parseDouble(shareDetail[1]);
   }
 
   /**

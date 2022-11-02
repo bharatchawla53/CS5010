@@ -11,8 +11,13 @@ import java.util.List;
  */
 public class StockViewImpl implements StockView {
 
-  final Appendable out;
+  private final Appendable out;
 
+  /**
+   * Creates a constructor that initializes Appendable.
+   *
+   * @param out takes an appendable object.
+   */
   public StockViewImpl(Appendable out) {
     this.out = out;
   }
@@ -87,17 +92,13 @@ public class StockViewImpl implements StockView {
     if (index != 100) {
       try {
         out.append("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
-      }
-      catch(IOException e)
-      {
+      } catch (IOException e) {
         e.printStackTrace();
       }
     } else {
       try {
         out.append("Processing: Done!");
-      }
-      catch(IOException e)
-      {
+      } catch (IOException e) {
         e.printStackTrace();
       }
     }
@@ -172,7 +173,7 @@ public class StockViewImpl implements StockView {
     commandLineTable.setHeaders(columns);
 
     for (String row : rows) {
-      String[] splitRow = row.split(" ");
+      String[] splitRow = row.split(",");
 
       if (splitRow.length == 1) {
         commandLineTable.addRow(splitRow[0]);
@@ -193,6 +194,11 @@ public class StockViewImpl implements StockView {
     return sb.toString();
   }
 
+  /**
+   * A helper method to print lines to command line.
+   *
+   * @param output string to print.
+   */
   private void print(String output) {
     try {
       this.out.append(String.format("%s\n", output));
@@ -201,6 +207,9 @@ public class StockViewImpl implements StockView {
     }
   }
 
+  /**
+   * The CommandLineTable class represents a table view builder for command line interface.
+   */
   private class CommandLineTable {
     private static final String HORIZONTAL_SEP = "-";
     private String verticalSep;
@@ -209,27 +218,53 @@ public class StockViewImpl implements StockView {
     private List<String[]> rows = new ArrayList<>();
     private boolean rightAlign;
 
+    /**
+     * Creates an empty constructor.
+     */
     public CommandLineTable() {
       setShowVerticalLines(false);
     }
 
+    /**
+     * Sets right align for table view.
+     *
+     * @param rightAlign true to set right align, false, otherwise.
+     */
     public void setRightAlign(boolean rightAlign) {
       this.rightAlign = rightAlign;
     }
 
+    /**
+     * shows vertical lines for table view.
+     *
+     * @param showVerticalLines true to show vertical lines, false, otherwise.
+     */
     public void setShowVerticalLines(boolean showVerticalLines) {
       verticalSep = showVerticalLines ? "|" : "";
       joinSep = showVerticalLines ? "+" : " ";
     }
 
+    /**
+     * Sets a list of headers for table view.
+     *
+     * @param headers takes a list of headers.
+     */
     public void setHeaders(List<String> headers) {
       this.headers = headers;
     }
 
+    /**
+     * Adds rows for table view.
+     *
+     * @param cells rows needed for tables.
+     */
     public void addRow(String... cells) {
       rows.add(cells);
     }
 
+    /**
+     * It prints the data in table view.
+     */
     public void print() {
       int[] maxWidths = headers != null ?
               headers.stream().mapToInt(String::length).toArray() : null;
@@ -259,28 +294,35 @@ public class StockViewImpl implements StockView {
       }
     }
 
+    /**
+     * It prints column for the given column widths.
+     *
+     * @param columnWidths an array of widths of the column.
+     */
     private void printLine(int[] columnWidths) {
       for (int i = 0; i < columnWidths.length; i++) {
         String line = String.join("", Collections.nCopies(columnWidths[i] +
                 verticalSep.length() + 1, HORIZONTAL_SEP));
         try {
-          out.append(joinSep + line + (i == columnWidths.length - 1 ? joinSep : ""));
-        }
-        catch(IOException e)
-        {
+          out.append(joinSep).append(line).append(i == columnWidths.length - 1 ? joinSep : "");
+        } catch (IOException e) {
           e.printStackTrace();
         }
       }
       try {
         out.append("\n");
-      }
-      catch(IOException e)
-      {
+      } catch (IOException e) {
         e.printStackTrace();
       }
 
     }
 
+    /**
+     * Given cells and max widths, it prints row for table view.
+     *
+     * @param cells     rows needed for tables.
+     * @param maxWidths an array of widths of the rows.
+     */
     private void printRow(List<String> cells, int[] maxWidths) {
       for (int i = 0; i < cells.size(); i++) {
         String s = cells.get(i);
@@ -289,9 +331,7 @@ public class StockViewImpl implements StockView {
           String sfmt = String.format("%s %" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
           try {
             out.append(sfmt);
-          }
-          catch(IOException e)
-          {
+          } catch (IOException e) {
             e.printStackTrace();
           }
 
@@ -299,9 +339,7 @@ public class StockViewImpl implements StockView {
           String sfmt = String.format("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
           try {
             out.append(sfmt);
-          }
-          catch(IOException e)
-          {
+          } catch (IOException e) {
             e.printStackTrace();
           }
 

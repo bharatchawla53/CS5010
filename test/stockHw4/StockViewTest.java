@@ -16,11 +16,11 @@ public class StockViewTest {
   private static StockView stockView;
   final Appendable out = new StringBuffer();
 
-
   @Before
   public void setUp() {
     stockView = new StockViewImpl(out);
   }
+
   private String ConsoleOpDialogCreator(List<String> consoleOp) {
     String consoleOpDialog = "";
     for (String line : consoleOp) {
@@ -218,10 +218,10 @@ public class StockViewTest {
     columns.add("Number of shares");
     columns.add("Share Price");
     List<String> rows = new ArrayList<String>();
-    rows.add("MSFT 45 235.87");
-    rows.add("GOOG 10 96.58");
-    rows.add("AAPL 15 155.74");
-    rows.add("DAL 10 34.67");
+    rows.add("MSFT,45,235.87");
+    rows.add("GOOG,10,96.58");
+    rows.add("AAPL,15,155.74");
+    rows.add("DAL,10,34.67");
     stockView.getTableViewBuilder(rows, columns);
     assertEquals(out.toString(), s);
   }

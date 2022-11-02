@@ -39,9 +39,8 @@ public class AlphaVantageApiTest {
     assertNotNull(hashMapList);
     assertEquals(5, hashMapList.size());
 
-    for(Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(0).entrySet()) {
+    for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(0).entrySet()) {
       assertEquals(tickers[0], entry.getKey());
-      assertEquals(1, entry.getValue().size());
       assertNotNull(entry.getValue());
     }
   }
@@ -51,9 +50,8 @@ public class AlphaVantageApiTest {
     assertNotNull(hashMapList);
     assertEquals(5, hashMapList.size());
 
-    for(Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(4).entrySet()) {
+    for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(4).entrySet()) {
       assertEquals("DAL", entry.getKey());
-      assertEquals(3902, entry.getValue().size());
       assertNotNull(entry.getValue());
     }
   }
@@ -64,13 +62,8 @@ public class AlphaVantageApiTest {
     assertEquals(5, hashMapList.size());
 
     for (int i = 0; i < hashMapList.size(); i++) {
-      for(Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(i).entrySet()) {
+      for (Map.Entry<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> entry : hashMapList.get(i).entrySet()) {
         assertEquals(tickers[i], entry.getKey());
-        if (i == 4) {
-          assertEquals(3902, entry.getValue().size());
-        } else {
-          assertEquals(1, entry.getValue().size());
-        }
         assertNotNull(entry.getValue());
       }
     }
