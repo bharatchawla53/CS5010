@@ -5,7 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,27 +19,25 @@ import static org.junit.Assert.assertEquals;
  */
 public class StockViewTest {
   private static StockView stockView;
-  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-  private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-  private final PrintStream originalOut = System.out;
-  private final PrintStream originalErr = System.err;
+
+  //StringBuffer out = new StringBuffer();
 
 
-  @Before
-  public void setUpStreams() {
-    System.setOut(new PrintStream(outContent));
-    System.setErr(new PrintStream(errContent));
-  }
+  //final Reader in = new StringReader("+ 3 4 + 8 9 q");
 
-  @After
-  public void restoreStreams() {
-    System.setOut(originalOut);
-    System.setErr(originalErr);
-  }
+  final Appendable out = new StringBuffer();
+
+  //ByteArrayOutputStream os = new ByteArrayOutputStream();
+  //PrintStream ps = new PrintStream(os);
+  //private final PrintStream originalOut = System.out;
+  //private final PrintStream originalErr = System.err;
+
 
   @Before
   public void setUp() {
-    stockView = new StockViewImpl();
+    stockView = new StockViewImpl(out);
+
+
   }
 
 
@@ -51,12 +52,14 @@ public class StockViewTest {
   @Test
   public void testGetLoginScreenView() {
     stockView.getLoginScreenView();
+
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Welcome to the portfolio manager\n");
     consoleOp.add("Are you a existing user or would you like to create a new user ?\n");
     consoleOp.add("Enter Y/N : \n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -66,7 +69,7 @@ public class StockViewTest {
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Enter your username: \n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -76,7 +79,7 @@ public class StockViewTest {
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Please enter a Portfolio ID from the above: \n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -86,7 +89,7 @@ public class StockViewTest {
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Here are your Portfolio's!\n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -96,7 +99,7 @@ public class StockViewTest {
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Enter the Portfolio UUID of the Portfolio you wish to serialize: \n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -116,7 +119,7 @@ public class StockViewTest {
     consoleOp.add("fmdsfdsikfdslAKLSA\n");
     consoleOp.add("fmdslsaKLSKfsuosfidAKLSA\n");
 
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -126,7 +129,7 @@ public class StockViewTest {
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Let's save an external portfolio!\n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -137,7 +140,7 @@ public class StockViewTest {
     List<String> consoleOp = new ArrayList<String>();
     consoleOp.add("\n");
     consoleOp.add("Please enter the filepath of the external portfolio:\n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
 
   }
 
@@ -150,7 +153,7 @@ public class StockViewTest {
     consoleOp.add("Please enter an username and can't be longer than 8 characters: \n");
 
 
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
   @Test
@@ -168,7 +171,7 @@ public class StockViewTest {
     consoleOp.add("Enter your option: \n");
 
 
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
 
@@ -181,7 +184,7 @@ public class StockViewTest {
     consoleOp.add("Enter your preferred ticker and no of shares you'd like "
             + "to invest in this ticker "
             + "(Expected Format: ABC123,number of shares): \n");
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
   @Test
@@ -192,7 +195,7 @@ public class StockViewTest {
     consoleOp.add("Here are your Portfolios:\n");
 
 
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
   @Test
@@ -203,7 +206,7 @@ public class StockViewTest {
     consoleOp.add("Please enter a date for which the portfolio value will be calculated on "
             + "(Expected Date Format: yyyy-MM-dd): \n");
 
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
 
@@ -215,7 +218,7 @@ public class StockViewTest {
     consoleOp.add("Are you sure you want to exit the application ?\n");
     consoleOp.add("Enter Y/N : \n");
 
-    assertEquals(outContent.toString(), ConsoleOpDialogCreator(consoleOp));
+    assertEquals(out.toString(), ConsoleOpDialogCreator(consoleOp));
   }
 
 
@@ -240,7 +243,7 @@ public class StockViewTest {
     rows.add("AAPL 15 155.74");
     rows.add("DAL 10 34.67");
     stockView.getTableViewBuilder(rows, columns);
-    assertEquals(outContent.toString(), s);
+    assertEquals(out.toString(), s);
   }
 
   @Test
@@ -257,9 +260,9 @@ public class StockViewTest {
                 .append(animationChars[i % 4])
                 .append("\r");
       } else {
-        sb.append("Processing: Done!" + "\n");
+        sb.append("Processing: Done!");
       }
-      assertEquals(outContent.toString(), sb.toString());
+      assertEquals(out.toString(), sb.toString());
     }
   }
 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class StockViewImpl implements StockView {
 
-  private final Appendable out;
+  final Appendable out;
 
   public StockViewImpl(Appendable out) {
     this.out = out;
@@ -85,9 +85,21 @@ public class StockViewImpl implements StockView {
     char[] animationChars = new char[]{'|', '/', '-', '\\'};
 
     if (index != 100) {
-      System.out.print("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
+      try {
+        out.append("Calculating your portfolio worth: " + index + "% " + animationChars[index % 4] + "\r");
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
     } else {
-      print("Processing: Done!");
+      try {
+        out.append("Processing: Done!");
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -168,7 +180,7 @@ public class StockViewImpl implements StockView {
         commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2]);
       }
     }
-
+    //this.out.append(commandLineTable.print());
     commandLineTable.print();
   }
 
@@ -251,9 +263,22 @@ public class StockViewImpl implements StockView {
       for (int i = 0; i < columnWidths.length; i++) {
         String line = String.join("", Collections.nCopies(columnWidths[i] +
                 verticalSep.length() + 1, HORIZONTAL_SEP));
-        System.out.print(joinSep + line + (i == columnWidths.length - 1 ? joinSep : ""));
+        try {
+          out.append(joinSep + line + (i == columnWidths.length - 1 ? joinSep : ""));
+        }
+        catch(IOException e)
+        {
+          e.printStackTrace();
+        }
       }
-      System.out.println();
+      try {
+        out.append("\n");
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
+
     }
 
     private void printRow(List<String> cells, int[] maxWidths) {
@@ -261,12 +286,32 @@ public class StockViewImpl implements StockView {
         String s = cells.get(i);
         String verStrTemp = i == cells.size() - 1 ? verticalSep : "";
         if (rightAlign) {
-          System.out.printf("%s %" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+          String sfmt = String.format("%s %" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+          try {
+            out.append(sfmt);
+          }
+          catch(IOException e)
+          {
+            e.printStackTrace();
+          }
+          //System.out.printf("%s %" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
         } else {
-          System.out.printf("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+          String sfmt = String.format("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
+          try {
+            out.append(sfmt);
+          }
+          catch(IOException e)
+          {
+            e.printStackTrace();
+          }
+          //System.out.printf("%s %-" + maxWidths[i] + "s %s", verticalSep, s, verStrTemp);
         }
       }
-      System.out.println();
+      try {
+        out.append("\n");
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 }
