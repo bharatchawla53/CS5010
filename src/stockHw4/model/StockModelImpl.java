@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.model;
 
 import java.io.BufferedReader;
 import java.io.File;

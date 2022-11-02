@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.controller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,6 +9,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+
+import stockHw4.model.StockModel;
+import stockHw4.model.User;
+import stockHw4.view.StockView;
 
 /**
  * The StockControllerImpl class represents as a mediator between model and view.

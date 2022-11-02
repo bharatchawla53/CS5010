@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import stockHw4.model.StockModel;
+import stockHw4.model.User;
+import stockHw4.view.StockView;
 
 import static org.junit.Assert.assertEquals;
 

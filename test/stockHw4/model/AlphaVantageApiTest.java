@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.model;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

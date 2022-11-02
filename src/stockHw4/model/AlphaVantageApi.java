@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,6 @@ public class AlphaVantageApi {
 
   private final String API_KEY = "EHQVGM4192TAX7FI";
   private final String API_URL = "https://www.alphavantage.co/query?";
-
   private List<HashMap<String, List<AlphaDailyTimeSeries>>> stockTradedValues;
 
   /**

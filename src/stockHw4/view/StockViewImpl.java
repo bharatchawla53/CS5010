@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.view;
 
 import java.io.IOException;
 import java.util.ArrayList;

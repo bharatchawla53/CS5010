@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.controller;
 
 /**
  * This interface represents a StockController that defines the operations for the controller.

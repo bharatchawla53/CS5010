@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.model;
 
 /**
  * This enum represents the values for output size accepted by third-party API.

@@ -1,4 +1,4 @@
-package stockHw4;
+package stockHw4.model;
 
 import java.util.UUID;
 
