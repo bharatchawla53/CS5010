@@ -2,12 +2,12 @@ package stockhw5;
 
 import java.io.InputStreamReader;
 
-import stockhw4.controller.StockController;
-import stockhw4.controller.StockControllerImpl;
-import stockhw4.model.StockModel;
-import stockhw4.model.StockModelImpl;
-import stockhw4.view.StockView;
-import stockhw4.view.StockViewImpl;
+import stockhw5.controller.StockController;
+import stockhw5.controller.StockControllerImpl;
+import stockhw5.model.FlexibleStockModelImpl;
+import stockhw5.model.StockModel;
+import stockhw5.view.StockView;
+import stockhw5.view.StockViewImpl;
 
 /**
  * Demonstrates a command-line-based Stock application.
@@ -22,7 +22,7 @@ public class Stock {
     System.out.println("Stock app started");
 
     // create the model
-    StockModel model = new StockModelImpl();
+    StockModel model = new FlexibleStockModelImpl();
     // create the view
     StockView view = new StockViewImpl(System.out);
     // create the controller

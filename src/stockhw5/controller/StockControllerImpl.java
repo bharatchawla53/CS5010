@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
-import stockhw4.model.StockModel;
-import stockhw4.model.User;
-import stockhw4.view.StockView;
+import stockhw5.model.StockModel;
+import stockhw5.model.User;
+import stockhw5.view.StockView;
 
 /**
  * The StockControllerImpl class represents as a mediator between model and view.

@@ -1,6 +1,9 @@
 package stockhw5.model;
 
-public class FlexibleStockModelImpl extends StockModelImpl implements FlexibleStockModel {
+import java.util.List;
+import java.util.Map;
+
+public class FlexibleStockModelImpl extends AbstractStockModel implements FlexibleStockModel {
 
   @Override
   public boolean buyStockOnASpecificDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
@@ -18,7 +21,8 @@ public class FlexibleStockModelImpl extends StockModelImpl implements FlexibleSt
   }
 
   @Override
-  public int calculatePortfolioOnASpecificDate(User user, String portfolioUUID, String date) {
-    return 0;
+  public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
+                                                             User user, String portfolioUUID){
+    return null;
   }
 }
