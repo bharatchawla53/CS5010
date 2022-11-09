@@ -6,12 +6,12 @@ import java.util.Map;
 public class FlexibleStockModelImpl extends AbstractStockModel implements FlexibleStockModel {
 
   @Override
-  public boolean buyStockOnASpecificDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
+  public boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
     return false;
   }
 
   @Override
-  public boolean sellStockOnASpecifiedDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
+  public boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
     return false;
   }
 
