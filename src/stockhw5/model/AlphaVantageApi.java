@@ -1,4 +1,4 @@
-package stockhw4.model;
+package stockhw5.model;
 
 import java.io.IOException;
 import java.io.InputStream;
