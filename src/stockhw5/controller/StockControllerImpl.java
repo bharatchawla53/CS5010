@@ -1,6 +1,8 @@
 package stockhw5.controller;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -444,8 +446,12 @@ public class StockControllerImpl implements StockController {
    * @return true if it's a valid date, false, otherwise.
    */
   private boolean isValidDate(String date) {
-    return LocalDate.parse(date) != null;
-    // TODO dont allow future dates
+    LocalDate localDate = LocalDate.now(ZoneId.systemDefault());
+
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDate inputDate = LocalDate.parse(date, dtf);
+
+    return !inputDate.isAfter(localDate);
   }
 
   /**
