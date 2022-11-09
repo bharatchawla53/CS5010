@@ -445,6 +445,7 @@ public class StockControllerImpl implements StockController {
    */
   private boolean isValidDate(String date) {
     return LocalDate.parse(date) != null;
+    // TODO dont allow future dates
   }
 
   /**
