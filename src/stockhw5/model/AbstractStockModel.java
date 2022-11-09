@@ -23,11 +23,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractStockModel implements StockModel{
+public abstract class AbstractStockModel implements StockModel {
 
   private static List<String> tickerList;
-  private final AlphaVantageApi alphaVantageApi;
-  protected static List<HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>>> stockHashMapList;
+  private final StockApi alphaVantageApi;
+  protected static List<HashMap<String, List<StockApiResponse>>> stockHashMapList;
 
   /**
    * Constructs an empty StockModelImpl constructor which initializes alphaVantageApi, tickerList,
@@ -298,10 +298,10 @@ public abstract class AbstractStockModel implements StockModel{
   protected Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
     Double stockPrice = null;
 
-    for (HashMap<String, List<AlphaVantageApi.AlphaDailyTimeSeries>> symbolMap : stockHashMapList) {
+    for (HashMap<String, List<StockApiResponse>> symbolMap : stockHashMapList) {
       if (symbolMap.containsKey(shareDetail[0])) {
         // iterate to find the stock value on a certain date
-        for (AlphaVantageApi.AlphaDailyTimeSeries timeSeries : symbolMap.get(shareDetail[0])) {
+        for (StockApiResponse timeSeries : symbolMap.get(shareDetail[0])) {
           if (timeSeries.getDate().equals(certainDate)) {
             stockPrice = isCurrentTimeBeforeNoon()
                     ? Double.parseDouble(timeSeries.getOpenVal())

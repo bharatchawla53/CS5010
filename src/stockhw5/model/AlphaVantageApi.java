@@ -12,11 +12,11 @@ import java.util.List;
 /**
  * The AlphaVantageApi class represents the third party API call to retrieve stock data.
  */
-public class AlphaVantageApi {
+public class AlphaVantageApi implements StockApi {
 
   private final String API_KEY = "TIKUGQGX5SGSNYAE";
   private final String API_URL = "https://www.alphavantage.co/query?";
-  private List<HashMap<String, List<AlphaDailyTimeSeries>>> stockTradedValues;
+  private List<HashMap<String, List<StockApiResponse>>> stockTradedValues;
 
   /**
    * Constructs an empty AlphaVantageApi constructor which initializes stockTradedValues.
@@ -33,8 +33,9 @@ public class AlphaVantageApi {
    * @param symbol     the name of the stock.
    * @return a list of map of stock with its list of historical data.
    */
-  public List<HashMap<String, List<AlphaDailyTimeSeries>>> getStockTradedValue(String outputSize,
-                                                                               String symbol) {
+  @Override
+  public List<HashMap<String, List<StockApiResponse>>> getStockTradedValue(String outputSize,
+                                                                           String symbol) {
     URL url;
     try {
       /*
@@ -95,19 +96,19 @@ public class AlphaVantageApi {
    * @param symbol     the name of the stock.
    * @return a list of map of stock with its list of historical data.
    */
-  private List<HashMap<String, List<AlphaDailyTimeSeries>>> parseResponseToObject(String[] response,
-                                          String outputSize, String symbol) {
-    List<AlphaDailyTimeSeries> timeSeries = new ArrayList<>();
+  private List<HashMap<String, List<StockApiResponse>>> parseResponseToObject(String[] response,
+                                                                              String outputSize, String symbol) {
+    List<StockApiResponse> timeSeries = new ArrayList<>();
 
     // only need the current date stock price
     if (outputSize.equals(AlphaVantageOutputSize.COMPACT.getInput())) {
       String[] currDailyTimeStock = response[1].split(",");
-      timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]),
+      timeSeries.add(new StockApiResponse(dateParser(currDailyTimeStock[0]),
               currDailyTimeStock[1], currDailyTimeStock[4]));
     } else {
       for (int i = 1; i < response.length; i++) {
         String[] currDailyTimeStock = response[i].split(",");
-        timeSeries.add(new AlphaDailyTimeSeries(dateParser(currDailyTimeStock[0]),
+        timeSeries.add(new StockApiResponse(dateParser(currDailyTimeStock[0]),
                 currDailyTimeStock[1], currDailyTimeStock[4]));
       }
     }
@@ -128,58 +129,9 @@ public class AlphaVantageApi {
    * @param date string date to be parsed.
    * @return parsed LocalDate.
    */
-  LocalDate dateParser(String date) {
+  @Override
+  public LocalDate dateParser(String date) {
     return LocalDate.parse(date);
   }
 
-  /**
-   * The AlphaDailyTimeSeries package-private class represents the object to map the fields received
-   * from third-party API.
-   */
-  static class AlphaDailyTimeSeries {
-
-    private final LocalDate date;
-    private final String openVal;
-    private final String closeVal;
-
-    /**
-     * Creates an AlphaDailyTimeSeries constructor.
-     *
-     * @param date     stock data for that particular day.
-     * @param openVal  open value of stock for the given date.
-     * @param closeVal close value of stock for the given date.
-     */
-    public AlphaDailyTimeSeries(LocalDate date, String openVal, String closeVal) {
-      this.date = date;
-      this.openVal = openVal;
-      this.closeVal = closeVal;
-    }
-
-    /**
-     * Returns the date.
-     *
-     * @return date.
-     */
-    public LocalDate getDate() {
-      return this.date;
-    }
-
-    /**
-     * Returns the open value of stock.
-     *
-     * @return openVal.
-     */
-    public String getOpenVal() {
-      return this.openVal;
-    }
-
-    /**
-     * Returns the close value of stock.
-     *
-     * @return closeVal.
-     */
-    public String getCloseVal() {
-      return this.closeVal;
-    }
-  }
 }
