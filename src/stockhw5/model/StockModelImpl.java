@@ -1,6 +1,10 @@
 package stockhw5.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,4 +51,52 @@ public class StockModelImpl extends AbstractStockModel {
       }
     };
   }
+
+  /**
+   * It returns a stock price for a given stock on a certain date.
+   *
+   * @param shareDetail an array containing stock symbol and number of shares.
+   * @param certainDate the date for retrieving stock price on.
+   * @return the stock price.
+   */
+  @Override
+  public Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
+    Double stockPrice = null;
+
+    for (HashMap<String, List<StockApiResponse>> symbolMap : stockHashMapList) {
+      if (symbolMap.containsKey(shareDetail[0])) {
+        // iterate to find the stock value on a certain date
+        for (StockApiResponse timeSeries : symbolMap.get(shareDetail[0])) {
+          if (timeSeries.getDate().equals(certainDate)) {
+            stockPrice = isCurrentTimeBeforeNoon()
+                    ? Double.parseDouble(timeSeries.getOpenVal())
+                    : Double.parseDouble(timeSeries.getCloseVal());
+            break;
+          }
+        }
+      }
+    }
+    return stockPrice;
+  }
+
+  /**
+   * It checks if the current time is before noon or not.
+   *
+   * @return true if current time is before noon, false, otherwise.
+   */
+  private boolean isCurrentTimeBeforeNoon() {
+    Date now = new Date();
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+    String formattedDate = formatter.format(now);
+    boolean isTimeBeforeNoon = false;
+    try {
+      if (formatter.parse(formattedDate).before(formatter.parse("12:00"))) {
+        isTimeBeforeNoon = true;
+      }
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    return isTimeBeforeNoon;
+  }
+
 }

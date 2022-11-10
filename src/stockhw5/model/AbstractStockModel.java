@@ -295,24 +295,7 @@ public abstract class AbstractStockModel implements StockModel {
    * @param certainDate the date for retrieving stock price on.
    * @return the stock price.
    */
-  protected Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
-    Double stockPrice = null;
-
-    for (HashMap<String, List<StockApiResponse>> symbolMap : stockHashMapList) {
-      if (symbolMap.containsKey(shareDetail[0])) {
-        // iterate to find the stock value on a certain date
-        for (StockApiResponse timeSeries : symbolMap.get(shareDetail[0])) {
-          if (timeSeries.getDate().equals(certainDate)) {
-            stockPrice = isCurrentTimeBeforeNoon()
-                    ? Double.parseDouble(timeSeries.getOpenVal())
-                    : Double.parseDouble(timeSeries.getCloseVal());
-            break;
-          }
-        }
-      }
-    }
-    return stockPrice;
-  }
+  public abstract Double getStockPrice(String[] shareDetail, LocalDate certainDate);
 
   /**
    * It gets the total stock price for a given ticker.
@@ -357,26 +340,6 @@ public abstract class AbstractStockModel implements StockModel {
    */
   protected void getStockDataFromApi(String outputSize, String symbol) {
     stockHashMapList = alphaVantageApi.getStockTradedValue(outputSize, symbol);
-  }
-
-  /**
-   * It checks if the current time is before noon or not.
-   *
-   * @return true if current time is before noon, false, otherwise.
-   */
-  private boolean isCurrentTimeBeforeNoon() {
-    Date now = new Date();
-    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-    String formattedDate = formatter.format(now);
-    boolean isTimeBeforeNoon = false;
-    try {
-      if (formatter.parse(formattedDate).before(formatter.parse("12:00"))) {
-        isTimeBeforeNoon = true;
-      }
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return isTimeBeforeNoon;
   }
 
   /**
