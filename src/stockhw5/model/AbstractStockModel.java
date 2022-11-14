@@ -76,9 +76,7 @@ public abstract class AbstractStockModel implements StockModel {
             .substring(0, 8);
   }
 
-
-
-  @Override
+  @Override // TODO separate out into their concrete classes since a user can have both flexible and inflexible
   public List<String> getPortfoliosForUser(User user) {
     List<String> userPortfolios = new ArrayList<>();
     File folder = new File("./");
@@ -128,6 +126,67 @@ public abstract class AbstractStockModel implements StockModel {
       if (u.getUserName().equals(username)) {
         return u;
       }
+    }
+    return null;
+  }
+
+  @Override
+  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath) {
+    File f = new File(filePath);
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+
+        if (!validatePortfolioRow(strLine)) {
+          return false;
+        }
+      }
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+
+  @Override
+  public String saveExternalUserPortfolio(String filePath, User user) {
+    String uuid = generateUUID();
+    String portfolioFileName = user.getUserName() + "_" + uuid + ".csv";
+    List<String> portfolioContents = new ArrayList<>();
+    File f = new File(portfolioFileName);
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
+
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+        if (validatePortfolioRow(strLine)) {
+          String ticker = strLine.split(",")[0];
+          String noOfShares = strLine.split(",")[1];
+          String stockPrice = strLine.split(",")[2];
+          String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
+          portfolioContents.add(tickerNoOfShares);
+        } else {
+          return null;
+        }
+      }
+      if (f.createNewFile()) {
+        try {
+          FileWriter fw = new FileWriter(portfolioFileName, true);
+          for (String s : portfolioContents) {
+            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "," + s.split(" ")[2] + "\n");
+          }
+
+          fw.close();
+          return uuid;
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+    } catch (IOException e) {
+      return null;
     }
     return null;
   }
@@ -200,89 +259,6 @@ public abstract class AbstractStockModel implements StockModel {
     return isSuccessful;
   }
 
-  @Override
-  public List<String> getPortfolioContents(User user, String portfolioUUID) {
-    String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
-    List<String> portfolioContents = new ArrayList<>();
-
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
-      String strLine;
-
-      while ((strLine = fr.readLine()) != null) {
-        String ticker = strLine.split(",")[0];
-        String noOfShares = strLine.split(",")[1];
-        String stockPrice = strLine.split(",")[2];
-        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice;
-        portfolioContents.add(tickerNoOfShares);
-      }
-      return portfolioContents;
-    } catch (IOException e) {
-      return portfolioContents;
-    }
-  }
-
-  @Override
-  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath) {
-    File f = new File(filePath);
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(filePath));
-      String strLine;
-
-      while ((strLine = fr.readLine()) != null) {
-
-        if (!validatePortfolioRow(strLine)) {
-          return false;
-        }
-      }
-      return true;
-    } catch (IOException e) {
-      return false;
-    }
-  }
-
-  @Override
-  public String saveExternalUserPortfolio(String filePath, User user) {
-    String uuid = generateUUID();
-    String portfolioFileName = user.getUserName() + "_" + uuid + ".csv";
-    List<String> portfolioContents = new ArrayList<>();
-    File f = new File(portfolioFileName);
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(filePath));
-
-      String strLine;
-
-      while ((strLine = fr.readLine()) != null) {
-        if (validatePortfolioRow(strLine)) {
-          String ticker = strLine.split(",")[0];
-          String noOfShares = strLine.split(",")[1];
-          String stockPrice = strLine.split(",")[2];
-          String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
-          portfolioContents.add(tickerNoOfShares);
-        } else {
-          return null;
-        }
-      }
-      if (f.createNewFile()) {
-        try {
-          FileWriter fw = new FileWriter(portfolioFileName, true);
-          for (String s : portfolioContents) {
-            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "," + s.split(" ")[2] + "\n");
-          }
-
-          fw.close();
-          return uuid;
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-
-    } catch (IOException e) {
-      return null;
-    }
-    return null;
-  }
-
   /**
    * It returns a stock price for a given stock on a certain date.
    *
@@ -299,7 +275,7 @@ public abstract class AbstractStockModel implements StockModel {
    * @param noOfShares number of shares for that ticker.
    * @return stock price.
    */
-  private Double getStockPrice(String ticker, String noOfShares) {
+  protected Double getStockPrice(String ticker, String noOfShares) {
     Double stockPrice;
     // call the API
     getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
@@ -343,7 +319,7 @@ public abstract class AbstractStockModel implements StockModel {
    *
    * @return LocalDate
    */
-  private LocalDate checkCallIsWithinMarketHours() {
+  protected LocalDate checkCallIsWithinMarketHours() {
     LocalDate date = null;
 
     Date now = new Date();
@@ -411,16 +387,6 @@ public abstract class AbstractStockModel implements StockModel {
       e.printStackTrace();
     }
   }
-
-  public boolean validateTickerShare(String tickerShareDate)
-  {
-    //TODO check future dates
-    Pattern ticketShareValidationPattern = Pattern.compile("([A-Z]+[,]\\d+[,][2][0][0-9][0-9][\\-][0-1][0-2][\\-][0-3][0-9])|([A-Z]+[,]\\d+)");
-    Matcher validator = ticketShareValidationPattern.matcher(tickerShareDate);
-    return validator.matches();
-
-  }
-
 
   /**
    * Given a valid user, it attempts to persist the user to the users.csv file.

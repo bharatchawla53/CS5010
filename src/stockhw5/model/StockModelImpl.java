@@ -1,5 +1,10 @@
 package stockhw5.model;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -54,12 +59,39 @@ public class StockModelImpl extends AbstractStockModel {
     };
   }
 
+  @Override
+  public List<String> getPortfolioContents(User user, String portfolioUUID) {
+    String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
+    List<String> portfolioContents = new ArrayList<>();
+
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+        String ticker = strLine.split(",")[0];
+        String noOfShares = strLine.split(",")[1];
+        String stockPrice = strLine.split(",")[2];
+        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice;
+        portfolioContents.add(tickerNoOfShares);
+      }
+      return portfolioContents;
+    } catch (IOException e) {
+      return portfolioContents;
+    }
+  }
+
   /**
    * Javadoc for validate tickerShare
    * @param tickerShare input received from the user.
    * @return
    */
-
+  @Override
+  public boolean validateTickerShare(String tickerShare) {
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+");
+    Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
+    return validator.matches();
+  }
 
   /**
    * It returns a stock price for a given stock on a certain date.

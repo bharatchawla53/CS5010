@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FlexibleStockModelImpl extends AbstractStockModel implements FlexibleStockModel {
@@ -146,6 +148,19 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       }
     }
     return this.commissionRate * totalShares;
+  }
+
+  @Override
+  public boolean validateTickerShare(String tickerShareDate) {
+    Pattern pattern = Pattern
+            .compile("([A-Z]+[,]\\d+[,][2][0][0-9][0-9][\\-][0-1][0-2][\\-][0-3][0-9])|([A-Z]+[,]\\d+)");
+    Matcher validator = pattern.matcher(tickerShareDate);
+    return validator.matches();
+  }
+
+  @Override
+  public List<String> getPortfolioContents(User user, String portfolioUUID) {
+    return null;
   }
 
   // search through a portfolio and find all the stocks before or equal to user given date to
