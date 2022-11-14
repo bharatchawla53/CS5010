@@ -20,7 +20,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   @Override
   public List<String> calculateCostBasis(User user, String portfolioUUID, String date) {
-    // add the cost of each share till the user provided date?  + commission ?
+    // add the cost of each share till the user provided date?  + TODO commission ?
 
     List<String> result = new ArrayList<>();
     List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);

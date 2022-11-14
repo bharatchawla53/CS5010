@@ -2,7 +2,7 @@ package stockhw5.model;
 
 import java.util.List;
 
-public interface FlexibleStockModel {
+public interface FlexibleStockModel extends StockModel{
 
   boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker, String noOfShares, String date);
 

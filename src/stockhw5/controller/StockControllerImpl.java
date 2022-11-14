@@ -12,16 +12,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
-import stockhw5.model.StockModel;
+import stockhw5.model.StockModelMaker;
 import stockhw5.model.User;
-import stockhw5.view.StockView;
+import stockhw5.view.StockViewMaker;
 
 /**
  * The StockControllerImpl class represents as a mediator between model and view.
  */
 public class StockControllerImpl implements StockController {
-  private final StockModel model;
-  private final StockView view;
+  private final StockModelMaker model;
+  private final StockViewMaker view;
   private User user;
   private final Scanner scanner;
   private Boolean isUserOperationSuccessful;
@@ -32,7 +32,7 @@ public class StockControllerImpl implements StockController {
    * @param model StockModel that controller talks to.
    * @param view  StockView that controller talk to.
    */
-  public StockControllerImpl(StockModel model, StockView view, Readable in) {
+  public StockControllerImpl(StockModelMaker model, StockViewMaker view, Readable in) {
     this.model = model;
     this.view = view;
     this.scanner = new Scanner(in);
@@ -51,16 +51,42 @@ public class StockControllerImpl implements StockController {
       // get the user object from the model once validated
       this.user = model.getUserFromUsername(input);
 
-      while (this.isUserOperationSuccessful) {
-        keepPromptingUserForOptionsOnceAOperationIsDone(input);
-      }
+      getPortfolioTypeInput(input);
+
     } else {
       if (processNewUser()) {
-        while (this.isUserOperationSuccessful) {
-          keepPromptingUserForOptionsOnceAOperationIsDone(input);
-        }
+        getPortfolioTypeInput(input);
       }
     }
+  }
+
+  private void getPortfolioTypeInput(String input) {
+    boolean invalidInput = true;
+
+    view.getPortfolioTypeView();
+    // validate the user portfolio type input
+    while (invalidInput) {
+      try {
+        input = getUserInputView().toUpperCase(Locale.ROOT);
+
+        if (input.equals(UserInputOptions.ONE.getInput())) {
+          // inflexible view
+          while (this.isUserOperationSuccessful) {
+            keepPromptingInflexibleUserOptions(input);
+          }
+          invalidInput = false;
+        } else if (input.equals(UserInputOptions.TWO.getInput())) {
+          // flexible view
+          while (this.isUserOperationSuccessful) {
+            keepPromptingFlexibleUserOptions(input);
+          }
+          invalidInput = false;
+        }
+      } catch (IllegalArgumentException e) {
+        view.getBuilderView(Arrays.asList("Invalid user input", "Enter Y/N : "));
+      }
+    }
+
   }
 
   /**
@@ -117,20 +143,44 @@ public class StockControllerImpl implements StockController {
    *
    * @param input input received from the user.
    */
-  private void keepPromptingUserForOptionsOnceAOperationIsDone(String input) {
-    input = getUserOptionsInput(input);
+  private void keepPromptingInflexibleUserOptions(String input) {
+    input = getInflexibleUserOptionsInput(input);
 
     if (input.equals(UserInputOptions.ONE.getInput())) {
-      processUserOptionOne(input);
+      processInflexibleUserOptionOne(input);
     } else if (input.equals(UserInputOptions.TWO.getInput())) {
-      processUserOptionTwo(input);
+      processInflexibleUserOptionTwo(input);
     } else if (input.equals(UserInputOptions.THREE.getInput())) {
-      processUserOptionThree(input);
+      processInflexibleUserOptionThree(input);
     } else if (input.equals(UserInputOptions.FOUR.getInput())) {
       processUserOptionFour(input);
     } else if (input.equals(UserInputOptions.FIVE.getInput())) {
       processUserOptionFive(input);
     } else if (input.equals(UserInputOptions.SIX.getInput())) {
+      terminateApplication(input);
+    }
+  }
+
+  private void keepPromptingFlexibleUserOptions(String input) {
+    input = getFlexibleUserOptionsInput(input);
+
+    if (input.equals(UserInputOptions.ONE.getInput())) {
+      processFlexibleUserOptionOne(input);
+    } else if (input.equals(UserInputOptions.TWO.getInput())) {
+      processFlexibleUserOptionTwo(input);
+    } else if (input.equals(UserInputOptions.THREE.getInput())) {
+      processFlexibleUserOptionThree(input);
+    } else if (input.equals(UserInputOptions.FOUR.getInput())) {
+      processFlexibleUserOptionFour(input);
+    } else if (input.equals(UserInputOptions.FIVE.getInput())) {
+      processUserOptionFour(input);
+    } else if (input.equals(UserInputOptions.SIX.getInput())) {
+      processUserOptionFive(input);
+    } else if (input.equals(UserInputOptions.SEVEN.getInput())) {
+      processFlexibleUserOptionSeven(input);
+    } else if (input.equals(UserInputOptions.EIGHT.getInput())) {
+      processFlexibleUserOptionEight(input);
+    } else if (input.equals(UserInputOptions.NINE.getInput())) {
       terminateApplication(input);
     }
   }
@@ -169,10 +219,33 @@ public class StockControllerImpl implements StockController {
    * @param input input received from the user.
    * @return input received from the user.
    */
-  private String getUserOptionsInput(String input) {
+  private String getInflexibleUserOptionsInput(String input) {
     boolean invalidInput = true;
 
-    view.getUserOptionsView();
+    view.getInflexibleUserOptionsView();
+    // validate the user options input
+    while (invalidInput) {
+      input = getUserInputView().toUpperCase(Locale.ROOT);
+
+      String finalInput = input;
+      Optional<UserInputOptions> userInputOption = Arrays.stream(UserInputOptions.values())
+              .filter(u -> finalInput.equals(u.getInput()))
+              .findFirst();
+
+      if (userInputOption.isPresent()) {
+        invalidInput = false;
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid option!", "Please enter a valid option:"));
+      }
+
+    }
+    return input;
+  }
+
+  private String getFlexibleUserOptionsInput(String input) {
+    boolean invalidInput = true;
+
+    view.getFlexibleUserOptionsView();
     // validate the user options input
     while (invalidInput) {
       input = getUserInputView().toUpperCase(Locale.ROOT);
@@ -198,16 +271,16 @@ public class StockControllerImpl implements StockController {
    *
    * @param input input received from the user.
    */
-  private void processUserOptionOne(String input) {
+  private void processInflexibleUserOptionOne(String input) {
     boolean invalidInput = true;
 
-    view.getPortfolioCreatorView();
+    view.getInflexiblePortfolioCreatorView();
     String portfolioUuid = model.generateUUID();
     while (!input.equals("DONE")) {
       // validate the user provided ticker/share combination
       while (invalidInput) {
         input = getUserInputView().toUpperCase(Locale.ROOT);
-        if (model.validateTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
+        if (model.validateInflexibleTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
           invalidInput = false;
         } else {
           if (input.equals("DONE")) {
@@ -220,8 +293,44 @@ public class StockControllerImpl implements StockController {
       }
       // received correct combination from user to add share to their portfolio
 
-      if (!input.equals("DONE") && model.saveStock(this.user, portfolioUuid,
+      if (!input.equals("DONE") && model.saveInflexibleStock(this.user, portfolioUuid,
               input.split(",")[0], input.split(",")[1])) {
+        view.getBuilderView(Collections.singletonList("Ticker and number of shares added "
+                + "to portfolio! "
+                + "Enter DONE to exit "
+                + "Portfolio Creation or enter another valid stock to continue"));
+        invalidInput = true;
+      }
+    }
+    view.getBuilderView(Collections.singletonList("---Your portfolio has been created! "
+            + "You can find it at : " + portfolioUuid + "---"));
+  }
+
+  private void processFlexibleUserOptionOne(String input) {
+    boolean invalidInput = true;
+
+    view.getFlexiblePortfolioCreatorView();
+    String portfolioUuid = model.generateUUID();
+    while (!input.equals("DONE")) {
+      // validate the user provided ticker/share/date combination
+      while (invalidInput) {
+        input = getUserInputView().toUpperCase(Locale.ROOT);
+        if (model.validateFlexibleTickerShare(input) && model.isValidTicker(input.split(",")[0])
+                && isValidDate(input.split(",")[2])) {
+          invalidInput = false;
+        } else {
+          if (input.equals("DONE")) {
+            invalidInput = false;
+          } else {
+            view.getBuilderView(Arrays.asList("Invalid input!", "Please enter a "
+                    + "valid ticker/share/date (no fractional shares) combination : "));
+          }
+        }
+      }
+      // received correct combination from user to add share to their portfolio
+
+      if (!input.equals("DONE") && model.saveFlexibleStock(this.user, portfolioUuid,
+              input.split(",")[0], input.split(",")[1], input.split(",")[2])) {
         view.getBuilderView(Collections.singletonList("Ticker and number of shares added "
                 + "to portfolio! "
                 + "Enter DONE to exit "
@@ -239,7 +348,7 @@ public class StockControllerImpl implements StockController {
    *
    * @param input input received from the user.
    */
-  private void processUserOptionTwo(String input) {
+  private void processInflexibleUserOptionTwo(String input) {
     input = getPortfolioIdInput(input);
 
     List<String> columns = new ArrayList<String>();
@@ -249,13 +358,51 @@ public class StockControllerImpl implements StockController {
     view.getTableViewBuilder(model.getPortfolioContents(this.user, input), columns);
   }
 
+  // TODO check model rejects if a selling stock does not exist
+  private void processFlexibleUserOptionTwo(String input) {
+    boolean invalidInput = true;
+
+    String portfolioUuid = getPortfolioIdInput(input);
+
+    view.getFlexibleSellStockView();
+    while (!input.equals("DONE")) {
+      // validate the user provided ticker/share/date combination
+      while (invalidInput) {
+        input = getUserInputView().toUpperCase(Locale.ROOT);
+        if (model.validateFlexibleTickerShare(input) && model.isValidTicker(input.split(",")[0])
+                && isValidDate(input.split(",")[2])) {
+          invalidInput = false;
+        } else {
+          if (input.equals("DONE")) {
+            invalidInput = false;
+          } else {
+            view.getBuilderView(Arrays.asList("Invalid input!", "Please enter a "
+                    + "valid ticker/share/date (no fractional shares) combination : "));
+          }
+        }
+      }
+      // received correct combination from user to add share to their portfolio
+
+      if (!input.equals("DONE") && model.sellFlexibleStock(this.user, portfolioUuid,
+              input.split(",")[0], input.split(",")[1], input.split(",")[2])) {
+        view.getBuilderView(Collections.singletonList("Ticker and number of shares sold "
+                + "from your portfolio! "
+                + "Enter DONE to exit "
+                + "Portfolio or enter another valid stock to continue selling "));
+        invalidInput = true;
+      }
+    }
+    view.getBuilderView(Collections.singletonList("---Your portfolio has been updated! "
+            + "You can find it at : " + portfolioUuid + "---"));
+  }
+
   /**
    * It processes the UserOptions.THREE and allows them to determine the total value of a portfolio,
    * and keeps prompting until successful sequence of input is received.
    *
    * @param input input received from the user.
    */
-  private void processUserOptionThree(String input) {
+  private void processInflexibleUserOptionThree(String input) {
     boolean invalidInput = true;
     String portfolioId = getPortfolioIdInput(input);
 
@@ -274,7 +421,7 @@ public class StockControllerImpl implements StockController {
 
     // calculate total worth of a portfolio
     Map<Integer, List<String>> totalValueOfAPortfolio =
-            model.calculateTotalValueOfAPortfolio(input, this.user, portfolioId);
+            model.calculateTotalValueOfAInflexiblePortfolio(input, this.user, portfolioId);
 
     double totalPortfolioValueSum = 0.0;
     // check if list length matches with expected length returned by model to
@@ -285,7 +432,7 @@ public class StockControllerImpl implements StockController {
         for (int i = 0; i <= 100; i++) {
           if (i != 100) {
             // call the model again to fetch remaining ones
-            totalValueOfAPortfolio = model.calculateTotalValueOfAPortfolio(input, this.user,
+            totalValueOfAPortfolio = model.calculateTotalValueOfAInflexiblePortfolio(input, this.user,
                     portfolioId);
           }
           view.getProgressBarView(i);
@@ -307,9 +454,34 @@ public class StockControllerImpl implements StockController {
       columns.add("Number of shares");
       columns.add("Total Share Value");
       view.getTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
-      view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: "
+      view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: $"
               + totalPortfolioValueSum + "---"));
     }
+  }
+
+  // TODO check if date new column is returned from model
+  private void processFlexibleUserOptionThree(String input) {
+    boolean invalidInput = true;
+
+    input = getPortfolioIdInput(input);
+    view.getFlexibleCompositionView();
+
+    // validate date is in correct format
+    while (invalidInput) {
+      input = getUserInputView();
+      if (isValidDate(input)) {
+        invalidInput = false;
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid "
+                + "date format entered!", "Please enter a valid date: "));
+      }
+    }
+
+    List<String> columns = new ArrayList<String>();
+    columns.add("Ticker");
+    columns.add("Number of shares");
+    columns.add("Share Price");
+    view.getTableViewBuilder(model.getPortfolioContents(this.user, input), columns);
   }
 
   /**
@@ -342,6 +514,64 @@ public class StockControllerImpl implements StockController {
             + "serialized! You can find it at: " + portfolioFilePath + "---"));
   }
 
+  // TODO test and check if there is impl difference
+  private void processFlexibleUserOptionFour(String input) {
+    boolean invalidInput = true;
+    String portfolioId = getPortfolioIdInput(input);
+
+    view.getTotalPortfolioValueView();
+
+    // validate date is in correct format
+    while (invalidInput) {
+      input = getUserInputView();
+      if (isValidDate(input)) {
+        invalidInput = false;
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid "
+                + "date format entered!", "Please enter a valid date: "));
+      }
+    }
+
+    // calculate total worth of a portfolio
+    Map<Integer, List<String>> totalValueOfAPortfolio =
+            model.calculateTotalValueOfAFlexiblePortfolio(input, this.user, portfolioId);
+
+    double totalPortfolioValueSum = 0.0;
+    // check if list length matches with expected length returned by model to
+    // indicate if the entire portfolio has been processed
+    for (Map.Entry<Integer, List<String>> entry : totalValueOfAPortfolio.entrySet()) {
+      if (entry.getKey() != entry.getValue().size()) {
+
+        for (int i = 0; i <= 100; i++) {
+          if (i != 100) {
+            // call the model again to fetch remaining ones
+            totalValueOfAPortfolio = model.calculateTotalValueOfAFlexiblePortfolio(input, this.user,
+                    portfolioId);
+          }
+          view.getProgressBarView(i);
+          try {
+            Thread.sleep(600);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+
+      }
+
+      for (String row : totalValueOfAPortfolio.values().stream().findFirst().get()) {
+        totalPortfolioValueSum += Double.parseDouble(row.split(",")[2]);
+      }
+
+      List<String> columns = new ArrayList<String>();
+      columns.add("Ticker");
+      columns.add("Number of shares");
+      columns.add("Total Share Value");
+      view.getTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
+      view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: "
+              + totalPortfolioValueSum + "---"));
+    }
+  }
+
   /**
    * It processes the UserOptions.FIVE and allows them to load an external portfolio, and keeps
    * prompting until successful sequence of input is received.
@@ -368,6 +598,48 @@ public class StockControllerImpl implements StockController {
     view.getBuilderView(Collections.singletonList("---The external portfolio file has "
             + "been saved successfully. "
             + "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---"));
+  }
+
+  private void processFlexibleUserOptionSeven(String input) {
+    boolean invalidInput = true;
+    String portfolioUuid = getPortfolioIdInput(input);
+
+    view.getCostBasisView();
+
+    // validate date is in correct format
+    while (invalidInput) {
+      input = getUserInputView();
+      if (isValidDate(input)) {
+        invalidInput = false;
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid "
+                + "date format entered!", "Please enter a valid date: "));
+      }
+    }
+
+    List<String> result = model.calculateCostBasis(user, portfolioUuid, input);
+
+    // TODO display result
+  }
+
+  private void processFlexibleUserOptionEight(String input) {
+    boolean invalidInput = true;
+    String portfolioUuid = getPortfolioIdInput(input);
+
+    view.getPortfolioPerformanceView();
+
+    // validate date is in correct format
+    while (invalidInput) {
+      input = getUserInputView();
+      if (isValidDate(input.split("-")[0]) && isValidDate(input.split("-")[1])) {
+        invalidInput = false;
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid "
+                + "date format entered!", "Please enter a valid date: "));
+      }
+    }
+
+    // TODO call designated model method to retreive performance results and display it
   }
 
   /**

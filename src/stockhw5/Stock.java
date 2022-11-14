@@ -4,10 +4,8 @@ import java.io.InputStreamReader;
 
 import stockhw5.controller.StockController;
 import stockhw5.controller.StockControllerImpl;
-import stockhw5.model.FlexibleStockModelImpl;
-import stockhw5.model.StockModel;
-import stockhw5.view.StockView;
-import stockhw5.view.StockViewImpl;
+import stockhw5.model.StockModelMaker;
+import stockhw5.view.StockViewMaker;
 
 /**
  * Demonstrates a command-line-based Stock application.
@@ -22,9 +20,9 @@ public class Stock {
     System.out.println("Stock app started");
 
     // create the model
-    StockModel model = new FlexibleStockModelImpl();
+    StockModelMaker model = new StockModelMaker();
     // create the view
-    StockView view = new StockViewImpl(System.out);
+    StockViewMaker view = new StockViewMaker(System.out);
     // create the controller
     StockController controller = new StockControllerImpl(model, view,
             new InputStreamReader(System.in));
