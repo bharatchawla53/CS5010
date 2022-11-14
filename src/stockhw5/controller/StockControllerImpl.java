@@ -460,6 +460,7 @@ public class StockControllerImpl implements StockController {
   }
 
   // TODO check if date new column is returned from model
+  //TODO call portfolioCompositionFlexible instead of getPortfolioContents
   private void processFlexibleUserOptionThree(String input) {
     boolean invalidInput = true;
 
@@ -617,7 +618,7 @@ public class StockControllerImpl implements StockController {
       }
     }
 
-    List<String> result = model.calculateCostBasis(user, portfolioUuid, input);
+    double costBasisValue = model.calculateCostBasis(user, portfolioUuid, input);
 
     // TODO display result
   }

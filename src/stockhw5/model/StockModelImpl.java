@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The StockModelImpl class represents user portfolio's and features supported for it.
@@ -51,6 +53,13 @@ public class StockModelImpl extends AbstractStockModel {
       }
     };
   }
+
+  /**
+   * Javadoc for validate tickerShare
+   * @param tickerShare input received from the user.
+   * @return
+   */
+
 
   /**
    * It returns a stock price for a given stock on a certain date.

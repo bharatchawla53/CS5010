@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"}]
+packageSearchIndex = [{"l":"abstractDataType"},{"l":"All Packages","u":"allpackages-index.html"},{"l":"bignumber"},{"l":"calculator"},{"l":"duration"},{"l":"lab1"},{"l":"lab2"},{"l":"lab3"},{"l":"lab4"},{"l":"solution"},{"l":"solution.bst"},{"l":"solution.listadt"},{"l":"stockhw4"},{"l":"stockhw4.controller"},{"l":"stockhw4.model"},{"l":"stockhw4.view"},{"l":"unionDataTypesExample"},{"l":"vehicle"}];updateSearchResults();

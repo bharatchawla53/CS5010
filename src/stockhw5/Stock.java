@@ -26,6 +26,9 @@ public class Stock {
     // create the controller
     StockController controller = new StockControllerImpl(model, view,
             new InputStreamReader(System.in));
+
+
+
     // hand over the control of the app to the controller
     controller.start();
 

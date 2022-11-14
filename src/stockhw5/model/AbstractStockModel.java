@@ -76,12 +76,7 @@ public abstract class AbstractStockModel implements StockModel {
             .substring(0, 8);
   }
 
-  @Override
-  public boolean validateTickerShare(String tickerShare) {
-    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+");
-    Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
-    return validator.matches();
-  }
+
 
   @Override
   public List<String> getPortfoliosForUser(User user) {
@@ -393,6 +388,7 @@ public abstract class AbstractStockModel implements StockModel {
    * @return true if the sequence is valid, false, otherwise.
    */
   private boolean validatePortfolioRow(String row) {
+    //TODO merge flexible and inflexible portfolio row regex to maintain abstraction
     Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+");
     Matcher validator = ticketShareValidationPattern.matcher(row);
     return validator.matches();
@@ -415,6 +411,16 @@ public abstract class AbstractStockModel implements StockModel {
       e.printStackTrace();
     }
   }
+
+  public boolean validateTickerShare(String tickerShareDate)
+  {
+    //TODO check future dates
+    Pattern ticketShareValidationPattern = Pattern.compile("([A-Z]+[,]\\d+[,][2][0][0-9][0-9][\\-][0-1][0-2][\\-][0-3][0-9])|([A-Z]+[,]\\d+)");
+    Matcher validator = ticketShareValidationPattern.matcher(tickerShareDate);
+    return validator.matches();
+
+  }
+
 
   /**
    * Given a valid user, it attempts to persist the user to the users.csv file.

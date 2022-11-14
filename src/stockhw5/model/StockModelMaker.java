@@ -81,7 +81,7 @@ public class StockModelMaker {
     return flexibleModel.calculateTotalValueOfAPortfolio(certainDate, user, portfolioUuid);
   }
 
-  public List<String> calculateCostBasis(User user, String portfolioUuid, String date) {
+  public double calculateCostBasis(User user, String portfolioUuid, String date) {
     return flexibleModel.calculateCostBasis(user, portfolioUuid, date);
   }
 }

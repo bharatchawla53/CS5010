@@ -8,5 +8,15 @@ public interface FlexibleStockModel extends StockModel{
 
   boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker, String noOfShares, String date);
 
-  List<String> calculateCostBasis(User user, String portfolioUUID, String date);
+  double calculateCostBasis(User user, String portfolioUUID, String date);
+
+  boolean validateTickerShare(String tickerShareDate);
+
+
+
+
+  List<String> portfolioCompositionFlexible(String portfolioUUID, User user,  String date);
+
+
+
 }
