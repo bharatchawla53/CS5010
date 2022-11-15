@@ -1,6 +1,8 @@
 package stockhw5.model;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -18,7 +20,30 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   private final double commissionRate;
 
   public FlexibleStockModelImpl() {
-    this.commissionRate = 0.02;
+    this.commissionRate = 1.02;
+  }
+
+
+  @Override
+  public List<String> getPortfolioContents(User user, String portfolioUUID) {
+    String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
+    List<String> portfolioContents = new ArrayList<>();
+
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+        String ticker = strLine.split(",")[0];
+        String noOfShares = strLine.split(",")[1];
+        String stockPrice = strLine.split(",")[2];
+        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice;
+        portfolioContents.add(tickerNoOfShares);
+      }
+      return portfolioContents;
+    } catch (IOException e) {
+      return portfolioContents;
+    }
   }
 
   @Override
@@ -37,22 +62,23 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
 
+
     Double stockPrice = getStockPrice(new String[]{ticker, noOfShares},
-            LocalDate.parse(date));
+            getCurrentDateSkippingWeekends(LocalDate.parse(date)));
 
     if (stockPrice == null) {
-      stockPrice = getStockPrice(ticker, noOfShares, date);
+      stockPrice = getStockPrice(ticker, noOfShares, String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
     }
 
     if (f.exists() && !f.isDirectory()) {
       List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
       List<String> sortedPortfolioContents = sortPortfolioOnDate(portfolioContents);
       String record = ticker + "," + noOfShares + "," + stockPrice + "," + date + "\n";
-      List<String> updatedPortfolioContents = insertIntoSortedPortfolio(portfolioUUID, user, record);
+      List<String> updatedPortfolioContents = insertIntoSortedPortfolio(portfolioUUID, user, record,date);
       try {
         FileWriter fw = new FileWriter(portfolioFileName, false);
         for (String row : updatedPortfolioContents) {
-          fw.write(row);
+          fw.write(row+"\n");
 
         }
         isSuccessful = true;
@@ -64,7 +90,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       try {
         if (f.createNewFile()) {
           try {
-            FileWriter fw = new FileWriter(portfolioFileName, false);
+            FileWriter fw = new FileWriter(portfolioFileName, true);
 
             fw.write(ticker + "," + noOfShares + "," + stockPrice + "," + date + "\n");
             isSuccessful = true;
@@ -100,17 +126,18 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     File f = new File(portfolioFileName);
 
     Double stockPrice = getStockPrice(new String[]{ticker, noOfShares},
-            LocalDate.parse(date));
+            getCurrentDateSkippingWeekends(LocalDate.parse(date)));
 
     if (stockPrice == null) {
-      stockPrice = getStockPrice(ticker, noOfShares, date);
+      stockPrice = getStockPrice(ticker, noOfShares, String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
+
     }
 
     if (f.exists() && !f.isDirectory()) {
       List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
       String record = ticker + "," + "-" + noOfShares + "," + stockPrice + "," + date + "\n";
       //fw.write(ticker + "," + "-"+ noOfShares + "," + stockPrice + ","+date+"\n");
-      List<String> updatedPortfolioContents = insertIntoSortedPortfolio(portfolioUUID, user, record);
+      List<String> updatedPortfolioContents = insertIntoSortedPortfolio(portfolioUUID, user, record,date);
       if (!isSuccessful) {
         try {
           FileWriter fw = new FileWriter(portfolioFileName, false);
@@ -138,12 +165,12 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     // multiply by constant fixed value
     // TODO push commisionRate as field variable
 
-    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
     int totalShares = 0;
 
     for (String row : portfolioContents) {
-      if (LocalDate.parse(row.split(",")[3]).isBefore(LocalDate.parse(date))) {
-        int shares = Integer.parseInt(row.split(",")[2]);
+      if (LocalDate.parse(row.split(",")[3]).isBefore(LocalDate.parse(date)) || LocalDate.parse(row.split(",")[3]).isEqual(LocalDate.parse(date))) {
+        int shares = Integer.parseInt(row.split(",")[1]);
         totalShares += Math.abs(shares);
       }
     }
@@ -158,9 +185,32 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return validator.matches();
   }
 
-  @Override
-  public List<String> getPortfolioContents(User user, String portfolioUUID) {
-    return null;
+
+  public List<String> getPortfolioContents(User user, String portfolioUUID, String date) {
+    List<String> portfolioRows = new ArrayList<>();
+    File f = new File(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv");
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv"));
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null || fr.readLine() != "") {
+        if (strLine==null || strLine.equals(""))
+        {
+          break;
+        }
+
+        String ticker = strLine.split(",")[0];
+        String noOfShares = strLine.split(",")[1];
+        String stockPrice = strLine.split(",")[2];
+        String rdate = strLine.split(",")[3];
+        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice+","+rdate;
+        portfolioRows.add(tickerNoOfShares);
+      }
+      return portfolioRows;
+    } catch (IOException e) {
+      return portfolioRows;
+    }
+
   }
 
   // search through a portfolio and find all the stocks before or equal to user given date to
@@ -172,7 +222,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     List<String> totalValueOfPortfolio = new ArrayList<>();
 
     List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
-    Map<String, Integer> tickerShare = getTickerNumSharesGivenDate(user, portfolioUUID, LocalDate.parse(certainDate));
+    //Map<String, Integer> tickerShare = getTickerNumSharesGivenDate(user, portfolioUUID, LocalDate.parse(certainDate));
 
     for (String content : portfolioContents) {
       String[] shareDetail = content.split(",");
@@ -236,35 +286,81 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return stockPrice;
   }
 
+
+  private int checkIfTickerInPortfolio(String ticker, List<String> portfolioList)
+  {
+    for(int i =0;i<portfolioList.size();i++)
+    {
+      String row = portfolioList.get(i);
+      if(row.split(",")[0].equals(ticker))
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
   @Override
   public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
-    Map<String, Integer> tickerNumShareIntraDay = getTickerNumShareIntraDay(portfolioUUID, user);
+    Map<String, Integer> tickerNumShareIntraDay = getTickerNumShareIntraDay(portfolioUUID, user,date);
     List<String> portfolioList = new ArrayList<>();
     for (String key : tickerNumShareIntraDay.keySet()) {
-      if (LocalDate.parse(key.split("%")[1]).isBefore(LocalDate.parse(date))) {
+      if (LocalDate.parse(key.split("%")[1]).isBefore(LocalDate.parse(date)) || LocalDate.parse(key.split("%")[1]).isEqual(LocalDate.parse(date))) {
         String ticker = key.split("%")[0];
         String bDate = key.split("%")[1];
         String numShares = String.valueOf(tickerNumShareIntraDay.get(key));
-        String shareValue = String.valueOf(getStockPrice(ticker, numShares, bDate));
-        String pRow = ticker + "," + bDate + "," + numShares + "," + shareValue;
+        String shareValue = String.valueOf(getStockPrice(ticker, numShares, String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(bDate)))));
+        //String pRow = ticker + "," + bDate + "," + numShares + "," + shareValue;
+        String pRow = ticker + "," + numShares + "," + shareValue +"," +bDate;
         portfolioList.add(pRow);
       }
     }
-    return portfolioList;
+
+    List<String> fPortfolioList = new ArrayList<>();
+    for (String row:portfolioList)
+    {
+      if(checkIfTickerInPortfolio(row.split(",")[0],fPortfolioList)>=0)
+      {
+        int index = checkIfTickerInPortfolio(row.split(",")[0],fPortfolioList);
+        String gRow = fPortfolioList.get(index);
+        String ticker = row.split(",")[0];
+        String shareVal = row.split(",")[2];
+        String gDate = gRow.split(",")[3];
+        String gShareNum = gRow.split(",")[1];
+        String iDate = row.split(",")[3];
+        String iShareNum = row.split(",")[1];
+        String tShareNum = String.valueOf(Integer.parseInt(gShareNum)+Integer.parseInt(iShareNum));
+        String tDate = String.valueOf(LocalDate.MAX);
+        if(LocalDate.parse(iDate).isBefore(LocalDate.parse(gDate)))
+        {
+          tDate = String.valueOf(LocalDate.parse(gDate));
+        }
+        else
+        {
+          tDate = String.valueOf(LocalDate.parse(iDate));
+        }
+        String tRow = ticker+","+tShareNum+ ","+shareVal+","+tDate;
+        fPortfolioList.set(index,tRow);
+      }
+      else
+      {
+        fPortfolioList.add(row);
+      }
+    }
+    return fPortfolioList;
   }
 
   private Double getStockPrice(String ticker, String noOfShares, String date) {
     //TODO move from abstract if present, and add to
     Double stockPrice;
     // call the API
-    getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
+    getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
     if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
       try {
         Thread.sleep(60 * 1000);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      getStockDataFromApi(AlphaVantageOutputSize.COMPACT.name(), ticker);
+      getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
     }
     stockPrice = getStockPrice(new String[]{ticker, noOfShares},
             LocalDate.parse(date));
@@ -274,9 +370,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   private Map<String, Integer> getTickerNumSharesGivenDate(User user, String portfolioUUID, LocalDate date) {
 
     Map<String, Integer> tickerNumShares = new HashMap<>();
-    List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
+    List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID,String.valueOf(date));
     for (String row : portfolioContents) {
-      if (LocalDate.parse(row.split(",")[3]).compareTo(date) <= 0) {
+      if (LocalDate.parse(row.split(",")[3]).isBefore(date)) {
         if (tickerNumShares.containsKey(row.split(",")[0])) {
           tickerNumShares.put(row.split(",")[0], tickerNumShares.get(row.split(",")[0]) + Integer.parseInt(row.split(",")[1]));
 
@@ -290,43 +386,44 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
   private List<String> sortPortfolioOnDate(List<String> portfolioContents) {
-    return portfolioContents.stream()
-            .sorted(Comparator.comparing(o -> o.split(",")[3]))
-            .collect(Collectors.toList());
+    List<String> sortedPortfolioContents = new ArrayList<>();
+    while(portfolioContents.size() > 0) {
+      LocalDate maxDate = LocalDate.MAX;
+      String minDateRow = "";
+      int mIndex = 0;
+      for (int i = 0; i < portfolioContents.size(); i++) {
+        String row = portfolioContents.get(i);
+        row = row.split("\n")[0];
+        if (LocalDate.parse(row.split(",")[3]).isBefore(maxDate)) {
+          minDateRow = row;
+          maxDate = LocalDate.parse(row.split(",")[3]);
+          mIndex = i;
+        }
+
+      }
+      sortedPortfolioContents.add(minDateRow);
+      portfolioContents.remove(mIndex);
+    }
+    return sortedPortfolioContents;
   }
 
-  private List<String> insertIntoSortedPortfolio(String portfolioUUID, User user, String record) {
+  private List<String> insertIntoSortedPortfolio(String portfolioUUID, User user, String record,String date) {
     //TODO Make sure everything is comma
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     //FileWriter fw = new FileWriter(portfolioFileName,false);
-    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
-    portfolioContents = sortPortfolioOnDate(portfolioContents);
-    List<String> updatedPortfolioContents = new ArrayList<String>();
-    boolean isInserted = false;
-    for (String row : portfolioContents) {
-      if (!isInserted) {
-        LocalDate ipDate = LocalDate.parse(record.split(",")[3]);
-        LocalDate pDate = LocalDate.parse(row.split(",")[3]);
-        if (ipDate.compareTo(pDate) <= 0) {
-          updatedPortfolioContents.add(record);
-          updatedPortfolioContents.add(row);
-          isInserted = true;
-        } else {
-          updatedPortfolioContents.add(row);
-        }
-      } else {
-        updatedPortfolioContents.add(row);
-      }
-    }
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
+    portfolioContents.add(record);
+    List<String> updatedPortfolioContents = sortPortfolioOnDate(portfolioContents);
     return updatedPortfolioContents;
   }
 
-  private Map<String, Integer> getTickerNumShareIntraDay(String portfolioUUID, User user) {
-    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
+  private Map<String, Integer> getTickerNumShareIntraDay(String portfolioUUID, User user,String date) {
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
+    Map<String,Integer> tickerShares = getTickerNumSharesGivenDate(user,portfolioUUID,LocalDate.parse(date));
     Map<String, Integer> tickerNumShareIntraDay = new HashMap<>();
     for (String row : portfolioContents) {
       String tickerDate = row.split(",")[0] + "%" + row.split(",")[3];
-      if (tickerNumShareIntraDay.containsKey(tickerDate)) {
+      if (tickerNumShareIntraDay.containsKey(tickerDate))  {
         tickerNumShareIntraDay.put(tickerDate, tickerNumShareIntraDay.get(tickerDate) + Integer.parseInt(row.split(",")[1]));
 
       } else {

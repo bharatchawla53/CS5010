@@ -35,8 +35,12 @@ public class StockViewMaker {
     inflexibleView.getPortfolioCreatorView();
   }
 
-  public void getTableViewBuilder(List<String> rows, List<String> cols) {
+  public void getInflexibleTableViewBuilder(List<String> rows, List<String> cols) {
     inflexibleView.getTableViewBuilder(rows, cols);
+  }
+
+  public void getFlexibleTableViewBuilder(List<String> rows, List<String> cols) {
+    flexibleView.getTableViewBuilder(rows, cols);
   }
 
   public void getTotalPortfolioValueView() {

@@ -41,6 +41,10 @@ public class StockModelMaker {
     return inflexibleModel.getPortfolioContents(user, portfolioUuid);
   }
 
+  public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
+    return flexibleModel.portfolioCompositionFlexible(portfolioUUID,user,date);
+  }
+
   public Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(String certainDate, User user, String portfolioUuid) {
     return inflexibleModel.calculateTotalValueOfAPortfolio(certainDate, user, portfolioUuid);
   }

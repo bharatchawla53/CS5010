@@ -181,7 +181,7 @@ public abstract class AbstractStockView implements StockView {
   /**
    * The CommandLineTable class represents a table view builder for command line interface.
    */
-  private class CommandLineTable {
+  protected class CommandLineTable {
     private static final String HORIZONTAL_SEP = "-";
     private String verticalSep;
     private String joinSep;

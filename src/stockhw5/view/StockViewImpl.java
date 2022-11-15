@@ -20,6 +20,7 @@ public class StockViewImpl extends AbstractStockView {
     this.out = out;
   }
 
+
   @Override
   public void getUserOptionsView() {
     List<String> opItems = new ArrayList<>();
@@ -47,4 +48,25 @@ public class StockViewImpl extends AbstractStockView {
 
     print(formatOutput(opItems));
   }
+
+  @Override
+  public void getTableViewBuilder(List<String> rows, List<String> columns) {
+    CommandLineTable commandLineTable = new CommandLineTable();
+    commandLineTable.setShowVerticalLines(true);
+    commandLineTable.setHeaders(columns);
+
+    for (String row : rows) {
+      String[] splitRow = row.split(",");
+
+      if (splitRow.length == 1) {
+        commandLineTable.addRow(splitRow[0]);
+      } else {
+        commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2]);
+      }
+    }
+
+    commandLineTable.print();
+  }
+
+
 }
