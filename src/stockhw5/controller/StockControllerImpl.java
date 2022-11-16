@@ -564,12 +564,12 @@ public class StockControllerImpl implements StockController {
         totalPortfolioValueSum += Double.parseDouble(row.split(",")[2]);
       }
 
-      List<String> columns = new ArrayList<String>();
+      List<String> columns = new ArrayList<>();
       columns.add("Ticker");
       columns.add("Number of shares");
       columns.add("Total Share Value");
       view.getInflexibleTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
-      view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: "
+      view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: $"
               + totalPortfolioValueSum + "---"));
     }
   }

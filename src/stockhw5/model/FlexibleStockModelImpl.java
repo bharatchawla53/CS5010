@@ -7,13 +7,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class FlexibleStockModelImpl extends AbstractStockModel implements FlexibleStockModel {
 
@@ -26,23 +24,28 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
-    String portfolioFileName = user.getUserName() + "_" + portfolioUUID + ".csv";
-    List<String> portfolioContents = new ArrayList<>();
-
+    List<String> portfolioRows = new ArrayList<>();
+    File f = new File(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv");
     try {
-      BufferedReader fr = new BufferedReader(new FileReader(portfolioFileName));
+      BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv"));
       String strLine;
 
-      while ((strLine = fr.readLine()) != null) {
+      while ((strLine = fr.readLine()) != null || !fr.readLine().equals("")) {
+        if (strLine==null || strLine.equals(""))
+        {
+          break;
+        }
+
         String ticker = strLine.split(",")[0];
         String noOfShares = strLine.split(",")[1];
         String stockPrice = strLine.split(",")[2];
-        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice;
-        portfolioContents.add(tickerNoOfShares);
+        String rdate = strLine.split(",")[3];
+        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice+","+rdate;
+        portfolioRows.add(tickerNoOfShares);
       }
-      return portfolioContents;
+      return portfolioRows;
     } catch (IOException e) {
-      return portfolioContents;
+      return portfolioRows;
     }
   }
 
@@ -165,7 +168,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     // multiply by constant fixed value
     // TODO push commisionRate as field variable
 
-    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
 
     double totalCommissionValue  = 0.0;
     for (String row : portfolioContents) {
@@ -175,10 +178,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         double transactionValue = shares*shareValue;
         double commisionFromTransaction = transactionValue*this.commissionRate;
         totalCommissionValue += commisionFromTransaction;
-
-
-
-
       }
     }
     return totalCommissionValue;
@@ -186,39 +185,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   @Override
   public boolean validateTickerShare(String tickerShareDate) {
-    Pattern pattern = Pattern
-            .compile("([A-Z]+[,]\\d+[,][2][0][0-9][0-9][\\-][0-9][0-9][\\-][0-3][0-9])|([A-Z]+[,]\\d+)");
+    Pattern pattern = Pattern.compile("([A-Z]+[,]\\d+[,]+\\d{4}-\\d{2}-\\d{2})");
     Matcher validator = pattern.matcher(tickerShareDate);
     return validator.matches();
   }
 
-
-  public List<String> getPortfolioContents(User user, String portfolioUUID, String date) {
-    List<String> portfolioRows = new ArrayList<>();
-    File f = new File(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv");
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv"));
-      String strLine;
-
-      while ((strLine = fr.readLine()) != null || fr.readLine() != "") {
-        if (strLine==null || strLine.equals(""))
-        {
-          break;
-        }
-
-        String ticker = strLine.split(",")[0];
-        String noOfShares = strLine.split(",")[1];
-        String stockPrice = strLine.split(",")[2];
-        String rdate = strLine.split(",")[3];
-        String tickerNoOfShares = ticker + "," + noOfShares + "," + stockPrice+","+rdate;
-        portfolioRows.add(tickerNoOfShares);
-      }
-      return portfolioRows;
-    } catch (IOException e) {
-      return portfolioRows;
-    }
-
-  }
 
   // search through a portfolio and find all the stocks before or equal to user given date to
   // calculate portfolio value
@@ -227,18 +198,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
                                                                     User user, String portfolioUUID) {
 
     List<String> totalValueOfPortfolio = new ArrayList<>();
-
-    List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
-    //Map<String, Integer> tickerShare = getTickerNumSharesGivenDate(user, portfolioUUID, LocalDate.parse(certainDate));
+    List<String> portfolioContents = portfolioCompositionFlexible(portfolioUUID, user, certainDate);
 
     for (String content : portfolioContents) {
       String[] shareDetail = content.split(",");
-      // TODO expecting another column, test once other impl is done
 
       LocalDate purchaseDate = getCurrentDateSkippingWeekends(dateParser(shareDetail[3]));
       LocalDate userInputDate = getCurrentDateSkippingWeekends(dateParser(certainDate));
 
-      if (userInputDate.isBefore(purchaseDate) || userInputDate.isEqual(purchaseDate)) {
+      if (purchaseDate.isBefore(userInputDate) || purchaseDate.isEqual(userInputDate)) {
         Double stockPrice = getStockPrice(shareDetail, userInputDate);
 
         if (stockPrice == null) {
@@ -316,7 +284,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         String bDate = key.split("%")[1];
         String numShares = String.valueOf(tickerNumShareIntraDay.get(key));
         String shareValue = String.valueOf(getStockPrice(ticker, numShares, String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(bDate)))));
-        //String pRow = ticker + "," + bDate + "," + numShares + "," + shareValue;
         String pRow = ticker + "," + numShares + "," + shareValue +"," +bDate;
         portfolioList.add(pRow);
       }
@@ -377,7 +344,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   private Map<String, Integer> getTickerNumSharesGivenDate(User user, String portfolioUUID, LocalDate date) {
 
     Map<String, Integer> tickerNumShares = new HashMap<>();
-    List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID,String.valueOf(date));
+    List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);
     for (String row : portfolioContents) {
       if (LocalDate.parse(row.split(",")[3]).isBefore(date)) {
         if (tickerNumShares.containsKey(row.split(",")[0])) {
@@ -418,14 +385,14 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     //TODO Make sure everything is comma
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     //FileWriter fw = new FileWriter(portfolioFileName,false);
-    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
     portfolioContents.add(record);
     List<String> updatedPortfolioContents = sortPortfolioOnDate(portfolioContents);
     return updatedPortfolioContents;
   }
 
   private Map<String, Integer> getTickerNumShareIntraDay(String portfolioUUID, User user,String date) {
-    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
     Map<String,Integer> tickerShares = getTickerNumSharesGivenDate(user,portfolioUUID,LocalDate.parse(date));
     Map<String, Integer> tickerNumShareIntraDay = new HashMap<>();
     for (String row : portfolioContents) {
