@@ -620,8 +620,10 @@ public class StockControllerImpl implements StockController {
     }
 
     double costBasisValue = model.calculateCostBasis(user, portfolioUuid, input);
+    view.getBuilderView(Collections.singletonList("The total amount of money invested in "
+            + "a portfolio : $" + costBasisValue));
 
-    // TODO display result
+
   }
 
   private void processFlexibleUserOptionEight(String input) {

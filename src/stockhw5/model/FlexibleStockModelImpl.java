@@ -20,7 +20,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   private final double commissionRate;
 
   public FlexibleStockModelImpl() {
-    this.commissionRate = 1.02;
+    this.commissionRate = 0.10;
   }
 
 
@@ -166,21 +166,28 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     // TODO push commisionRate as field variable
 
     List<String> portfolioContents = getPortfolioContents(user, portfolioUUID,date);
-    int totalShares = 0;
 
+    double totalCommissionValue  = 0.0;
     for (String row : portfolioContents) {
       if (LocalDate.parse(row.split(",")[3]).isBefore(LocalDate.parse(date)) || LocalDate.parse(row.split(",")[3]).isEqual(LocalDate.parse(date))) {
-        int shares = Integer.parseInt(row.split(",")[1]);
-        totalShares += Math.abs(shares);
+        int shares = Math.abs(Integer.parseInt(row.split(",")[1]));
+        double shareValue = Double.parseDouble(row.split(",")[2]);
+        double transactionValue = shares*shareValue;
+        double commisionFromTransaction = transactionValue*this.commissionRate;
+        totalCommissionValue += commisionFromTransaction;
+
+
+
+
       }
     }
-    return this.commissionRate * totalShares;
+    return totalCommissionValue;
   }
 
   @Override
   public boolean validateTickerShare(String tickerShareDate) {
     Pattern pattern = Pattern
-            .compile("([A-Z]+[,]\\d+[,][2][0][0-9][0-9][\\-][0-1][0-2][\\-][0-3][0-9])|([A-Z]+[,]\\d+)");
+            .compile("([A-Z]+[,]\\d+[,][2][0][0-9][0-9][\\-][0-9][0-9][\\-][0-3][0-9])|([A-Z]+[,]\\d+)");
     Matcher validator = pattern.matcher(tickerShareDate);
     return validator.matches();
   }
