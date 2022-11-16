@@ -30,8 +30,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()+"_"+portfolioUUID+"_"+"fl_"+".csv"));
       String strLine;
 
-      while ((strLine = fr.readLine()) != null || !fr.readLine().equals("")) {
-        if (strLine==null || strLine.equals(""))
+      while ((strLine = fr.readLine()) != null) {
+        if (strLine.equals(""))
         {
           break;
         }
@@ -170,14 +170,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
     List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
 
-    double totalCommissionValue  = 0.0;
+    double totalCommissionValue = 0.0;
     for (String row : portfolioContents) {
       if (LocalDate.parse(row.split(",")[3]).isBefore(LocalDate.parse(date)) || LocalDate.parse(row.split(",")[3]).isEqual(LocalDate.parse(date))) {
         int shares = Math.abs(Integer.parseInt(row.split(",")[1]));
         double shareValue = Double.parseDouble(row.split(",")[2]);
-        double transactionValue = shares*shareValue;
-        double commisionFromTransaction = transactionValue*this.commissionRate;
-        totalCommissionValue += commisionFromTransaction;
+        double transactionValue = shares * shareValue;
+        double commissionFromTransaction = transactionValue * this.commissionRate;
+        totalCommissionValue += transactionValue + commissionFromTransaction;
+
       }
     }
     return totalCommissionValue;
@@ -321,6 +322,84 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       }
     }
     return fPortfolioList;
+  }
+
+  @Override
+  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath) {
+    File f = new File(filePath);
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+
+        if (!validatePortfolioRow(strLine)) {
+          return false;
+        }
+      }
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+
+  @Override
+  public String saveExternalUserPortfolio(String filePath, User user) {
+    String uuid = generateUUID();
+    String portfolioFileName = user.getUserName() + "_" + uuid + "_fl_.csv";
+    List<String> portfolioContents = new ArrayList<>();
+    File f = new File(portfolioFileName);
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
+
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+        if (validatePortfolioRow(strLine)) {
+          String ticker = strLine.split(",")[0];
+          String noOfShares = strLine.split(",")[1];
+          String stockPrice = strLine.split(",")[2];
+          String date = strLine.split(",")[3];
+          String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice + " " + date;
+          portfolioContents.add(tickerNoOfShares);
+        } else {
+          return null;
+        }
+      }
+      if (f.createNewFile()) {
+        try {
+          FileWriter fw = new FileWriter(portfolioFileName, true);
+          for (String s : portfolioContents) {
+            fw.write(s.split(" ")[0] + "," + s.split(" ")[1]
+                    + "," + s.split(" ")[2]
+                    + "," + s.split(" ")[3]
+                    + "\n");
+          }
+
+          fw.close();
+          return uuid;
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+    } catch (IOException e) {
+      return null;
+    }
+    return null;
+  }
+
+  /**
+   * It validates if the correct sequence of combination is provided by the user in the external
+   * file.
+   *
+   * @param row it contains stock details, expected format : symbol,shares,price.
+   * @return true if the sequence is valid, false, otherwise.
+   */
+  private boolean validatePortfolioRow(String row) {
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+[,]+\\d{4}-\\d{2}-\\d{2}");
+    Matcher validator = ticketShareValidationPattern.matcher(row);
+    return validator.matches();
   }
 
   private Double getStockPrice(String ticker, String noOfShares, String date) {

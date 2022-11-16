@@ -120,6 +120,81 @@ public class StockModelImpl extends AbstractStockModel {
     return stockPrice;
   }
 
+  @Override
+  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath) {
+    File f = new File(filePath);
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+
+        if (!validatePortfolioRow(strLine)) {
+          return false;
+        }
+      }
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+
+
+  @Override
+  public String saveExternalUserPortfolio(String filePath, User user) {
+    String uuid = generateUUID();
+    String portfolioFileName = user.getUserName() + "_" + uuid + ".csv";
+    List<String> portfolioContents = new ArrayList<>();
+    File f = new File(portfolioFileName);
+    try {
+      BufferedReader fr = new BufferedReader(new FileReader(filePath));
+
+      String strLine;
+
+      while ((strLine = fr.readLine()) != null) {
+        if (validatePortfolioRow(strLine)) {
+          String ticker = strLine.split(",")[0];
+          String noOfShares = strLine.split(",")[1];
+          String stockPrice = strLine.split(",")[2];
+          String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
+          portfolioContents.add(tickerNoOfShares);
+        } else {
+          return null;
+        }
+      }
+      if (f.createNewFile()) {
+        try {
+          FileWriter fw = new FileWriter(portfolioFileName, true);
+          for (String s : portfolioContents) {
+            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "," + s.split(" ")[2] + "\n");
+          }
+
+          fw.close();
+          return uuid;
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+    } catch (IOException e) {
+      return null;
+    }
+    return null;
+  }
+
+  /**
+   * It validates if the correct sequence of combination is provided by the user in the external
+   * file.
+   *
+   * @param row it contains stock details, expected format : symbol,shares,price.
+   * @return true if the sequence is valid, false, otherwise.
+   */
+  private boolean validatePortfolioRow(String row) {
+    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+");
+    Matcher validator = ticketShareValidationPattern.matcher(row);
+    return validator.matches();
+  }
+
   /**
    * It checks if the current time is before noon or not.
    *

@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class AbstractStockModel implements StockModel {
 
@@ -130,66 +128,6 @@ public abstract class AbstractStockModel implements StockModel {
     return null;
   }
 
-  @Override
-  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filePath) {
-    File f = new File(filePath);
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(filePath));
-      String strLine;
-
-      while ((strLine = fr.readLine()) != null) {
-
-        if (!validatePortfolioRow(strLine)) {
-          return false;
-        }
-      }
-      return true;
-    } catch (IOException e) {
-      return false;
-    }
-  }
-
-  @Override
-  public String saveExternalUserPortfolio(String filePath, User user) {
-    String uuid = generateUUID();
-    String portfolioFileName = user.getUserName() + "_" + uuid + ".csv";
-    List<String> portfolioContents = new ArrayList<>();
-    File f = new File(portfolioFileName);
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(filePath));
-
-      String strLine;
-
-      while ((strLine = fr.readLine()) != null) {
-        if (validatePortfolioRow(strLine)) {
-          String ticker = strLine.split(",")[0];
-          String noOfShares = strLine.split(",")[1];
-          String stockPrice = strLine.split(",")[2];
-          String tickerNoOfShares = ticker + " " + noOfShares + " " + stockPrice;
-          portfolioContents.add(tickerNoOfShares);
-        } else {
-          return null;
-        }
-      }
-      if (f.createNewFile()) {
-        try {
-          FileWriter fw = new FileWriter(portfolioFileName, true);
-          for (String s : portfolioContents) {
-            fw.write(s.split(" ")[0] + "," + s.split(" ")[1] + "," + s.split(" ")[2] + "\n");
-          }
-
-          fw.close();
-          return uuid;
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-
-    } catch (IOException e) {
-      return null;
-    }
-    return null;
-  }
 
   @Override
   public boolean saveStock(User user, String portfolioUUID, String ticker, String noOfShares) {
@@ -354,20 +292,6 @@ public abstract class AbstractStockModel implements StockModel {
   protected String calculateTotalStockWorth(String[] shareDetail, Double stockPrice) {
     return shareDetail[0] + "," + shareDetail[1] + ","
             + stockPrice * Double.parseDouble(shareDetail[1]);
-  }
-
-  /**
-   * It validates if the correct sequence of combination is provided by the user in the external
-   * file.
-   *
-   * @param row it contains stock details, expected format : symbol,shares,price.
-   * @return true if the sequence is valid, false, otherwise.
-   */
-  private boolean validatePortfolioRow(String row) {
-    //TODO merge flexible and inflexible portfolio row regex to maintain abstraction
-    Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+[,](\\d|\\.)+");
-    Matcher validator = ticketShareValidationPattern.matcher(row);
-    return validator.matches();
   }
 
   /**

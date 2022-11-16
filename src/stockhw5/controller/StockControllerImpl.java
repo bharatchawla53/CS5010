@@ -175,7 +175,7 @@ public class StockControllerImpl implements StockController {
     } else if (input.equals(UserInputOptions.FIVE.getInput())) {
       processUserOptionFour(input);
     } else if (input.equals(UserInputOptions.SIX.getInput())) {
-      processUserOptionFive(input);
+      processFlexibleUserOptionSix(input);
     } else if (input.equals(UserInputOptions.SEVEN.getInput())) {
       processFlexibleUserOptionSeven(input);
     } else if (input.equals(UserInputOptions.EIGHT.getInput())) {
@@ -184,6 +184,7 @@ public class StockControllerImpl implements StockController {
       terminateApplication(input);
     }
   }
+
 
   /**
    * It terminates the application if valid input is provided.
@@ -587,14 +588,37 @@ public class StockControllerImpl implements StockController {
     view.getSavePortfolioFilePathInputView();
     while (invalidInput) {
       input = getUserInputView();
-      if (model.validateUserPortfolioExternalPathAndContentsStructure(input)) {
-        pUUID = model.saveExternalUserPortfolio(input, this.user);
+      if (model.validateInflexibleUserPortfolioExternalPathAndContentsStructure(input)) {
+        pUUID = model.saveExternalInflexibleUserPortfolio(input, this.user);
         if (pUUID != null) {
           invalidInput = false;
         }
       } else {
         view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of "
                + "File is malformed!", "Please enter a valid file path: "));
+      }
+    }
+    view.getBuilderView(Collections.singletonList("---The external portfolio file has "
+            + "been saved successfully. "
+            + "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---"));
+  }
+
+
+  private void processFlexibleUserOptionSix(String input) {
+    boolean invalidInput = true;
+    view.getSavePortfolioFromUserView();
+    String pUUID = null;
+    view.getSavePortfolioFilePathInputView();
+    while (invalidInput) {
+      input = getUserInputView();
+      if (model.validateFlexibleUserPortfolioExternalPathAndContentsStructure(input)) {
+        pUUID = model.saveExternalFlexibleUserPortfolio(input, this.user);
+        if (pUUID != null) {
+          invalidInput = false;
+        }
+      } else {
+        view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of "
+                + "File is malformed!", "Please enter a valid file path: "));
       }
     }
     view.getBuilderView(Collections.singletonList("---The external portfolio file has "

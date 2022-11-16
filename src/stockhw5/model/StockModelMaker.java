@@ -57,11 +57,11 @@ public class StockModelMaker {
     return inflexibleModel.validatePortfolioUUID(portfolioUuid, user);
   }
 
-  public boolean validateUserPortfolioExternalPathAndContentsStructure(String filepath) {
+  public boolean validateInflexibleUserPortfolioExternalPathAndContentsStructure(String filepath) {
     return inflexibleModel.validateUserPortfolioExternalPathAndContentsStructure(filepath);
   }
 
-  public String saveExternalUserPortfolio(String filepath, User user) {
+  public String saveExternalInflexibleUserPortfolio(String filepath, User user) {
     return inflexibleModel.saveExternalUserPortfolio(filepath, user);
   }
 
@@ -87,5 +87,13 @@ public class StockModelMaker {
 
   public double calculateCostBasis(User user, String portfolioUuid, String date) {
     return flexibleModel.calculateCostBasis(user, portfolioUuid, date);
+  }
+
+  public boolean validateFlexibleUserPortfolioExternalPathAndContentsStructure(String filepath) {
+    return flexibleModel.validateUserPortfolioExternalPathAndContentsStructure(filepath);
+  }
+
+  public String saveExternalFlexibleUserPortfolio(String filepath, User user) {
+    return flexibleModel.saveExternalUserPortfolio(filepath, user);
   }
 }
