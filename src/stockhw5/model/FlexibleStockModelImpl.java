@@ -344,7 +344,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     while(cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))  )
     {
       LocalDate nextMonth = cursorDate.plusMonths(1);
-      dateListMonths.add(nextMonth);
+      LocalDate nextMonthLastDay = nextMonth.with(TemporalAdjusters.lastDayOfMonth());
+      dateListMonths.add(nextMonthLastDay);
       cursorDate = cursorDate.plusMonths(1);
     }
     return dateListMonths;
@@ -365,7 +366,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     while(cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))  )
     {
       LocalDate nextYear = cursorDate.plusYears(1);
-      dateListYears.add(nextYear);
+      LocalDate nextYearLastDay= cursorDate.with(TemporalAdjusters.lastDayOfYear());
+      dateListYears.add(nextYearLastDay);
       cursorDate = cursorDate.plusYears(1);
     }
     return dateListYears;
@@ -555,6 +557,36 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return sortedPerformanceList;
   }
+
+  private List<String> alignPerformanceList(List<String> performanceList)
+  {
+    int maxLen = 0;
+    List<String> dateCol = new ArrayList<>();
+    List<String> starCol = new ArrayList<>();
+    for(String item: performanceList)
+    {
+      String dateItem = item.split(":")[0];
+      dateCol.add(dateItem.strip());
+      starCol.add(item.split(":")[1]);
+      if(dateItem.strip().length() > maxLen)
+      {
+        maxLen = dateItem.strip().length();
+      }
+
+    }
+    for(int k=0;k<dateCol.size();k++)
+    {
+      int spacesToAdd = maxLen-dateCol.get(k).length();
+      String nDate = dateCol.get(k);
+      for(int i=0;i<spacesToAdd;i++)
+      {
+        nDate+=" ";
+      }
+      nDate += ":";
+      dateCol.set(k,nDate+starCol.get(k));
+    }
+    return dateCol;
+  }
   @Override
   public List<String> getPortfolioPerformance(String date1,String date2, String portfolioUUID, User user)
   {
@@ -574,8 +606,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
 
     List<String> sortedPerformanceListDesc = sortPerformanceList(graphContents);
-    sortedPerformanceListDesc.add("Scale: 1 * is = "+scale+" USD.");
-    return sortedPerformanceListDesc;
+    List<String> alignedPerformanceListDesc = alignPerformanceList(sortedPerformanceListDesc);
+    alignedPerformanceListDesc.add("Scale: 1 * is = "+scale+" USD.");
+    return alignedPerformanceListDesc;
 
   }
 
