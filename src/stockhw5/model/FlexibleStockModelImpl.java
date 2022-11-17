@@ -6,9 +6,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -275,6 +281,304 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return -1;
   }
+
+  private String getMinDateInRange(String date1,String date2, User user, String portfolioUUID)
+  {
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
+    LocalDate minDate = LocalDate.MAX;
+    for(String row: portfolioContents)
+    {
+      LocalDate rDate = LocalDate.parse(row.split(",")[3]);
+      if(rDate.isBefore(minDate) && (rDate.isAfter(LocalDate.parse(date1)) || rDate.equals(LocalDate.parse(date1)))
+      && rDate.isBefore(LocalDate.parse(date2)))
+      {
+        minDate = rDate;
+      }
+    }
+    return String.valueOf(minDate);
+  }
+
+  private String getMaxDate(String date1, String date2, User user, String portfolioUUID)
+  {
+    List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
+    LocalDate minDate = LocalDate.MIN;
+    for(String row: portfolioContents)
+    {
+      LocalDate rDate = LocalDate.parse(row.split(",")[3]);
+      if(rDate.isAfter(minDate) && (rDate.isAfter(LocalDate.parse(date1)) || rDate.equals(LocalDate.parse(date1)))
+              && rDate.isBefore(LocalDate.parse(date2)))
+      {
+        minDate = rDate;
+      }
+    }
+    return String.valueOf(minDate);
+  }
+
+  private List<LocalDate> getNumDays(String minDateInRange, String getMaxDateInRange)
+  {
+
+   List<LocalDate> dateListDays = new ArrayList<>();
+   LocalDate cursorDate = LocalDate.parse(minDateInRange);
+   dateListDays.add(cursorDate);
+   while(cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))  )
+   {
+     LocalDate nextDay = cursorDate.plusDays(1);
+     dateListDays.add(nextDay);
+     cursorDate = cursorDate.plusDays(1);
+   }
+   return dateListDays;
+  }
+
+  private List<LocalDate> getNumMonths(String minDateInRange, String getMaxDateInRange)
+  {
+    List<LocalDate> dateListMonths = new ArrayList<>();
+    LocalDate cursorDate = LocalDate.parse(minDateInRange);
+    //Get month
+
+    LocalDate lastDayOfCursorMonth = cursorDate.with(TemporalAdjusters.lastDayOfMonth());
+
+    // Get month, decide if 30 or 31, then get entire date
+
+    
+    dateListMonths.add(lastDayOfCursorMonth);
+    while(cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))  )
+    {
+      LocalDate nextMonth = cursorDate.plusMonths(1);
+      dateListMonths.add(nextMonth);
+      cursorDate = cursorDate.plusMonths(1);
+    }
+    return dateListMonths;
+  }
+
+  private List<LocalDate> getNumYears(String minDateInRange, String getMaxDateInRange)
+  {
+    List<LocalDate> dateListYears = new ArrayList<>();
+    LocalDate cursorDate = LocalDate.parse(minDateInRange);
+    //Get month
+
+    LocalDate lastDayOfCursorYear = cursorDate.with(TemporalAdjusters.lastDayOfYear());
+
+    // Get month, decide if 30 or 31, then get entire date
+
+
+    dateListYears.add(lastDayOfCursorYear);
+    while(cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))  )
+    {
+      LocalDate nextYear = cursorDate.plusYears(1);
+      dateListYears.add(nextYear);
+      cursorDate = cursorDate.plusYears(1);
+    }
+    return dateListYears;
+  }
+
+  private String getGranularity(String date1,String date2, User user, String portfolioUUID)
+  {
+    LocalDate min_date_in_range = LocalDate.parse(getMinDateInRange(date1,date2,user, portfolioUUID));
+    LocalDate max_date_in_range = LocalDate.parse(getMaxDate(date1,date2,user,portfolioUUID));
+
+    List<LocalDate> numDays = getNumDays(String.valueOf(min_date_in_range),String.valueOf(max_date_in_range));
+    List<LocalDate> numMonths = getNumMonths(String.valueOf(min_date_in_range),String.valueOf(max_date_in_range));
+    List<LocalDate> numYears = getNumYears(String.valueOf(min_date_in_range),String.valueOf(max_date_in_range));
+
+    String granularity = "";
+    if(numYears.size() > 5 && numYears.size()<=30)
+    {
+      granularity = "YY";
+    }
+    else if(numMonths.size()>5 && numYears.size()<=30)
+    {
+      granularity = "MMYY";
+    }
+    else
+    {
+      granularity = "DDMM";
+    }
+    return granularity;
+  }
+  private  Map<Map<String,String>,Integer> getDatePerformanceMap(String date1,String date2, User user, String portfolioUUID)
+  {
+    LocalDate min_date_in_range = LocalDate.parse(getMinDateInRange(date1,date2,user, portfolioUUID));
+    LocalDate max_date_in_range = LocalDate.parse(getMaxDate(date1,date2,user,portfolioUUID));
+
+    List<LocalDate> numDays = getNumDays(date1,date2);
+    List<LocalDate> numMonths = getNumMonths(date1,date2);
+    List<LocalDate> numYears = getNumYears(date1,date2);
+
+    List<LocalDate> graphContentsDate = new ArrayList<>();
+    if(numYears.size() > 5 && numYears.size()<=30)
+    {
+      graphContentsDate = numYears;
+    }
+    else if(numMonths.size()>5 && numYears.size()<=30)
+    {
+      graphContentsDate = numMonths;
+    }
+    else
+    {
+
+      graphContentsDate = numDays;
+    }
+    Map<String,Double> graphContentsMap = new HashMap<>();
+    List<Double> graphContentsPerf= new ArrayList<>();
+
+    for(LocalDate gDate: graphContentsDate)
+    {
+      double totalVal = 0.0;
+      Map<Integer,List<String>> totalValResp = calculateTotalValueOfAPortfolio(String.valueOf(gDate),user,portfolioUUID);
+      for (String row : totalValResp.values().stream().findFirst().get()) {
+        totalVal += Double.parseDouble(row.split(",")[2]);
+      }
+
+      graphContentsMap.put(String.valueOf(gDate),totalVal);
+
+    }
+
+
+
+
+    Map<Map<String,String>,Integer> graphContentsMapStars = cvtGraphMapToMMDD(graphContentsMap);
+
+    return graphContentsMapStars;
+
+
+  }
+
+  private String getStarsFromVal(double val, int scale)
+  {
+    int numStars =  (int) Math.floor(val/scale);
+    String starString = "";
+    for(int i =0;i<numStars;i++)
+    {
+      starString+= "*";
+    }
+    return starString;
+  }
+
+  private int getScale(List<Double> vals)
+  {
+
+    int minScale = 100000;
+    int numZeroes = 0;
+    int minZeroes = 9999;
+    int numStarsMax = 25;
+    int idealScaleVar = 0;
+    int maxIdealScaleVar = -1;
+    int chosenMinScale = 0;
+    while(minScale > 1) {
+      for (double val : vals) {
+        if (val / minScale < 1) {
+
+          numZeroes += 1;
+        }
+        int numStars = (int) Math.floor(val/minScale);
+        if (numStars <= numStarsMax && !(numStars < 1))
+        {
+          idealScaleVar+=1;
+        }
+      }
+      if (numZeroes < minZeroes && idealScaleVar > maxIdealScaleVar) {
+        minZeroes = numZeroes;
+
+        chosenMinScale = minScale;
+        maxIdealScaleVar = idealScaleVar;
+
+      }
+      minScale = minScale / 10;
+      numZeroes = 0;
+    }
+    return chosenMinScale;
+  }
+  private Map<Map<String,String>,Integer> cvtGraphMapToMMDD(Map<String,Double> gMap)
+  {
+    // i have a date object
+    //
+    Map<String,String> MMDDMap = new HashMap<>();
+    List<Double> allValues = new ArrayList<>();
+
+    for (String key: gMap.keySet())
+    {
+
+      allValues.add(gMap.get(key));
+    }
+    int scale = getScale(allValues);
+
+    for (String key: gMap.keySet())
+    {
+      String nMapKey =  String.valueOf(key);
+
+      MMDDMap.put(nMapKey,getStarsFromVal(gMap.get(key),scale));
+    }
+
+    Map<Map<String,String>,Integer> gMapContentScale = new HashMap<>();
+    gMapContentScale.put(MMDDMap,scale);
+
+    return gMapContentScale;
+  }
+
+  private String cvtToMMD(String graphObj)
+  {
+
+    String date = graphObj.split(":")[0];
+    String stars = "";
+    if(graphObj.split(":").length == 1)
+    {
+      stars = "";
+    }
+    else {
+    stars = graphObj.split(":")[1];}
+
+    String gDate = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+            .format(LocalDate.parse(date));
+    return gDate+":"+stars;
+  }
+
+  private List<String> sortPerformanceList(List<String> performanceList)
+  {
+    List<String> sortedPerformanceList = new ArrayList<>();
+    while(performanceList.size() > 0) {
+      LocalDate maxDate = LocalDate.MAX;
+      String minDateRow = "";
+      int mIndex = 0;
+      for (int i = 0; i < performanceList.size(); i++) {
+        String row = performanceList.get(i);
+
+        if (LocalDate.parse(row.split(":")[0]).isBefore(maxDate)) {
+          minDateRow = row;
+          maxDate = LocalDate.parse(row.split(":")[0]);
+          mIndex = i;
+        }
+
+      }
+
+      sortedPerformanceList.add(cvtToMMD(minDateRow));
+      performanceList.remove(mIndex);
+    }
+    return sortedPerformanceList;
+  }
+  @Override
+  public List<String> getPortfolioPerformance(String date1,String date2, String portfolioUUID, User user)
+  {
+    Map<Map<String,String>,Integer> nMap = getDatePerformanceMap(date1,date2,user, portfolioUUID);
+    Map<String,String> resMap = new HashMap<>();
+    int scale = 0;
+    for(Map<String,String> res:nMap.keySet())
+    {
+      resMap = res;
+      scale = nMap.get(res);
+    }
+
+    List<String> graphContents = new ArrayList<>();
+    for(String graphObj: resMap.keySet())
+    {
+      graphContents.add(graphObj+":"+resMap.get(graphObj));
+    }
+
+    List<String> sortedPerformanceListDesc = sortPerformanceList(graphContents);
+    sortedPerformanceListDesc.add("Scale: 1 * is = "+scale+" USD.");
+    return sortedPerformanceListDesc;
+
+  }
+
   @Override
   public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
     Map<String, Integer> tickerNumShareIntraDay = getTickerNumShareIntraDay(portfolioUUID, user,date);
@@ -485,4 +789,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return tickerNumShareIntraDay;
   }
+
+
+
+
 }
