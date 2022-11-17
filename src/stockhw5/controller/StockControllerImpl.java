@@ -12,16 +12,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
-import stockhw5.model.StockModelMaker;
+import stockhw5.model.IStockModelMaker;
 import stockhw5.model.User;
-import stockhw5.view.StockViewMaker;
+import stockhw5.view.IStockViewMaker;
 
 /**
  * The StockControllerImpl class represents as a mediator between model and view.
  */
 public class StockControllerImpl implements StockController {
-  private final StockModelMaker model;
-  private final StockViewMaker view;
+  private final IStockModelMaker model;
+  private final IStockViewMaker view;
   private User user;
   private final Scanner scanner;
   private Boolean isUserOperationSuccessful;
@@ -32,7 +32,7 @@ public class StockControllerImpl implements StockController {
    * @param model StockModel that controller talks to.
    * @param view  StockView that controller talk to.
    */
-  public StockControllerImpl(StockModelMaker model, StockViewMaker view, Readable in) {
+  public StockControllerImpl(IStockModelMaker model, IStockViewMaker view, Readable in) {
     this.model = model;
     this.view = view;
     this.scanner = new Scanner(in);

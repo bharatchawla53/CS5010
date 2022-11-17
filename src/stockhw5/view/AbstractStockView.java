@@ -137,25 +137,6 @@ public abstract class AbstractStockView implements StockView {
     print(formatOutput(opItems));
   }
 
-  @Override
-  public void getTableViewBuilder(List<String> rows, List<String> columns) {
-    CommandLineTable commandLineTable = new CommandLineTable();
-    commandLineTable.setShowVerticalLines(true);
-    commandLineTable.setHeaders(columns);
-
-    for (String row : rows) {
-      String[] splitRow = row.split(",");
-
-      if (splitRow.length == 1) {
-        commandLineTable.addRow(splitRow[0]);
-      } else {
-        commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2]);
-      }
-    }
-
-    commandLineTable.print();
-  }
-
   protected String formatOutput(List<String> outputStrings) {
     StringBuilder sb = new StringBuilder();
     for (String e : outputStrings) {

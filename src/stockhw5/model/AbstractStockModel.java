@@ -74,7 +74,7 @@ public abstract class AbstractStockModel implements StockModel {
             .substring(0, 8);
   }
 
-  @Override // TODO separate out into their concrete classes since a user can have both flexible and inflexible
+  @Override
   public List<String> getPortfoliosForUser(User user) {
     List<String> userPortfolios = new ArrayList<>();
     File folder = new File("./");

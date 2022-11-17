@@ -4,7 +4,9 @@ import java.io.InputStreamReader;
 
 import stockhw5.controller.StockController;
 import stockhw5.controller.StockControllerImpl;
+import stockhw5.model.IStockModelMaker;
 import stockhw5.model.StockModelMaker;
+import stockhw5.view.IStockViewMaker;
 import stockhw5.view.StockViewMaker;
 
 /**
@@ -20,9 +22,9 @@ public class Stock {
     System.out.println("Stock app started");
 
     // create the model
-    StockModelMaker model = new StockModelMaker();
+    IStockModelMaker model = new StockModelMaker();
     // create the view
-    StockViewMaker view = new StockViewMaker(System.out);
+    IStockViewMaker view = new StockViewMaker(System.out);
     // create the controller
     StockController controller = new StockControllerImpl(model, view,
             new InputStreamReader(System.in));

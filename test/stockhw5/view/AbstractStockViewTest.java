@@ -209,7 +209,7 @@ public abstract class AbstractStockViewTest {
       List<String> consoleOp = new ArrayList<String>();
       consoleOp.add("\n");
       consoleOp.add("Please enter a specific date range to analyze how your portfolio has performed over time:  "
-              + "(Expected Date Format: (minDate to maxDate) (yyyy-MM-dd)): \n");
+              + "(Expected Date Format: Enter date1 hit enter, and then enter date2 and hit enter again (yyyy-MM-dd)): \n");
       assertEquals(out.toString(), consoleOpDialogCreator(consoleOp));
     }
 
