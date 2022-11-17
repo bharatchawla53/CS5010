@@ -653,13 +653,16 @@ public class StockControllerImpl implements StockController {
   private void processFlexibleUserOptionEight(String input) {
     boolean invalidInput = true;
     String portfolioUuid = getPortfolioIdInput(input);
+    String date1 = null;
+    String date2 = null;
 
     view.getPortfolioPerformanceView();
 
     // validate date is in correct format
     while (invalidInput) {
-      input = getUserInputView();
-      if (isValidDate(input.split("-")[0]) && isValidDate(input.split("-")[1])) {
+      date1 = getUserInputView();
+      date2 = getUserInputView();
+      if (isValidDate(date1) && isValidDate(date2)) {
         invalidInput = false;
       } else {
         view.getBuilderView(Arrays.asList("Invalid "
@@ -667,7 +670,11 @@ public class StockControllerImpl implements StockController {
       }
     }
 
-    // TODO call designated model method to retreive performance results and display it
+    List<String> result = model.getFlexiblePortfolioPerformance(date1, date2, portfolioUuid, user);
+    view.getBuilderView(Collections.singletonList("Performance of portfolio " + portfolioUuid
+            + "from " + date1 + " to " + date2));
+
+    view.getBuilderView(result);
   }
 
   /**

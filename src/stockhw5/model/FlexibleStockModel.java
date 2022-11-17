@@ -14,4 +14,5 @@ public interface FlexibleStockModel extends StockModel {
 
   List<String> portfolioCompositionFlexible(String portfolioUUID, User user,  String date);
 
+  List<String> getPortfolioPerformance(String date1, String date2, String portfolioUuid, User user);
 }

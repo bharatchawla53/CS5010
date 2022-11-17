@@ -91,7 +91,7 @@ public class FlexibleStockViewImpl extends AbstractStockView implements Flexible
   public void getFlexiblePerformanceView() {
     List<String> opItems = new ArrayList<>();
     opItems.add("Please enter a specific date range to analyze how your portfolio has performed over time:  "
-            + "(Expected Date Format: (minDate-maxDate) (yyyy-MM-dd)): ");
+            + "(Expected Date Format: (minDate to maxDate) (yyyy-MM-dd)): ");
 
     print(formatOutput(opItems));
   }

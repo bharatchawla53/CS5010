@@ -96,4 +96,8 @@ public class StockModelMaker {
   public String saveExternalFlexibleUserPortfolio(String filepath, User user) {
     return flexibleModel.saveExternalUserPortfolio(filepath, user);
   }
+
+  public List<String> getFlexiblePortfolioPerformance(String date1, String date2, String portfolioUuid, User user) {
+    return flexibleModel.getPortfolioPerformance(date1, date2, portfolioUuid, user);
+  }
 }
