@@ -337,7 +337,16 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         fPortfolioList.add(row);
       }
     }
-    return fPortfolioList;
+    List<String> nonZeroPortfolioList = new ArrayList<>();
+    for(String row: fPortfolioList)
+    {
+
+      if(!row.split(",")[1].equals(String.valueOf("0")))
+      {
+        nonZeroPortfolioList.add(row);
+      }
+    }
+    return nonZeroPortfolioList;
   }
 
   /**
