@@ -36,7 +36,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
     List<String> portfolioRows = new ArrayList<>();
-    File f = new File(user.getUserName() + "_" + portfolioUUID + "_" + "fl_" + ".csv");
+
     try {
       BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()
               + "_" + portfolioUUID + "_" + "fl_" + ".csv"));
@@ -161,7 +161,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       String record = ticker + "," + "-" + noOfShares + "," + stockPrice + "," + date + "\n";
       List<String> updatedPortfolioContents =
               insertIntoSortedPortfolio(portfolioUUID, user, record);
-      if (!isSuccessful) {
+
         try {
           FileWriter fw = new FileWriter(portfolioFileName, false);
 
@@ -173,7 +173,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         } catch (IOException e) {
           e.printStackTrace();
         }
-      }
+
     }
 
     return isSuccessful;
