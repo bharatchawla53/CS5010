@@ -741,6 +741,8 @@ public abstract class AbstractStockModelTest {
       List<String> gContents = stockModel.getPortfolioPerformance(date1, date2,
               portfolioUUID, user);
       assertEquals(7, gContents.size());
+
+      // only for testing
       deleteFileOnlyForTesting(portfolioUUID, user, true);
 
     }
@@ -770,8 +772,8 @@ public abstract class AbstractStockModelTest {
               portfolioUUID, user);
 
       assertEquals(8, gContents.size());
+      // only for testing
       deleteFileOnlyForTesting(portfolioUUID, user, true);
-
     }
 
     @Test
@@ -800,6 +802,8 @@ public abstract class AbstractStockModelTest {
 
       assertEquals(7, gContents.size());
 
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
 
     @Test
@@ -839,6 +843,9 @@ public abstract class AbstractStockModelTest {
 
         assertTrue(numStarsAfter >= numStarsBefore);
       }
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
 
 
