@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -290,6 +291,35 @@ public abstract class AbstractStockModelTest {
       assertNull(portfolioIdSavedTo);
     }
 
+    @Test
+    public void testValidPortfolioUUID() {
+      User user = User.builder().userName("test").build();
+      StockModel stockModel = abstractStockModel();
+      String userFilePath = "test/stockhw5/testUserLoadFile.csv";
+      String portfolioIdSavedTo = stockModel
+              .saveExternalUserPortfolio(userFilePath, user);
+
+      assertNotNull(portfolioIdSavedTo);
+
+      List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
+
+      assertEquals(1, portfoliosForUser.size());
+
+      String portfolioUuid = null;
+      for (String portfolioId : portfoliosForUser) {
+        portfolioUuid = portfolioId;
+        break;
+
+      }
+
+      boolean validPortfolioId = stockModel.validatePortfolioUUID(portfolioUuid, user);
+
+      assertTrue(validPortfolioId);
+
+      // only for testing this action needs to be performed
+      deleteFileOnlyForTesting(portfolioIdSavedTo, user, false);
+    }
+
   }
 
   public static final class FlexibleStockModelClass extends AbstractStockModelTest {
@@ -451,17 +481,216 @@ public abstract class AbstractStockModelTest {
 
     @Test
     public void testCalculateCostBasis() {
+      User user = User.builder().userName("test").build();
 
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "5", "2022-08-12");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock3Saved);
+      boolean isStock4Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock4Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(4, result.size());
+
+      String date = "2022-08-15";
+      double expectedCostBasis = 0;
+
+      for (String row : result) {
+        String[] split = row.split(",");
+        if (LocalDate.parse(split[3]).isBefore(LocalDate.parse(date))) {
+          double totalShareValue = Double.parseDouble(split[1]) * Double.parseDouble(split[2]);
+          double commission = totalShareValue * 0.10;
+          expectedCostBasis += totalShareValue + commission;
+        }
+      }
+
+      double costBasis = stockModel.calculateCostBasis(user, portfolioUUID, date);
+
+      assertEquals(expectedCostBasis, costBasis, 0.2);
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
 
     @Test
-    public void testPortfolioCompositionFlexible() {
+    public void testCalculateCostBasisWithNoMatchingRecords() {
+      User user = User.builder().userName("test").build();
 
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "5", "2022-08-12");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock3Saved);
+      boolean isStock4Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock4Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(4, result.size());
+
+      String date = "2020-08-15";
+      double expectedCostBasis = 0;
+
+      for (String row : result) {
+        String[] split = row.split(",");
+        if (LocalDate.parse(split[3]).isBefore(LocalDate.parse(date))) {
+          double totalShareValue = Double.parseDouble(split[1]) * Double.parseDouble(split[2]);
+          double commission = totalShareValue * 0.10;
+          expectedCostBasis += totalShareValue + commission;
+        }
+      }
+
+      double costBasis = stockModel.calculateCostBasis(user, portfolioUUID, date);
+
+      assertEquals(expectedCostBasis, costBasis, 0.2);
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
+    public void testPortfolioCompositionFlexibleWithBuy() {
+      User user = User.builder().userName("test").build();
+
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "5", "2022-08-12");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock3Saved);
+      boolean isStock4Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock4Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(4, result.size());
+
+      List<String> portfolioComposition = stockModel
+              .portfolioCompositionFlexible(portfolioUUID, user, "2022-12-02");
+
+      assertEquals(3, portfolioComposition.size());
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
+    public void testPortfolioCompositionFlexibleWithBuyAndSell() {
+      User user = User.builder().userName("test").build();
+
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.sellStockOnSpecifiedDate(user, portfolioUUID, "AAPL", "8", "2022-11-12");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock3Saved);
+      boolean isStock4Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock4Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(4, result.size());
+
+      List<String> portfolioComposition = stockModel
+              .portfolioCompositionFlexible(portfolioUUID, user, "2022-12-02");
+
+      assertEquals(3, portfolioComposition.size());
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
 
     @Test
     public void testGetPortfolioPerformance() {
+      // TODO
+    }
 
+    @Test
+    public void testCalculateTotalValueOfAPortfolioUnderApiLimit() {
+      User user = User.builder().userName("test").build();
+      FlexibleStockModel stockModel = flexibleStockModel();
+
+      String portfolioUUID = stockModel.generateUUID();
+
+      // buy stocks
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock3Saved);
+
+      Map<Integer, List<String>> result = stockModel
+              .calculateTotalValueOfAPortfolio("2022-10-30", user, portfolioUUID);
+
+
+      assertNotNull(result);
+      for (Map.Entry<Integer, List<String>> entry : result.entrySet()) {
+        Integer key = entry.getKey();
+        int size = entry.getValue().size();
+        assertEquals(String.valueOf(key), String.valueOf(size));
+      }
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+
+    @Test
+    public void testSaveExternalUserPortfolio() {
+      User user = User.builder().userName("test").build();
+      String userFilePath = "test/stockhw5/testFlexibleUserLoad.csv";
+      StockModel stockModel = abstractStockModel();
+      String portfolioIdSavedTo = stockModel
+              .saveExternalUserPortfolio(userFilePath, user);
+
+      assertNotNull(portfolioIdSavedTo);
+
+      List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioIdSavedTo);
+      assertNotNull(portfolioContents);
+      assertEquals(4, portfolioContents.size());
+
+      // only for testing this action needs to be performed
+      deleteFileOnlyForTesting(portfolioIdSavedTo, user, true);
+    }
+
+    @Test
+    public void testSaveExternalUserPortfolioInvalidStructure() {
+      User user = User.builder().userName("test").build();
+      String userFilePath = "test/stockhw5/testFlexibleUserLoadInvalidFile.csv";
+      StockModel stockModel = abstractStockModel();
+
+      String portfolioIdSavedTo = stockModel.saveExternalUserPortfolio(userFilePath, user);
+
+      assertNull(portfolioIdSavedTo);
+    }
+
+    @Test
+    public void testSaveExternalUserPortfolioInvalidFilePath() {
+      User user = User.builder().userName("test").build();
+      String userFilePath = "random.csv";
+      StockModel stockModel = abstractStockModel();
+
+      String portfolioIdSavedTo = stockModel.saveExternalUserPortfolio(userFilePath, user);
+
+      assertNull(portfolioIdSavedTo);
     }
 
   }
@@ -534,26 +763,6 @@ public abstract class AbstractStockModelTest {
     assertEquals(8, uuid.length());
   }
 
-  @Test
-  public void testValidPortfolioUUID() {
-    User user = User.builder().userName("test").build();
-    StockModel stockModel = abstractStockModel();
-    List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
-
-    assertEquals(1, portfoliosForUser.size());
-
-    String portfolioUuid = null;
-    for (String portfolioId : portfoliosForUser) {
-      if (!portfolioId.equals("3cf39b8a")) {
-        portfolioUuid = portfolioId;
-        break;
-      }
-    }
-
-    boolean validPortfolioId = stockModel.validatePortfolioUUID(portfolioUuid, user);
-
-    assertTrue(validPortfolioId);
-  }
 
   @Test
   public void testInValidPortfolioUUID() {
