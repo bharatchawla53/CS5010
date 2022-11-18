@@ -20,7 +20,6 @@ public class StockViewImpl extends AbstractStockView {
     this.out = out;
   }
 
-
   @Override
   public void getUserOptionsView() {
     List<String> opItems = new ArrayList<>();
@@ -67,6 +66,5 @@ public class StockViewImpl extends AbstractStockView {
 
     commandLineTable.print();
   }
-
 
 }

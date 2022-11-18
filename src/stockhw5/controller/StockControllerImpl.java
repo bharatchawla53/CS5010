@@ -307,6 +307,13 @@ public class StockControllerImpl implements StockController {
             + "You can find it at : " + portfolioUuid + "---"));
   }
 
+  /**
+   * It processes the flexible UserOptions.ONE and allows them to create a portfolio with one or
+   * more stocks, on a specific date and keeps prompting until successful sequence of input is
+   * received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionOne(String input) {
     boolean invalidInput = true;
 
@@ -359,7 +366,12 @@ public class StockControllerImpl implements StockController {
     view.getInflexibleTableViewBuilder(model.getPortfolioContents(this.user, input), columns);
   }
 
-  // TODO check model rejects if a selling stock does not exist
+  /**
+   * It processes the flexible UserOptions.SECOND and allows them to sell one or more stocks of a
+   * portfolio, and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionTwo(String input) {
     boolean invalidInput = true;
 
@@ -460,8 +472,12 @@ public class StockControllerImpl implements StockController {
     }
   }
 
-  // TODO check if date new column is returned from model
-  //TODO call portfolioCompositionFlexible instead of getPortfolioContents
+  /**
+   * It processes the flexible UserOptions.THREE and allows them to see composition of their
+   * portfolio, and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionThree(String input) {
     boolean invalidInput = true;
 
@@ -484,7 +500,7 @@ public class StockControllerImpl implements StockController {
     columns.add("Number of shares");
     columns.add("Share Price");
     columns.add("Date");
-    view.getFlexibleTableViewBuilder(model.portfolioCompositionFlexible(portfolioInput,user,input), columns);
+    view.getFlexibleTableViewBuilder(model.portfolioCompositionFlexible(portfolioInput, user, input), columns);
   }
 
   /**
@@ -517,7 +533,12 @@ public class StockControllerImpl implements StockController {
             + "serialized! You can find it at: " + portfolioFilePath + "---"));
   }
 
-  // TODO test and check if there is impl difference
+  /**
+   * It processes the flexible UserOptions.FOUR and provided them the total value of a portfolio,
+   * and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionFour(String input) {
     boolean invalidInput = true;
     String portfolioId = getPortfolioIdInput(input);
@@ -595,7 +616,7 @@ public class StockControllerImpl implements StockController {
         }
       } else {
         view.getBuilderView(Arrays.asList("Invalid File Path entered or Structure of "
-               + "File is malformed!", "Please enter a valid file path: "));
+                + "File is malformed!", "Please enter a valid file path: "));
       }
     }
     view.getBuilderView(Collections.singletonList("---The external portfolio file has "
@@ -603,7 +624,12 @@ public class StockControllerImpl implements StockController {
             + "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---"));
   }
 
-
+  /**
+   * It processes the flexible UserOptions.SIX and allows them to load an external portfolio, and
+   * keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionSix(String input) {
     boolean invalidInput = true;
     view.getSavePortfolioFromUserView();
@@ -626,6 +652,12 @@ public class StockControllerImpl implements StockController {
             + "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv---"));
   }
 
+  /**
+   * It processes the flexible UserOptions.SEVEN and allows them to determine the cost basis by a
+   * specific date and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionSeven(String input) {
     boolean invalidInput = true;
     String portfolioUuid = getPortfolioIdInput(input);
@@ -650,6 +682,12 @@ public class StockControllerImpl implements StockController {
 
   }
 
+  /**
+   * It processes the flexible UserOptions.EIGHT and displays them the portfolio performance over
+   * time, and keeps prompting until successful sequence of input is received.
+   *
+   * @param input input received from the user.
+   */
   private void processFlexibleUserOptionEight(String input) {
     boolean invalidInput = true;
     String portfolioUuid = getPortfolioIdInput(input);
@@ -693,7 +731,7 @@ public class StockControllerImpl implements StockController {
       input = getUserInputView();
       while (input.length() > 8) {
         view.getBuilderView(Arrays.asList("Username can't be longer than 8 characters", "Please "
-              +  "enter a valid username: "));
+                + "enter a valid username: "));
         input = getUserInputView();
 
       }
@@ -707,7 +745,7 @@ public class StockControllerImpl implements StockController {
         invalidUserName = false;
       } else { // means invalid username meaning already exists
         view.getBuilderView(Arrays.asList("Username already exists", "Please "
-               + "try another valid username"));
+                + "try another valid username"));
       }
     }
 

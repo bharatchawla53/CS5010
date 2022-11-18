@@ -23,7 +23,6 @@ public interface StockView {
    */
   void getPortfolioIdInputView();
 
-
   /**
    * Method for displaying greeting prompt when user wants to load an external portfolio.
    */

@@ -2,11 +2,11 @@ package stockhw5.model;
 
 import java.time.LocalDate;
 
+/**
+ * The StockApiResponse class represents the object to map the fields received from third-party API
+ * for stock data.
+ */
 public class StockApiResponse {
-  /**
-   * The AlphaDailyTimeSeries package-private class represents the object to map the fields received
-   * from third-party API.
-   */
 
   private final LocalDate date;
   private final String openVal;

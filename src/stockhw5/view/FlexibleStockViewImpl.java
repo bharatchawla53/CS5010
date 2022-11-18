@@ -3,6 +3,10 @@ package stockhw5.view;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The FlexibleStockViewImpl class represents user flexible portfolio's features user interface
+ * while supporting inflexible portfolio features.
+ */
 public class FlexibleStockViewImpl extends AbstractStockView implements FlexibleStockView {
 
   private final Appendable out;
@@ -109,7 +113,7 @@ public class FlexibleStockViewImpl extends AbstractStockView implements Flexible
       if (splitRow.length == 1) {
         commandLineTable.addRow(splitRow[0]);
       } else {
-        commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2],splitRow[3]);
+        commandLineTable.addRow(splitRow[0], splitRow[1], splitRow[2], splitRow[3]);
       }
     }
 

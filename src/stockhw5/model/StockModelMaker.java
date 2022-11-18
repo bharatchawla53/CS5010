@@ -3,7 +3,11 @@ package stockhw5.model;
 import java.util.List;
 import java.util.Map;
 
-public class StockModelMaker implements IStockModelMaker{
+/**
+ * This class represents all the features supported for models including flexible and inflexible
+ * portfolios.
+ */
+public class StockModelMaker implements IStockModelMaker {
 
   private final StockModel inflexibleModel;
   private final FlexibleStockModel flexibleModel;
@@ -50,7 +54,7 @@ public class StockModelMaker implements IStockModelMaker{
 
   @Override
   public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
-    return flexibleModel.portfolioCompositionFlexible(portfolioUUID,user,date);
+    return flexibleModel.portfolioCompositionFlexible(portfolioUUID, user, date);
   }
 
   @Override

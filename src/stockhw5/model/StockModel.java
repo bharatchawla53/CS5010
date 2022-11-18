@@ -6,7 +6,6 @@ import java.util.Map;
 /**
  * This interface represents a StockModel that defines the operations listed below.
  */
-
 public interface StockModel {
 
   /**
@@ -121,8 +120,4 @@ public interface StockModel {
    * @return the name of the portfolio that was used to save it.
    */
   String saveExternalUserPortfolio(String filePath, User user);
-
-
-
-
 }

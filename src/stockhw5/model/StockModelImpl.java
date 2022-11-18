@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
  */
 public class StockModelImpl extends AbstractStockModel {
 
-  // TODO refactor protected methods access changes
   @Override
   public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
                                                                     User user, String portfolioUUID) {
@@ -81,11 +80,6 @@ public class StockModelImpl extends AbstractStockModel {
     }
   }
 
-  /**
-   * Javadoc for validate tickerShare
-   * @param tickerShare input received from the user.
-   * @return
-   */
   @Override
   public boolean validateTickerShare(String tickerShare) {
     Pattern ticketShareValidationPattern = Pattern.compile("[A-Z]+[,]\\d+");

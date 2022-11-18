@@ -16,8 +16,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/***
- * Implementation Class for a Flexible Portfolio.
+/**
+ * Implementation Class for a Flexible Portfolio while extending inflexible portfolio
+ * functionality.
  */
 public class FlexibleStockModelImpl extends AbstractStockModel implements FlexibleStockModel {
 
@@ -27,12 +28,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     this.commissionRate = 0.10;
   }
 
-  /***
-   * This method returns the portfolio contents from a flexible portfolio UUID and a user object.
-   * @param user          that is requesting to load its portfolio.
-   * @param portfolioUUID the unique ID of the flexible portfolio.
-   * @return List of records in the portfolio.
-   */
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
     List<String> portfolioRows = new ArrayList<>();
@@ -60,15 +55,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
   }
 
-  /***
-   * Buys some shares of some ticker on a date and adds it to a given portfolio belonging to a user.
-   * @param user The user who owns the portfolio.
-   * @param portfolioUUID the portfolio UUID.
-   * @param ticker the ticker that the user wants to buys shares of.
-   * @param noOfShares the no of shares that user wants to buy.
-   * @param date the date that the user purchases these shares.
-   * @return if the shares were successfully added to the portfolio return true else false.
-   */
   @Override
   public boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker,
                                         String noOfShares, String date) {
@@ -121,20 +107,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return isSuccessful;
   }
 
-  /***
-   * Sells some shares of some ticker on a date and adds it to a portfolio belonging to a user.
-   * @param user user The user who owns the portfolio.
-   * @param portfolioUUID  portfolioUUID the portfolio UUID.
-   * @param ticker the ticker that the user wants to buys shares of.
-   * @param noOfShares noOfShares the no of shares that user wants to buy.
-   * @param date the date that the user purchases these shares.
-   * @return if negative shares were inserted into the portfolio return true else false.
-   */
   @Override
   public boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker,
                                           String noOfShares, String date) {
-
-    //TODO throw exceptions - catch at the controller level
     Map<String, Integer> tickerNumShares = getTickerNumSharesGivenDate(user, portfolioUUID,
             LocalDate.parse(date));
     if (!tickerNumShares.containsKey(ticker)) {
@@ -162,35 +137,25 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       List<String> updatedPortfolioContents =
               insertIntoSortedPortfolio(portfolioUUID, user, record);
 
-        try {
-          FileWriter fw = new FileWriter(portfolioFileName, false);
+      try {
+        FileWriter fw = new FileWriter(portfolioFileName, false);
 
-          for (String row : updatedPortfolioContents) {
-            fw.write(row + "\n");
-          }
-          isSuccessful = true;
-          fw.close();
-        } catch (IOException e) {
-          e.printStackTrace();
+        for (String row : updatedPortfolioContents) {
+          fw.write(row + "\n");
         }
+        isSuccessful = true;
+        fw.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
     }
 
     return isSuccessful;
   }
 
-
-  /***
-   * Calculates the cost basis on a date for a given portfolio, given the user.
-   * @param user the owner of the portfolio.
-   * @param portfolioUUID the portfolio UUID of the portfolio.
-   * @param date the date on which the cost basis needs to be calculated on
-   * @return the cost basis of the portfolio
-   */
   @Override
   public double calculateCostBasis(User user, String portfolioUUID, String date) {
-
-
     List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
 
     double totalCommissionValue = 0.0;
@@ -221,19 +186,10 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return validator.matches();
   }
 
-
-  /***
-   * Calculates the total value of a given portfolio at an input date.
-   * @param certainDate   input received from the user on which they want to calculate total value.
-   * @param user          that is requesting to determine total value.
-   * @param portfolioUUID the unique ID of the portfolio.
-   * @return A map containing the number of tickers processed, and the value sum till that ticker.
-   */
   @Override
   public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
                                                                     User user,
                                                                     String portfolioUUID) {
-
     List<String> totalValueOfPortfolio = new ArrayList<>();
     List<String> portfolioContents = portfolioCompositionFlexible(portfolioUUID, user, certainDate);
 
@@ -273,13 +229,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     };
   }
 
-  /**
-   * It returns a closing stock price for a given stock on a certain date.
-   *
-   * @param shareDetail an array containing stock symbol and number of shares.
-   * @param certainDate the date for retrieving stock price on.
-   * @return the stock price.
-   */
   @Override
   public Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
     Double stockPrice = null;
@@ -298,296 +247,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return stockPrice;
   }
 
-  /***
-   * Checks if a ticker is in a portfolio.
-   * @param ticker the ticker
-   * @param portfolioList the portfolio contents.
-   * @return first index of ticker occurence in portfolio. -1 if not found.
-   */
-  private int checkIfTickerInPortfolio(String ticker, List<String> portfolioList) {
-    for (int i = 0; i < portfolioList.size(); i++) {
-      String row = portfolioList.get(i);
-      if (row.split(",")[0].equals(ticker)) {
-        return i;
-      }
-    }
-    return -1;
-  }
 
-  /***
-   * Get all LocalDate objects one day apart given 2 dates, start and end.
-   * @param minDateInRange the starting date.
-   * @param getMaxDateInRange the ending date.
-   * @return a list of local date objects.
-   */
-  private List<LocalDate> getNumDays(String minDateInRange, String getMaxDateInRange) {
-
-    List<LocalDate> dateListDays = new ArrayList<>();
-    LocalDate cursorDate = LocalDate.parse(minDateInRange);
-    dateListDays.add(cursorDate);
-    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
-      LocalDate nextDay = cursorDate.plusDays(1);
-      dateListDays.add(nextDay);
-      cursorDate = cursorDate.plusDays(1);
-    }
-    return dateListDays;
-  }
-
-  /***
-   * Get all LocalDate objects one month apart given 2 dates, start and end.
-   * @param minDateInRange the starting date.
-   * @param getMaxDateInRange the ending date.
-   * @return a list of local date objects.
-   */
-  private List<LocalDate> getNumMonths(String minDateInRange, String getMaxDateInRange) {
-    List<LocalDate> dateListMonths = new ArrayList<>();
-    LocalDate cursorDate = LocalDate.parse(minDateInRange);
-    LocalDate lastDayOfCursorMonth = cursorDate.with(TemporalAdjusters.lastDayOfMonth());
-    dateListMonths.add(lastDayOfCursorMonth);
-    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
-      LocalDate nextMonth = cursorDate.plusMonths(1);
-      LocalDate nextMonthLastDay = nextMonth.with(TemporalAdjusters.lastDayOfMonth());
-      dateListMonths.add(nextMonthLastDay);
-      cursorDate = cursorDate.plusMonths(1);
-    }
-    return dateListMonths;
-  }
-
-  /***
-   * Get all LocalDate objects one year apart given 2 dates, start and end.
-   * @param minDateInRange the starting date.
-   * @param getMaxDateInRange the ending date.
-   * @return a list of local date objects.
-   */
-
-  private List<LocalDate> getNumYears(String minDateInRange, String getMaxDateInRange) {
-    List<LocalDate> dateListYears = new ArrayList<>();
-    LocalDate cursorDate = LocalDate.parse(minDateInRange);
-    LocalDate lastDayOfCursorYear = cursorDate.with(TemporalAdjusters.lastDayOfYear());
-    dateListYears.add(lastDayOfCursorYear);
-    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))
-            ||
-            cursorDate.equals(LocalDate.parse(getMaxDateInRange))) {
-      LocalDate nextYearLastDay = cursorDate.with(TemporalAdjusters.lastDayOfYear());
-      dateListYears.add(nextYearLastDay);
-      cursorDate = cursorDate.plusYears(1);
-    }
-    return dateListYears;
-  }
-
-
-  /***
-   * Get datewise performance between 2 dates for a given portfolio belonging to a given user.
-   * @param date1 the start date.
-   * @param date2 the end date.
-   * @param user the user that owns the portfolio.
-   * @param portfolioUUID the portfolioUUID of the portfolio.
-   * @return a Hashmap with datewise values of portfolio and a scale to map these values to *.
-   */
-  private Map<Map<String, String>, Integer> getDatePerformanceMap(String date1, String date2,
-                                                                  User user, String portfolioUUID) {
-
-    List<LocalDate> numDays = getNumDays(date1, date2);
-    List<LocalDate> numMonths = getNumMonths(date1, date2);
-    List<LocalDate> numYears = getNumYears(date1, date2);
-    List<LocalDate> graphContentsDate = new ArrayList<>();
-    if (numYears.size() > 5 && numYears.size() <= 30) {
-      graphContentsDate = numYears;
-    } else if (numMonths.size() > 5 && numYears.size() <= 30) {
-      graphContentsDate = numMonths;
-    } else {
-
-      graphContentsDate = numDays;
-    }
-    Map<String, Double> graphContentsMap = new HashMap<>();
-    for (LocalDate gDate : graphContentsDate) {
-      double totalVal = 0.0;
-      Map<Integer, List<String>> totalValResp =
-              calculateTotalValueOfAPortfolio(String.valueOf(gDate), user, portfolioUUID);
-      for (String row : totalValResp.values().stream().findFirst().get()) {
-        totalVal += Double.parseDouble(row.split(",")[2]);
-      }
-
-      graphContentsMap.put(String.valueOf(gDate), totalVal);
-
-    }
-    Map<Map<String, String>, Integer> graphContentsMapStars = cvtGraphMapToMMDD(graphContentsMap);
-    return graphContentsMapStars;
-
-
-  }
-
-
-  /***
-   * Renders a string of * based on the entered value and a scale that is the value of one *.
-   * @param val the value to decompose into *'s.
-   * @param scale the value of one *.
-   * @return a string of *'s.
-   */
-  private String getStarsFromVal(double val, int scale) {
-    int numStars = (int) Math.floor(val / scale);
-    String starString = "";
-    if (numStars > 50) {
-      numStars = 50;
-    }
-    for (int i = 0; i < numStars; i++) {
-      starString += "*";
-    }
-    return starString;
-  }
-
-  /***
-   * Get an ideal scale given a list of values.
-   * @param vals the list of values to get a scale out of.
-   * @return a scale between 1000000 and 1.
-   */
-  private int getScale(List<Double> vals) {
-
-    int minScale = 1000000;
-    int numZeroes = 0;
-    int minZeroes = 9999;
-    int numStarsMax = 25;
-    int idealScaleVar = 0;
-    int maxIdealScaleVar = -1;
-    int chosenMinScale = 0;
-    while (minScale > 1) {
-      for (double val : vals) {
-        if (val / minScale < 1) {
-
-          numZeroes += 1;
-        }
-        int numStars = (int) Math.floor(val / minScale);
-        if (numStars <= numStarsMax && !(numStars < 1)) {
-          idealScaleVar += 1;
-        }
-      }
-      if (numZeroes < minZeroes && idealScaleVar > maxIdealScaleVar) {
-        minZeroes = numZeroes;
-
-        chosenMinScale = minScale;
-        maxIdealScaleVar = idealScaleVar;
-
-      }
-      minScale = minScale / 10;
-      numZeroes = 0;
-    }
-    return chosenMinScale;
-  }
-
-  /***
-   * Convert DDMMYY formatted LocalDate Objects to Month Day Year Formatted Strings.
-   * @param gMap A hashmap containing a DDMMYY formatted String as Key mapped to Portfolio Value.
-   * @return a Hashmap containing the contents of the performance graph mapped to the scale used.
-   */
-  private Map<Map<String, String>, Integer> cvtGraphMapToMMDD(Map<String, Double> gMap) {
-    Map<String, String> MMDDMap = new HashMap<>();
-    List<Double> allValues = new ArrayList<>();
-
-    for (String key : gMap.keySet()) {
-      allValues.add(gMap.get(key));
-    }
-    int scale = getScale(allValues);
-
-    for (String key : gMap.keySet()) {
-      String nMapKey = String.valueOf(key);
-      MMDDMap.put(nMapKey, getStarsFromVal(gMap.get(key), scale));
-    }
-
-    Map<Map<String, String>, Integer> gMapContentScale = new HashMap<>();
-    gMapContentScale.put(MMDDMap, scale);
-    return gMapContentScale;
-  }
-
-  /***
-   * Converts one line of the performance graph into a Month Day Year formatted line.
-   * @param graphObj the line of the graph to convert.
-   * @return a formatted line of the graph.
-   */
-  private String cvtToMMD(String graphObj) {
-
-    String date = graphObj.split(":")[0];
-    String stars = "";
-    if (graphObj.split(":").length == 1) {
-      stars = "";
-    } else {
-      stars = graphObj.split(":")[1];
-    }
-
-    String gDate = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-            .format(LocalDate.parse(date));
-    return gDate + ":" + stars;
-  }
-
-
-  /***
-   * Sorts each datapoint in the graph based on the date of portfolio value calculation.
-   * @param performanceList the list of portfolio values on different dates.
-   * @return a sorted list of portfolio values based on the date on which they were calculated.
-   */
-  private List<String> sortPerformanceList(List<String> performanceList) {
-    List<String> sortedPerformanceList = new ArrayList<>();
-    while (performanceList.size() > 0) {
-      LocalDate maxDate = LocalDate.MAX;
-      String minDateRow = "";
-      int mIndex = 0;
-      for (int i = 0; i < performanceList.size(); i++) {
-        String row = performanceList.get(i);
-
-        if (LocalDate.parse(row.split(":")[0]).isBefore(maxDate)) {
-          minDateRow = row;
-          maxDate = LocalDate.parse(row.split(":")[0]);
-          mIndex = i;
-        }
-      }
-      sortedPerformanceList.add(cvtToMMD(minDateRow));
-      performanceList.remove(mIndex);
-    }
-    return sortedPerformanceList;
-  }
-
-  /***
-   * Aligns a list of sorted portfolio values and renders it into a graph line.
-   * @param performanceList the list of portfolio values to be rendered into an aligned graph line.
-   * @return a list of graph lines.
-   */
-  private List<String> alignPerformanceList(List<String> performanceList) {
-    int maxLen = 0;
-    List<String> dateCol = new ArrayList<>();
-    List<String> starCol = new ArrayList<>();
-    for (String item : performanceList) {
-      String dateItem = item.split(":")[0];
-      dateCol.add(dateItem.strip());
-      if (item.split(":").length > 1) {
-        starCol.add(item.split(":")[1]);
-      } else {
-        starCol.add("");
-      }
-      if (dateItem.strip().length() > maxLen) {
-        maxLen = dateItem.strip().length();
-      }
-
-    }
-    for (int k = 0; k < dateCol.size(); k++) {
-      int spacesToAdd = maxLen - dateCol.get(k).length();
-      String nDate = dateCol.get(k);
-      for (int i = 0; i < spacesToAdd; i++) {
-        nDate += " ";
-      }
-      nDate += ":";
-      dateCol.set(k, nDate + starCol.get(k));
-    }
-    return dateCol;
-  }
-
-
-  /***
-   * Generates a performance graph given a start and end date, a portfolio, and a user.
-   * @param date1 the start date for the graph.
-   * @param date2 the end date for the graph.
-   * @param portfolioUUID the portfolio uuid.
-   * @param user the user owning the portfolio.
-   * @return a list of lines that make up the graph as a whole.
-   */
   @Override
   public List<String> getPortfolioPerformance(String date1, String date2,
                                               String portfolioUUID, User user) {
@@ -610,13 +270,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   }
 
-  /***
-   * Gets the composition of a flexible input portfolio.
-   * @param portfolioUUID the portfolio UUID.
-   * @param user the user that owns the portfolio.
-   * @param date the date on which you want to generate the composition of the portfolio.
-   * @return the composition of the portfolio to be rendered on the view.
-   */
   @Override
   public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
     Map<String, Integer> tickerNumShareIntraDay = getTickerNumShareIntraDay(portfolioUUID, user);
@@ -737,6 +390,291 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
   /**
+   * Checks if a ticker is in a portfolio.
+   *
+   * @param ticker        the ticker.
+   * @param portfolioList the portfolio contents.
+   * @return first index of ticker occurrence in portfolio. -1 if not found.
+   */
+  private int checkIfTickerInPortfolio(String ticker, List<String> portfolioList) {
+    for (int i = 0; i < portfolioList.size(); i++) {
+      String row = portfolioList.get(i);
+      if (row.split(",")[0].equals(ticker)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Get all LocalDate objects one day apart given 2 dates, start and end.
+   *
+   * @param minDateInRange    the starting date.
+   * @param getMaxDateInRange the ending date.
+   * @return a list of local date objects.
+   */
+  private List<LocalDate> getNumDays(String minDateInRange, String getMaxDateInRange) {
+
+    List<LocalDate> dateListDays = new ArrayList<>();
+    LocalDate cursorDate = LocalDate.parse(minDateInRange);
+    dateListDays.add(cursorDate);
+    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
+      LocalDate nextDay = cursorDate.plusDays(1);
+      dateListDays.add(nextDay);
+      cursorDate = cursorDate.plusDays(1);
+    }
+    return dateListDays;
+  }
+
+  /**
+   * Get all LocalDate objects one month apart given 2 dates, start and end.
+   *
+   * @param minDateInRange    the starting date.
+   * @param getMaxDateInRange the ending date.
+   * @return a list of local date objects.
+   */
+  private List<LocalDate> getNumMonths(String minDateInRange, String getMaxDateInRange) {
+    List<LocalDate> dateListMonths = new ArrayList<>();
+    LocalDate cursorDate = LocalDate.parse(minDateInRange);
+    LocalDate lastDayOfCursorMonth = cursorDate.with(TemporalAdjusters.lastDayOfMonth());
+    dateListMonths.add(lastDayOfCursorMonth);
+    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
+      LocalDate nextMonth = cursorDate.plusMonths(1);
+      LocalDate nextMonthLastDay = nextMonth.with(TemporalAdjusters.lastDayOfMonth());
+      dateListMonths.add(nextMonthLastDay);
+      cursorDate = cursorDate.plusMonths(1);
+    }
+    return dateListMonths;
+  }
+
+  /**
+   * Get all LocalDate objects one year apart given 2 dates, start and end.
+   *
+   * @param minDateInRange    the starting date.
+   * @param getMaxDateInRange the ending date.
+   * @return a list of local date objects.
+   */
+
+  private List<LocalDate> getNumYears(String minDateInRange, String getMaxDateInRange) {
+    List<LocalDate> dateListYears = new ArrayList<>();
+    LocalDate cursorDate = LocalDate.parse(minDateInRange);
+    LocalDate lastDayOfCursorYear = cursorDate.with(TemporalAdjusters.lastDayOfYear());
+    dateListYears.add(lastDayOfCursorYear);
+    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))
+            ||
+            cursorDate.equals(LocalDate.parse(getMaxDateInRange))) {
+      LocalDate nextYearLastDay = cursorDate.with(TemporalAdjusters.lastDayOfYear());
+      dateListYears.add(nextYearLastDay);
+      cursorDate = cursorDate.plusYears(1);
+    }
+    return dateListYears;
+  }
+
+  /**
+   * Get datewise performance between 2 dates for a given portfolio belonging to a given user.
+   *
+   * @param date1         the start date.
+   * @param date2         the end date.
+   * @param user          the user that owns the portfolio.
+   * @param portfolioUUID the portfolioUUID of the portfolio.
+   * @return a Hashmap with datewise values of portfolio and a scale to map these values to *.
+   */
+  private Map<Map<String, String>, Integer> getDatePerformanceMap(String date1, String date2,
+                                                                  User user, String portfolioUUID) {
+
+    List<LocalDate> numDays = getNumDays(date1, date2);
+    List<LocalDate> numMonths = getNumMonths(date1, date2);
+    List<LocalDate> numYears = getNumYears(date1, date2);
+    List<LocalDate> graphContentsDate;
+    if (numYears.size() > 5 && numYears.size() <= 30) {
+      graphContentsDate = numYears;
+    } else if (numMonths.size() > 5 && numYears.size() <= 30) {
+      graphContentsDate = numMonths;
+    } else {
+
+      graphContentsDate = numDays;
+    }
+    Map<String, Double> graphContentsMap = new HashMap<>();
+    for (LocalDate gDate : graphContentsDate) {
+      double totalVal = 0.0;
+      Map<Integer, List<String>> totalValResp =
+              calculateTotalValueOfAPortfolio(String.valueOf(gDate), user, portfolioUUID);
+      for (String row : totalValResp.values().stream().findFirst().get()) {
+        totalVal += Double.parseDouble(row.split(",")[2]);
+      }
+
+      graphContentsMap.put(String.valueOf(gDate), totalVal);
+
+    }
+    return cvtGraphMapToMMDD(graphContentsMap);
+  }
+
+  /**
+   * Renders a string of * based on the entered value and a scale that is the value of one *.
+   *
+   * @param val   the value to decompose into *'s.
+   * @param scale the value of one *.
+   * @return a string of *'s.
+   */
+  private String getStarsFromVal(double val, int scale) {
+    int numStars = (int) Math.floor(val / scale);
+    String starString = "";
+    if (numStars > 50) {
+      numStars = 50;
+    }
+    for (int i = 0; i < numStars; i++) {
+      starString += "*";
+    }
+    return starString;
+  }
+
+  /**
+   * Get an ideal scale given a list of values.
+   *
+   * @param vals the list of values to get a scale out of.
+   * @return a scale between 1000000 and 1.
+   */
+  private int getScale(List<Double> vals) {
+    int minScale = 1000000;
+    int numZeroes = 0;
+    int minZeroes = 9999;
+    int numStarsMax = 25;
+    int idealScaleVar = 0;
+    int maxIdealScaleVar = -1;
+    int chosenMinScale = 0;
+    while (minScale > 1) {
+      for (double val : vals) {
+        if (val / minScale < 1) {
+
+          numZeroes += 1;
+        }
+        int numStars = (int) Math.floor(val / minScale);
+        if (numStars <= numStarsMax && !(numStars < 1)) {
+          idealScaleVar += 1;
+        }
+      }
+      if (numZeroes < minZeroes && idealScaleVar > maxIdealScaleVar) {
+        minZeroes = numZeroes;
+
+        chosenMinScale = minScale;
+        maxIdealScaleVar = idealScaleVar;
+
+      }
+      minScale = minScale / 10;
+      numZeroes = 0;
+    }
+    return chosenMinScale;
+  }
+
+  /**
+   * Convert DDMMYY formatted LocalDate Objects to Month Day Year Formatted Strings.
+   *
+   * @param gMap A hashmap containing a DDMMYY formatted String as Key mapped to Portfolio Value.
+   * @return a Hashmap containing the contents of the performance graph mapped to the scale used.
+   */
+  private Map<Map<String, String>, Integer> cvtGraphMapToMMDD(Map<String, Double> gMap) {
+    Map<String, String> MMDDMap = new HashMap<>();
+    List<Double> allValues = new ArrayList<>();
+
+    for (String key : gMap.keySet()) {
+      allValues.add(gMap.get(key));
+    }
+    int scale = getScale(allValues);
+
+    for (String key : gMap.keySet()) {
+      String nMapKey = String.valueOf(key);
+      MMDDMap.put(nMapKey, getStarsFromVal(gMap.get(key), scale));
+    }
+
+    Map<Map<String, String>, Integer> gMapContentScale = new HashMap<>();
+    gMapContentScale.put(MMDDMap, scale);
+    return gMapContentScale;
+  }
+
+  /**
+   * Converts one line of the performance graph into a Month Day Year formatted line.
+   *
+   * @param graphObj the line of the graph to convert.
+   * @return a formatted line of the graph.
+   */
+  private String cvtToMMD(String graphObj) {
+
+    String date = graphObj.split(":")[0];
+    String stars = "";
+    if (graphObj.split(":").length == 1) {
+      stars = "";
+    } else {
+      stars = graphObj.split(":")[1];
+    }
+
+    String gDate = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+            .format(LocalDate.parse(date));
+    return gDate + ":" + stars;
+  }
+
+  /**
+   * Sorts each datapoint in the graph based on the date of portfolio value calculation.
+   *
+   * @param performanceList the list of portfolio values on different dates.
+   * @return a sorted list of portfolio values based on the date on which they were calculated.
+   */
+  private List<String> sortPerformanceList(List<String> performanceList) {
+    List<String> sortedPerformanceList = new ArrayList<>();
+    while (performanceList.size() > 0) {
+      LocalDate maxDate = LocalDate.MAX;
+      String minDateRow = "";
+      int mIndex = 0;
+      for (int i = 0; i < performanceList.size(); i++) {
+        String row = performanceList.get(i);
+
+        if (LocalDate.parse(row.split(":")[0]).isBefore(maxDate)) {
+          minDateRow = row;
+          maxDate = LocalDate.parse(row.split(":")[0]);
+          mIndex = i;
+        }
+      }
+      sortedPerformanceList.add(cvtToMMD(minDateRow));
+      performanceList.remove(mIndex);
+    }
+    return sortedPerformanceList;
+  }
+
+  /**
+   * Aligns a list of sorted portfolio values and renders it into a graph line.
+   *
+   * @param performanceList the list of portfolio values to be rendered into an aligned graph line.
+   * @return a list of graph lines.
+   */
+  private List<String> alignPerformanceList(List<String> performanceList) {
+    int maxLen = 0;
+    List<String> dateCol = new ArrayList<>();
+    List<String> starCol = new ArrayList<>();
+    for (String item : performanceList) {
+      String dateItem = item.split(":")[0];
+      dateCol.add(dateItem.strip());
+      if (item.split(":").length > 1) {
+        starCol.add(item.split(":")[1]);
+      } else {
+        starCol.add("");
+      }
+      if (dateItem.strip().length() > maxLen) {
+        maxLen = dateItem.strip().length();
+      }
+
+    }
+    for (int k = 0; k < dateCol.size(); k++) {
+      int spacesToAdd = maxLen - dateCol.get(k).length();
+      String nDate = dateCol.get(k);
+      for (int i = 0; i < spacesToAdd; i++) {
+        nDate += " ";
+      }
+      nDate += ":";
+      dateCol.set(k, nDate + starCol.get(k));
+    }
+    return dateCol;
+  }
+
+  /**
    * It validates if the correct sequence of combination is provided by the user in the external
    * file.
    *
@@ -750,15 +688,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return validator.matches();
   }
 
-  /***
+  /**
    * Gets the stock price given the ticker, number of shares, and the date of purchase.
-   * @param ticker the ticker to calculate stock price for.
+   *
+   * @param ticker     the ticker to calculate stock price for.
    * @param noOfShares the number of shares of the ticker.
-   * @param date the date of purchase.
+   * @param date       the date of purchase.
    * @return the total stock price.
    */
   private Double getStockPrice(String ticker, String noOfShares, String date) {
-    //TODO move from abstract if present, and add to
     Double stockPrice;
     getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
     if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
@@ -774,11 +712,12 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return stockPrice;
   }
 
-  /***
+  /**
    * Gets the number of shares per ticker on a given date.
-   * @param user the user that owns the portfolio.
+   *
+   * @param user          the user that owns the portfolio.
    * @param portfolioUUID the portfolio identifier.
-   * @param date the date on which the shares per ticker need to be returned to the user.
+   * @param date          the date on which the shares per ticker need to be returned to the user.
    * @return a hashmap with the ticker as key and the number of shares for that ticker.
    */
   private Map<String, Integer> getTickerNumSharesGivenDate(User user,
@@ -803,8 +742,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return tickerNumShares;
   }
 
-  /***
+  /**
    * Sorts a list of portfolio records by date.
+   *
    * @param portfolioContents the list of rows of the input portfolio.
    * @return sorted list of rows of the input portfolio.
    */
@@ -830,25 +770,26 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return sortedPortfolioContents;
   }
 
-  /***
+  /**
    * insert a transaction into a sorted portfolio, in a sorted manner.
+   *
    * @param portfolioUUID the portfolio UUID.
-   * @param user the user that owns the portfolio.
-   * @param record the transaction that needs to be inserted correctly into the portfolio.
+   * @param user          the user that owns the portfolio.
+   * @param record        the transaction that needs to be inserted correctly into the portfolio.
    * @return the sorted list of portfolio records with the input transaction.
    */
   private List<String> insertIntoSortedPortfolio(String portfolioUUID, User user, String record) {
     List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
     portfolioContents.add(record);
-    List<String> updatedPortfolioContents = sortPortfolioOnDate(portfolioContents);
-    return updatedPortfolioContents;
+    return sortPortfolioOnDate(portfolioContents);
   }
 
-  /***
-   * Aggregates transactions with the same ticker together.
-   * if the date of purchase and selling does not change.
+  /**
+   * Aggregates transactions with the same ticker together. if the date of purchase and selling does
+   * not change.
+   *
    * @param portfolioUUID the portfolio UUID
-   * @param user the user that owns the portfolio.
+   * @param user          the user that owns the portfolio.
    * @return a hashmap mapping a ticker to the number of shares across the portfolio time range.
    */
   private Map<String, Integer> getTickerNumShareIntraDay(String portfolioUUID, User user) {
@@ -866,6 +807,5 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return tickerNumShareIntraDay;
   }
-
 
 }

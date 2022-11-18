@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tests for {@link StockView}s.
+ */
 public abstract class AbstractStockViewTest {
 
   private static Appendable out;

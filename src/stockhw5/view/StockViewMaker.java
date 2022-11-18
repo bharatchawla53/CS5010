@@ -2,7 +2,11 @@ package stockhw5.view;
 
 import java.util.List;
 
-public class StockViewMaker implements IStockViewMaker{
+/**
+ * This class represents all the interfaces supported for views including flexible and inflexible
+ * portfolios.
+ */
+public class StockViewMaker implements IStockViewMaker {
   private final StockView inflexibleView;
   private final FlexibleStockView flexibleView;
 
