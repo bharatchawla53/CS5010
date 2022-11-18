@@ -248,11 +248,35 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return stockPrice;
   }
 
+  /**
+   * Gets the stock price given the ticker, number of shares, and the date of purchase.
+   *
+   * @param ticker     the ticker to calculate stock price for.
+   * @param noOfShares the number of shares of the ticker.
+   * @param date       the date of purchase.
+   * @return the total stock price.
+   */
+  private Double getStockPrice(String ticker, String noOfShares, String date) {
+    Double stockPrice;
+    getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
+    if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
+      try {
+        Thread.sleep(60 * 1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
+    }
+    stockPrice = getStockPrice(new String[]{ticker, noOfShares},
+            LocalDate.parse(date));
+    return stockPrice;
+  }
 
   @Override
   public List<String> getPortfolioPerformance(String date1, String date2,
                                               String portfolioUUID, User user) {
-    Map<Map<String, String>, Integer> nMap = getDatePerformanceMap(date1, date2, user, portfolioUUID);
+    Map<Map<String, String>, Integer> nMap = getDatePerformanceMap(date1,
+            date2, user, portfolioUUID);
     Map<String, String> resMap = new HashMap<>();
     int scale = 0;
     for (Map<String, String> res : nMap.keySet()) {
@@ -299,8 +323,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         String gShareNum = gRow.split(",")[1];
         String iDate = row.split(",")[3];
         String iShareNum = row.split(",")[1];
-        String tShareNum = String.valueOf(Integer.parseInt(gShareNum) +
-                Integer.parseInt(iShareNum));
+        String tShareNum = String.valueOf(Integer.parseInt(gShareNum)
+                + Integer.parseInt(iShareNum));
         String tDate = String.valueOf(LocalDate.MAX);
         if (LocalDate.parse(iDate).isBefore(LocalDate.parse(gDate))) {
           tDate = String.valueOf(LocalDate.parse(gDate));
@@ -316,8 +340,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return fPortfolioList;
   }
 
-  /***
+  /**
    * Validate the contents of a portfolio file.
+   *
    * @param filePath input received from the user.
    * @return if all the contents are valid, then return true. Else, return false.
    */
@@ -340,8 +365,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
 
-  /***
+  /**
    * The filepath of the file to be externally loaded as a flexible portfolio.
+   *
    * @param filePath input received from the user.
    * @param user     that is requesting to save external provided portfolio file.
    * @return the uuid of the flexible portfolio loaded onto the app.
@@ -419,7 +445,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     List<LocalDate> dateListDays = new ArrayList<>();
     LocalDate cursorDate = LocalDate.parse(minDateInRange);
     dateListDays.add(cursorDate);
-    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))){
+    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
       LocalDate nextDay = cursorDate.plusDays(1);
       dateListDays.add(nextDay);
       cursorDate = cursorDate.plusDays(1);
@@ -550,7 +576,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
           numZeroes += 1;
         }
         int numStars = (int) Math.floor(val / minScale);
-        if (numStars <= numStarsMax && !(numStars < 1)) {
+        if (numStars <= numStarsMax && numStars >= 1) {
           idealScaleVar += 1;
         }
       }
@@ -574,7 +600,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
    * @return a Hashmap containing the contents of the performance graph mapped to the scale used.
    */
   private Map<Map<String, String>, Integer> cvtGraphMapToMMDD(Map<String, Double> gMap) {
-    Map<String, String> MMDDMap = new HashMap<>();
+    Map<String, String> mmDdMap = new HashMap<>();
     List<Double> allValues = new ArrayList<>();
 
     for (String key : gMap.keySet()) {
@@ -584,11 +610,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
     for (String key : gMap.keySet()) {
       String nMapKey = String.valueOf(key);
-      MMDDMap.put(nMapKey, getStarsFromVal(gMap.get(key), scale));
+      mmDdMap.put(nMapKey, getStarsFromVal(gMap.get(key), scale));
     }
 
     Map<Map<String, String>, Integer> gMapContentScale = new HashMap<>();
-    gMapContentScale.put(MMDDMap, scale);
+    gMapContentScale.put(mmDdMap, scale);
     return gMapContentScale;
   }
 
@@ -690,30 +716,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
   /**
-   * Gets the stock price given the ticker, number of shares, and the date of purchase.
-   *
-   * @param ticker     the ticker to calculate stock price for.
-   * @param noOfShares the number of shares of the ticker.
-   * @param date       the date of purchase.
-   * @return the total stock price.
-   */
-  private Double getStockPrice(String ticker, String noOfShares, String date) {
-    Double stockPrice;
-    getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
-    if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
-      try {
-        Thread.sleep(60 * 1000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
-    }
-    stockPrice = getStockPrice(new String[]{ticker, noOfShares},
-            LocalDate.parse(date));
-    return stockPrice;
-  }
-
-  /**
    * Gets the number of shares per ticker on a given date.
    *
    * @param user          the user that owns the portfolio.
@@ -799,8 +801,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     for (String row : portfolioContents) {
       String tickerDate = row.split(",")[0] + "%" + row.split(",")[3];
       if (tickerNumShareIntraDay.containsKey(tickerDate)) {
-        tickerNumShareIntraDay.put(tickerDate, tickerNumShareIntraDay.get(tickerDate) +
-                Integer.parseInt(row.split(",")[1]));
+        tickerNumShareIntraDay.put(tickerDate, tickerNumShareIntraDay.get(tickerDate)
+                + Integer.parseInt(row.split(",")[1]));
 
       } else {
         tickerNumShareIntraDay.put(tickerDate, Integer.parseInt(row.split(",")[1]));

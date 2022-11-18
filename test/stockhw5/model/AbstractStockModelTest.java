@@ -738,7 +738,8 @@ public abstract class AbstractStockModelTest {
       String date1 = "2021-10-10";
       String date2 = "2021-10-15";
 
-      List<String> gContents = stockModel.getPortfolioPerformance(date1, date2, portfolioUUID, user);
+      List<String> gContents = stockModel.getPortfolioPerformance(date1, date2,
+              portfolioUUID, user);
       assertEquals(7, gContents.size());
       deleteFileOnlyForTesting(portfolioUUID, user, true);
 
@@ -765,7 +766,8 @@ public abstract class AbstractStockModelTest {
       String date1 = "2021-12-10";
       String date2 = "2022-06-15";
 
-      List<String> gContents = stockModel.getPortfolioPerformance(date1, date2, portfolioUUID, user);
+      List<String> gContents = stockModel.getPortfolioPerformance(date1, date2,
+              portfolioUUID, user);
 
       assertEquals(8, gContents.size());
       deleteFileOnlyForTesting(portfolioUUID, user, true);
@@ -793,7 +795,8 @@ public abstract class AbstractStockModelTest {
               portfolioUUID, "MRO", "30", "2022-01-31");
       assertTrue(isStock4Saved);
 
-      List<String> gContents = stockModel.getPortfolioPerformance(date1, date2, portfolioUUID, user);
+      List<String> gContents = stockModel.getPortfolioPerformance(date1, date2,
+              portfolioUUID, user);
 
       assertEquals(7, gContents.size());
 
