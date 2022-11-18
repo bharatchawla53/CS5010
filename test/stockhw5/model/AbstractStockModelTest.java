@@ -78,7 +78,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(1, result.size());
 
       // only for testing
-      deleteFileOnlyForTesting(portfolioUUID, user);
+      deleteFileOnlyForTesting(portfolioUUID, user, false);
     }
 
     @Test
@@ -104,7 +104,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(1, result.size());
 
       // only for testing
-      deleteFileOnlyForTesting(portfolioUUID, user);
+      deleteFileOnlyForTesting(portfolioUUID, user, false);
     }
 
     @Test
@@ -126,7 +126,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(3, result.size());
 
       // only for testing
-      deleteFileOnlyForTesting(portfolioUUID, user);
+      deleteFileOnlyForTesting(portfolioUUID, user, false);
     }
 
     @Test
@@ -148,7 +148,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(1, result.size());
 
       // only for testing
-      deleteFileOnlyForTesting(portfolioUUID, user);
+      deleteFileOnlyForTesting(portfolioUUID, user, false);
     }
 
     @Test
@@ -170,7 +170,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(3, result.size());
 
       // only for testing
-      deleteFileOnlyForTesting(portfolioUUID, user);
+      deleteFileOnlyForTesting(portfolioUUID, user, false);
     }
 
     @Test
@@ -214,7 +214,7 @@ public abstract class AbstractStockModelTest {
       }
 
       // only for testing
-      deleteFileOnlyForTesting(portfolioUUID, user);
+      deleteFileOnlyForTesting(portfolioUUID, user, false);
     }
 
     @Test
@@ -265,7 +265,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(4, portfolioContents.size());
 
       // only for testing this action needs to be performed
-      deleteFileOnlyForTesting(portfolioIdSavedTo, user);
+      deleteFileOnlyForTesting(portfolioIdSavedTo, user, false);
     }
 
     @Test
@@ -292,10 +292,14 @@ public abstract class AbstractStockModelTest {
 
   }
 
-  public static final class FlexibleStockModel extends AbstractStockModelTest {
+  public static final class FlexibleStockModelClass extends AbstractStockModelTest {
 
     @Override
     protected StockModel abstractStockModel() {
+      return new FlexibleStockModelImpl();
+    }
+
+    public FlexibleStockModel flexibleStockModel() {
       return new FlexibleStockModelImpl();
     }
 
@@ -367,6 +371,99 @@ public abstract class AbstractStockModelTest {
 
       assertFalse(validFilePath);
     }
+
+    @Test
+    public void testBuyStock() {
+      User user = User.builder().userName("test").build();
+
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock3Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(3, result.size());
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
+    public void testBuyStockNoConsolidationOnSameDay() {
+      User user = User.builder().userName("test").build();
+
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "5", "2022-10-12");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock3Saved);
+      boolean isStock4Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock4Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(4, result.size());
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
+    public void testSellStock() {
+      User user = User.builder().userName("test").build();
+
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+
+      // buy stocks
+      boolean isStock1Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "AAPL", "20", "2022-10-12");
+      assertTrue(isStock1Saved);
+      boolean isStock2Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "DAL", "10", "2021-12-22");
+      assertTrue(isStock2Saved);
+      boolean isStock3Saved = stockModel.buyStockOnSpecificDate(user, portfolioUUID, "MRO", "30", "2022-01-31");
+      assertTrue(isStock3Saved);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(3, result.size());
+
+      // sell stocks
+      boolean isSold = stockModel.sellStockOnSpecifiedDate(user, portfolioUUID, "AAPL", "10", "2022-11-01");
+      assertTrue(isSold);
+
+      List<String> updatedResult = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(4, updatedResult.size());
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
+    public void testCalculateCostBasis() {
+
+    }
+
+    @Test
+    public void testPortfolioCompositionFlexible() {
+
+    }
+
+    @Test
+    public void testGetPortfolioPerformance() {
+
+    }
+
   }
 
   private static final String[] tickers = new String[]{
@@ -535,8 +632,10 @@ public abstract class AbstractStockModelTest {
     }
   }
 
-  void deleteFileOnlyForTesting(String portfolioUuid, User user) {
-    String portfolioFileName = user.getUserName() + "_" + portfolioUuid + ".csv";
+  void deleteFileOnlyForTesting(String portfolioUuid, User user, boolean flexible) {
+    String portfolioFileName = flexible
+            ? user.getUserName() + "_" + portfolioUuid + "_fl_.csv"
+            : user.getUserName() + "_" + portfolioUuid + ".csv";
     File f = new File(portfolioFileName);
     if (f.delete()) {
       return;
