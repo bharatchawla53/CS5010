@@ -418,7 +418,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     List<LocalDate> dateListDays = new ArrayList<>();
     LocalDate cursorDate = LocalDate.parse(minDateInRange);
     dateListDays.add(cursorDate);
-    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
+    while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))){
       LocalDate nextDay = cursorDate.plusDays(1);
       dateListDays.add(nextDay);
       cursorDate = cursorDate.plusDays(1);
@@ -439,8 +439,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     LocalDate lastDayOfCursorMonth = cursorDate.with(TemporalAdjusters.lastDayOfMonth());
     dateListMonths.add(lastDayOfCursorMonth);
     while (cursorDate.isBefore(LocalDate.parse(getMaxDateInRange))) {
-      LocalDate nextMonth = cursorDate.plusMonths(1);
-      LocalDate nextMonthLastDay = nextMonth.with(TemporalAdjusters.lastDayOfMonth());
+
+      LocalDate nextMonthLastDay = cursorDate.with(TemporalAdjusters.lastDayOfMonth());
       dateListMonths.add(nextMonthLastDay);
       cursorDate = cursorDate.plusMonths(1);
     }
