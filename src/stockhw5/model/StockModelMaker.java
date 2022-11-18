@@ -43,7 +43,8 @@ public class StockModelMaker implements IStockModelMaker {
   }
 
   @Override
-  public boolean saveInflexibleStock(User user, String portfolioUuid, String ticker, String noOfShares) {
+  public boolean saveInflexibleStock(User user, String portfolioUuid,
+                                     String ticker, String noOfShares) {
     return inflexibleModel.saveStock(user, portfolioUuid, ticker, noOfShares);
   }
 
@@ -58,7 +59,8 @@ public class StockModelMaker implements IStockModelMaker {
   }
 
   @Override
-  public Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(String certainDate, User user, String portfolioUuid) {
+  public Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(
+          String certainDate, User user, String portfolioUuid) {
     return inflexibleModel.calculateTotalValueOfAPortfolio(certainDate, user, portfolioUuid);
   }
 
@@ -93,17 +95,20 @@ public class StockModelMaker implements IStockModelMaker {
   }
 
   @Override
-  public boolean saveFlexibleStock(User user, String portfolioUuid, String ticker, String noOfShares, String date) {
+  public boolean saveFlexibleStock(User user, String portfolioUuid,
+                   String ticker, String noOfShares, String date) {
     return flexibleModel.buyStockOnSpecificDate(user, portfolioUuid, ticker, noOfShares, date);
   }
 
   @Override
-  public boolean sellFlexibleStock(User user, String portfolioUuid, String ticker, String noOfShares, String date) {
+  public boolean sellFlexibleStock(User user, String portfolioUuid,
+                   String ticker, String noOfShares, String date) {
     return flexibleModel.sellStockOnSpecifiedDate(user, portfolioUuid, ticker, noOfShares, date);
   }
 
   @Override
-  public Map<Integer, List<String>> calculateTotalValueOfAFlexiblePortfolio(String certainDate, User user, String portfolioUuid) {
+  public Map<Integer, List<String>> calculateTotalValueOfAFlexiblePortfolio(
+          String certainDate, User user, String portfolioUuid) {
     return flexibleModel.calculateTotalValueOfAPortfolio(certainDate, user, portfolioUuid);
   }
 
@@ -123,7 +128,8 @@ public class StockModelMaker implements IStockModelMaker {
   }
 
   @Override
-  public List<String> getFlexiblePortfolioPerformance(String date1, String date2, String portfolioUuid, User user) {
+  public List<String> getFlexiblePortfolioPerformance(String date1, String date2,
+                              String portfolioUuid, User user) {
     return flexibleModel.getPortfolioPerformance(date1, date2, portfolioUuid, user);
   }
 }

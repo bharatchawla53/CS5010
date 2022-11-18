@@ -97,7 +97,7 @@ public class AlphaVantageApi implements StockApi {
    * @return a list of map of stock with its list of historical data.
    */
   private List<HashMap<String, List<StockApiResponse>>> parseResponseToObject(String[] response,
-                                                                              String outputSize, String symbol) {
+                                 String outputSize, String symbol) {
     List<StockApiResponse> timeSeries = new ArrayList<>();
 
     // only need the current date stock price

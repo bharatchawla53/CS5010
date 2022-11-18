@@ -9,8 +9,6 @@ import java.util.List;
  */
 public class FlexibleStockViewImpl extends AbstractStockView implements FlexibleStockView {
 
-  private final Appendable out;
-
   /**
    * Creates a constructor that initializes Appendable.
    *
@@ -18,7 +16,6 @@ public class FlexibleStockViewImpl extends AbstractStockView implements Flexible
    */
   public FlexibleStockViewImpl(Appendable out) {
     super(out);
-    this.out = out;
   }
 
   @Override
@@ -44,8 +41,10 @@ public class FlexibleStockViewImpl extends AbstractStockView implements Flexible
             + "certain date ?");
     opItems.add("5. Would you like to persist a portfolio so that it can be saved ?");
     opItems.add("6. Would you like to load an external portfolio?");
-    opItems.add("7. Would you like to determine the cost basis of a portfolio by a specific date ?");
-    opItems.add("8. Would you like to analyze your specific portfolio over time on a specified time range ?");
+    opItems.add("7. Would you like to determine the cost basis of a portfolio "
+            + "by a specific date ?");
+    opItems.add("8. Would you like to analyze your specific portfolio over time "
+            + "on a specified time range ?");
     opItems.add("9. Would you like to exit the application ?");
     opItems.add("Enter your option: ");
 
@@ -94,8 +93,10 @@ public class FlexibleStockViewImpl extends AbstractStockView implements Flexible
   @Override
   public void getFlexiblePerformanceView() {
     List<String> opItems = new ArrayList<>();
-    opItems.add("Please enter a specific date range to analyze how your portfolio has performed over time:  "
-            + "(Expected Date Format: Enter date1 hit enter, and then enter date2 and hit enter again (yyyy-MM-dd)): ");
+    opItems.add("Please enter a specific date range to analyze how your portfolio "
+            + "has performed over time:  "
+            + "(Expected Date Format: Enter date1 hit enter, and then "
+            + "enter date2 and hit enter again (yyyy-MM-dd)): ");
 
     print(formatOutput(opItems));
   }

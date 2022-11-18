@@ -19,7 +19,8 @@ public interface FlexibleStockModel extends StockModel {
    * @param date          the date that the user purchases these shares.
    * @return if the shares were successfully added to the portfolio return true else false.
    */
-  boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker, String noOfShares, String date);
+  boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker,
+                                 String noOfShares, String date);
 
   /**
    * Sells some shares of some ticker on a date and adds it to a portfolio belonging to a user.
@@ -31,7 +32,8 @@ public interface FlexibleStockModel extends StockModel {
    * @param date          the date that the user purchases these shares.
    * @return if negative shares were inserted into the portfolio return true else false.
    */
-  boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker, String noOfShares, String date);
+  boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker,
+                                   String noOfShares, String date);
 
   /**
    * Calculates the cost basis on a date for a given portfolio, given the user.

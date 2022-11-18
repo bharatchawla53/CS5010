@@ -87,7 +87,8 @@ public interface IStockModelMaker {
    * @param portfolioUuid the unique ID of the portfolio.
    * @return map of expected contents of a portfolio with the list of how many are processed.
    */
-  Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(String certainDate, User user, String portfolioUuid);
+  Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(
+          String certainDate, User user, String portfolioUuid);
 
   /**
    * Gets the list of all portfolios for a user.
@@ -131,8 +132,9 @@ public interface IStockModelMaker {
    */
   User saveUser(User user);
 
-  /***
+  /**
    * Validates the user input for ticker, number of bought shares, and the date of purchase.
+   *
    * @param tickerShare input received from the user.
    * @return if validation is successful, return true, else return false.
    */
@@ -147,7 +149,8 @@ public interface IStockModelMaker {
    * @param noOfShares    the number of shares for the given ticker.
    * @return true if the stock was saved successfully, false, otherwise.
    */
-  boolean saveFlexibleStock(User user, String portfolioUuid, String ticker, String noOfShares, String date);
+  boolean saveFlexibleStock(User user, String portfolioUuid, String ticker,
+                            String noOfShares, String date);
 
   /**
    * Sells some shares of some ticker on a date and adds it to a portfolio belonging to a user.
@@ -159,7 +162,8 @@ public interface IStockModelMaker {
    * @param date          the date that the user purchases these shares.
    * @return if negative shares were inserted into the portfolio return true else false.
    */
-  boolean sellFlexibleStock(User user, String portfolioUuid, String ticker, String noOfShares, String date);
+  boolean sellFlexibleStock(User user, String portfolioUuid, String ticker,
+                            String noOfShares, String date);
 
   /**
    * It calculates total value of a portfolio on a certain date.
@@ -169,7 +173,8 @@ public interface IStockModelMaker {
    * @param portfolioUuid the unique ID of the portfolio.
    * @return map of expected contents of a portfolio with the list of how many are processed.
    */
-  Map<Integer, List<String>> calculateTotalValueOfAFlexiblePortfolio(String certainDate, User user, String portfolioUuid);
+  Map<Integer, List<String>> calculateTotalValueOfAFlexiblePortfolio(
+          String certainDate, User user, String portfolioUuid);
 
   /**
    * Calculates the cost basis on a date for a given portfolio, given the user.
@@ -207,5 +212,6 @@ public interface IStockModelMaker {
    * @param user          the user owning the portfolio.
    * @return a list of lines that make up the graph as a whole.
    */
-  List<String> getFlexiblePortfolioPerformance(String date1, String date2, String portfolioUuid, User user);
+  List<String> getFlexiblePortfolioPerformance(String date1, String date2,
+                             String portfolioUuid, User user);
 }

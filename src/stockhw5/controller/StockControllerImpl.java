@@ -281,7 +281,8 @@ public class StockControllerImpl implements StockController {
       // validate the user provided ticker/share combination
       while (invalidInput) {
         input = getUserInputView().toUpperCase(Locale.ROOT);
-        if (model.validateInflexibleTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
+        if (model.validateInflexibleTickerShare(input)
+                && model.isValidTicker(input.split(",")[0])) {
           invalidInput = false;
         } else {
           if (input.equals("DONE")) {
@@ -445,7 +446,8 @@ public class StockControllerImpl implements StockController {
         for (int i = 0; i <= 100; i++) {
           if (i != 100) {
             // call the model again to fetch remaining ones
-            totalValueOfAPortfolio = model.calculateTotalValueOfAInflexiblePortfolio(input, this.user,
+            totalValueOfAPortfolio = model
+                    .calculateTotalValueOfAInflexiblePortfolio(input, this.user,
                     portfolioId);
           }
           view.getProgressBarView(i);
@@ -466,7 +468,8 @@ public class StockControllerImpl implements StockController {
       columns.add("Ticker");
       columns.add("Number of shares");
       columns.add("Total Share Value");
-      view.getInflexibleTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
+      view.getInflexibleTableViewBuilder(totalValueOfAPortfolio
+              .values().stream().findFirst().get(), columns);
       view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: $"
               + totalPortfolioValueSum + "---"));
     }
@@ -500,7 +503,8 @@ public class StockControllerImpl implements StockController {
     columns.add("Number of shares");
     columns.add("Share Price");
     columns.add("Date");
-    view.getFlexibleTableViewBuilder(model.portfolioCompositionFlexible(portfolioInput, user, input), columns);
+    view.getFlexibleTableViewBuilder(model
+            .portfolioCompositionFlexible(portfolioInput, user, input), columns);
   }
 
   /**
@@ -590,7 +594,8 @@ public class StockControllerImpl implements StockController {
       columns.add("Ticker");
       columns.add("Number of shares");
       columns.add("Total Share Value");
-      view.getInflexibleTableViewBuilder(totalValueOfAPortfolio.values().stream().findFirst().get(), columns);
+      view.getInflexibleTableViewBuilder(totalValueOfAPortfolio
+              .values().stream().findFirst().get(), columns);
       view.getBuilderView(Collections.singletonList("---The total value of this portfolio is: $"
               + totalPortfolioValueSum + "---"));
     }
@@ -777,7 +782,8 @@ public class StockControllerImpl implements StockController {
       if (model.validatePortfolioUUID(input, this.user)) {
         invalidInput = false;
       } else {
-        view.getInflexibleTableViewBuilder(portfolioUser, Collections.singletonList("Portfolio ID"));
+        view.getInflexibleTableViewBuilder(portfolioUser,
+                Collections.singletonList("Portfolio ID"));
         view.getBuilderView(Arrays.asList("Invalid UUID entered!", "Please enter a valid option:"));
       }
     }

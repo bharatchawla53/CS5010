@@ -8,8 +8,6 @@ import java.util.List;
  */
 public class StockViewImpl extends AbstractStockView {
 
-  private final Appendable out;
-
   /**
    * Creates a constructor that initializes Appendable.
    *
@@ -17,7 +15,6 @@ public class StockViewImpl extends AbstractStockView {
    */
   public StockViewImpl(Appendable out) {
     super(out);
-    this.out = out;
   }
 
   @Override

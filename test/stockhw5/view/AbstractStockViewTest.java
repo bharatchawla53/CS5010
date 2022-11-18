@@ -20,6 +20,9 @@ public abstract class AbstractStockViewTest {
 
   protected abstract StockView abstractStockView();
 
+  /**
+   * The InflexibleStockViewClass class represents user inflexible portfolio's views.
+   */
   public static final class InflexibleStockViewClass extends AbstractStockViewTest {
 
     @Override
@@ -89,6 +92,9 @@ public abstract class AbstractStockViewTest {
 
   }
 
+  /**
+   * The FlexibleStockViewClass class represents user flexible portfolio's views.
+   */
   public static final class FlexibleStockViewClass extends AbstractStockViewTest {
 
     @Override
@@ -111,13 +117,16 @@ public abstract class AbstractStockViewTest {
               + "Once done creating your portfolio, please enter \"DONE\" \n");
       consoleOp.add("2. Would you like to sell a specific number of shares of a specific stock "
               + "on a specified date from a given portfolio ?\n");
-      consoleOp.add("3. Would you like to examine the composition of a portfolio on a specific date ?\n");
+      consoleOp.add("3. Would you like to examine the composition of a "
+              + "portfolio on a specific date ?\n");
       consoleOp.add("4. Would you like to determine the total value of a portfolio on a "
               + "certain date ?\n");
       consoleOp.add("5. Would you like to persist a portfolio so that it can be saved ?\n");
       consoleOp.add("6. Would you like to load an external portfolio?\n");
-      consoleOp.add("7. Would you like to determine the cost basis of a portfolio by a specific date ?\n");
-      consoleOp.add("8. Would you like to analyze your specific portfolio over time on a specified time range ?\n");
+      consoleOp.add("7. Would you like to determine the cost basis of a "
+              + "portfolio by a specific date ?\n");
+      consoleOp.add("8. Would you like to analyze your specific portfolio "
+              + "over time on a specified time range ?\n");
       consoleOp.add("9. Would you like to exit the application ?\n");
       consoleOp.add("Enter your option: \n");
       assertEquals(out.toString(), consoleOpDialogCreator(consoleOp));
@@ -211,8 +220,10 @@ public abstract class AbstractStockViewTest {
       stockView.getFlexiblePerformanceView();
       List<String> consoleOp = new ArrayList<String>();
       consoleOp.add("\n");
-      consoleOp.add("Please enter a specific date range to analyze how your portfolio has performed over time:  "
-              + "(Expected Date Format: Enter date1 hit enter, and then enter date2 and hit enter again (yyyy-MM-dd)): \n");
+      consoleOp.add("Please enter a specific date range to analyze how your "
+              + "portfolio has performed over time:  "
+              + "(Expected Date Format: Enter date1 hit enter, and then enter "
+              + "date2 and hit enter again (yyyy-MM-dd)): \n");
       assertEquals(out.toString(), consoleOpDialogCreator(consoleOp));
     }
 

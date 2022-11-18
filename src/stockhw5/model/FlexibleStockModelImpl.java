@@ -174,8 +174,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return totalCommissionValue;
   }
 
-  /***
+  /**
    * Validates the user input for ticker, number of bought shares, and the date of purchase.
+   *
    * @param tickerShareDate input received from the user.
    * @return if validation is successful, return true, else return false.
    */

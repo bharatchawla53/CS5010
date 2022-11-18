@@ -30,7 +30,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class StockControllerTest {
   /**
-   * The MockStockModelImpl class represents user inflexible portfolio's and features supported for it.
+   * The MockStockModelImpl class represents user inflexible portfolio's and features supported for
+   * it.
    */
   public static class MockStockModelImpl extends AbstractStockModel {
     private StringBuilder log;
@@ -59,9 +60,10 @@ public class StockControllerTest {
   }
 
   /**
-   * The AbstractStockModel represents the common stock functionality between flexible and inflexible.
+   * The AbstractStockModel represents the common stock functionality between flexible and
+   * inflexible.
    */
-  public static abstract class AbstractStockModel implements StockModel {
+  public abstract static class AbstractStockModel implements StockModel {
     private StringBuilder log;
 
     public AbstractStockModel(StringBuilder sb) {
@@ -176,7 +178,7 @@ public class StockControllerTest {
 
     @Override
     public String saveExternalUserPortfolio(String filePath, User user) {
-      if (filePath != null &&  user != null) {
+      if (filePath != null && user != null) {
         return "saved ";
       }
       return null;
@@ -186,14 +188,15 @@ public class StockControllerTest {
   /**
    * The MockFlexibleModelImpl represents user flexible portfolio's and features supported for it.
    */
-  public static class MockFlexibleModelImpl extends AbstractStockModel implements FlexibleStockModel {
+  public static class MockFlexibleModelImpl extends AbstractStockModel
+          implements FlexibleStockModel {
 
     private StringBuilder log;
 
     /**
      * Constructs an empty MockStockModelImpl constructor which initializes StringBuilder.
      *
-     * @param sb
+     * @param sb string builder
      */
     public MockFlexibleModelImpl(StringBuilder sb) {
       super(sb);
@@ -201,13 +204,17 @@ public class StockControllerTest {
     }
 
     @Override
-    public boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
-      return user != null && portfolioUUID != null && ticker != null && noOfShares != null && date != null;
+    public boolean buyStockOnSpecificDate(User user, String portfolioUUID,
+                  String ticker, String noOfShares, String date) {
+      return user != null && portfolioUUID != null && ticker != null
+              && noOfShares != null && date != null;
     }
 
     @Override
-    public boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker, String noOfShares, String date) {
-      return user != null && portfolioUUID != null && ticker != null && noOfShares != null && date != null;
+    public boolean sellStockOnSpecifiedDate(User user, String portfolioUUID,
+                   String ticker, String noOfShares, String date) {
+      return user != null && portfolioUUID != null && ticker != null
+              && noOfShares != null && date != null;
     }
 
     @Override
@@ -224,7 +231,8 @@ public class StockControllerTest {
     }
 
     @Override
-    public List<String> getPortfolioPerformance(String date1, String date2, String portfolioUuid, User user) {
+    public List<String> getPortfolioPerformance(String date1, String date2,
+                       String portfolioUuid, User user) {
       if (date1 != null && date2 != null && portfolioUuid != null && user != null) {
         return new ArrayList<>();
       }
@@ -234,7 +242,8 @@ public class StockControllerTest {
     @Override
     public boolean validateTickerShare(String tickerShare) {
       if (tickerShare != null) {
-        Pattern ticketShareValidationPattern = Pattern.compile("([A-Z]+[,]\\d+[,]+\\d{4}-\\d{2}-\\d{2})");
+        Pattern ticketShareValidationPattern = Pattern
+                .compile("([A-Z]+[,]\\d+[,]+\\d{4}-\\d{2}-\\d{2})");
         Matcher validator = ticketShareValidationPattern.matcher(tickerShare);
         if (validator.matches()) {
           log.append(tickerShare).append(" ");
@@ -247,7 +256,7 @@ public class StockControllerTest {
   }
 
   /**
-   * MockStockModelMaker represents both flexible and inflexible model interfaces. 
+   * MockStockModelMaker represents both flexible and inflexible model interfaces.
    */
   public static class MockStockModelMaker implements IStockModelMaker {
 
@@ -285,7 +294,8 @@ public class StockControllerTest {
     }
 
     @Override
-    public boolean saveInflexibleStock(User user, String portfolioUuid, String ticker, String noOfShares) {
+    public boolean saveInflexibleStock(User user, String portfolioUuid,
+                  String ticker, String noOfShares) {
       return inflexibleModel.saveStock(user, portfolioUuid, ticker, noOfShares);
     }
 
@@ -296,11 +306,12 @@ public class StockControllerTest {
 
     @Override
     public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
-      return flexibleModel.portfolioCompositionFlexible(portfolioUUID,user,date);
+      return flexibleModel.portfolioCompositionFlexible(portfolioUUID, user, date);
     }
 
     @Override
-    public Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(String certainDate, User user, String portfolioUuid) {
+    public Map<Integer, List<String>> calculateTotalValueOfAInflexiblePortfolio(
+            String certainDate, User user, String portfolioUuid) {
       return inflexibleModel.calculateTotalValueOfAPortfolio(certainDate, user, portfolioUuid);
     }
 
@@ -315,7 +326,8 @@ public class StockControllerTest {
     }
 
     @Override
-    public boolean validateInflexibleUserPortfolioExternalPathAndContentsStructure(String filepath) {
+    public boolean validateInflexibleUserPortfolioExternalPathAndContentsStructure(
+            String filepath) {
       return inflexibleModel.validateUserPortfolioExternalPathAndContentsStructure(filepath);
     }
 
@@ -335,17 +347,20 @@ public class StockControllerTest {
     }
 
     @Override
-    public boolean saveFlexibleStock(User user, String portfolioUuid, String ticker, String noOfShares, String date) {
+    public boolean saveFlexibleStock(User user, String portfolioUuid, String ticker,
+                           String noOfShares, String date) {
       return flexibleModel.buyStockOnSpecificDate(user, portfolioUuid, ticker, noOfShares, date);
     }
 
     @Override
-    public boolean sellFlexibleStock(User user, String portfolioUuid, String ticker, String noOfShares, String date) {
+    public boolean sellFlexibleStock(User user, String portfolioUuid, String ticker,
+                            String noOfShares, String date) {
       return flexibleModel.sellStockOnSpecifiedDate(user, portfolioUuid, ticker, noOfShares, date);
     }
 
     @Override
-    public Map<Integer, List<String>> calculateTotalValueOfAFlexiblePortfolio(String certainDate, User user, String portfolioUuid) {
+    public Map<Integer, List<String>> calculateTotalValueOfAFlexiblePortfolio(String certainDate,
+                                           User user, String portfolioUuid) {
       return flexibleModel.calculateTotalValueOfAPortfolio(certainDate, user, portfolioUuid);
     }
 
@@ -365,7 +380,8 @@ public class StockControllerTest {
     }
 
     @Override
-    public List<String> getFlexiblePortfolioPerformance(String date1, String date2, String portfolioUuid, User user) {
+    public List<String> getFlexiblePortfolioPerformance(String date1, String date2,
+                            String portfolioUuid, User user) {
       return flexibleModel.getPortfolioPerformance(date1, date2, portfolioUuid, user);
     }
   }
@@ -400,11 +416,13 @@ public class StockControllerTest {
   }
 
   /**
-   * The AbstractStockView represents the common stock functionality between flexible and inflexible views.
+   * The AbstractStockView represents the common stock functionality between flexible and inflexible
+   * views.
    */
-  public static abstract class AbstractStockView implements StockView {
+  public abstract static class AbstractStockView implements StockView {
 
     private StringBuffer out;
+
     public AbstractStockView(StringBuffer out) {
       this.out = out;
     }
@@ -775,8 +793,8 @@ public class StockControllerTest {
 
     assertEquals("tony AMZN,15 ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options "
-                    + "inflexible portfolio creator builder view builder view builder view inflexible "
-                    + "user options terminate builder view ",
+                    + "inflexible portfolio creator builder view builder view builder "
+                    + "view inflexible user options terminate builder view ",
             out.toString());
   }
 
@@ -788,8 +806,8 @@ public class StockControllerTest {
 
     assertEquals("tony AMZN,15 ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options "
-                    + "inflexible portfolio creator builder view builder view builder view inflexible "
-                    + "user options terminate builder view ",
+                    + "inflexible portfolio creator builder view builder view builder "
+                    + "view inflexible user options terminate builder view ",
             out.toString());
   }
 
@@ -815,8 +833,8 @@ public class StockControllerTest {
     assertEquals("tony 23f 2022-10-20 ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options portfolio "
                     + "header inflexible table builder portfolio id input inflexible table builder "
-                    + "builder view total portfolio value inflexible table builder builder view inflexible "
-                    + "user options builder view terminate builder view ",
+                    + "builder view total portfolio value inflexible table builder builder "
+                    + "view inflexible user options builder view terminate builder view ",
             out.toString());
   }
 
@@ -828,8 +846,10 @@ public class StockControllerTest {
 
     assertEquals("tony 23f 2022-10-20 ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options portfolio "
-                    + "header inflexible table builder portfolio id input total portfolio value inflexible "
-                    + "table builder builder view inflexible user options builder view terminate builder view ",
+                    + "header inflexible table builder portfolio id input total "
+                    + "portfolio value inflexible "
+                    + "table builder builder view inflexible user options builder "
+                    + "view terminate builder view ",
             out.toString());
   }
 
@@ -848,8 +868,10 @@ public class StockControllerTest {
 
     assertEquals("tony 546fg 2022-10-20 executed once ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options portfolio "
-                    + "header inflexible table builder portfolio id input total portfolio value progress "
-                    + "bar inflexible table builder builder view inflexible user options builder view builder "
+                    + "header inflexible table builder portfolio id input "
+                    + "total portfolio value progress "
+                    + "bar inflexible table builder builder view inflexible user "
+                    + "options builder view builder "
                     + "view builder view terminate builder view ",
             out.toString());
   }
@@ -862,7 +884,8 @@ public class StockControllerTest {
 
     assertEquals("tony 23f ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options portfolio file "
-                    + "path header inflexible table builder portfolio file path input builder view inflexible "
+                    + "path header inflexible table builder portfolio file path "
+                    + "input builder view inflexible "
                     + "user options builder view terminate builder view ",
             out.toString());
   }
@@ -875,7 +898,8 @@ public class StockControllerTest {
 
     assertEquals("tony 23f ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options portfolio "
-                    + "file path header inflexible table builder portfolio file path input builder view "
+                    + "file path header inflexible table builder portfolio file "
+                    + "path input builder view "
                     + "builder view inflexible user options builder view terminate builder view ",
             out.toString());
   }
@@ -901,7 +925,8 @@ public class StockControllerTest {
 
     assertEquals("tony /test.csv ", sb.toString());
     assertEquals("login screen new user portfolio types inflexible user options save portfolio "
-                    + "save portfolio file path builder view builder view inflexible user options builder "
+                    + "save portfolio file path builder view builder view "
+                    + "inflexible user options builder "
                     + "view builder view terminate builder view ",
             out.toString());
   }
@@ -950,7 +975,8 @@ public class StockControllerTest {
 
     assertEquals("tony DAL,10,2022-08-12 AMZN,15,2022-10-10 ", sb.toString());
     assertEquals("login screen new user portfolio types flexible user options flexible portfolio "
-                    + "creator builder view builder view builder view flexible user options terminate builder view ",
+                    + "creator builder view builder view builder view flexible user "
+                    + "options terminate builder view ",
             out.toString());
   }
 
@@ -962,7 +988,8 @@ public class StockControllerTest {
 
     assertEquals("tony 23f DAL,10,2022-08-12 ", sb.toString());
     assertEquals("login screen new user portfolio types flexible user options portfolio header "
-                    + "inflexible table builder portfolio id input flexible sell stock view builder view "
+                    + "inflexible table builder portfolio id input flexible "
+                    + "sell stock view builder view "
                     + "builder view flexible user options terminate builder view ",
             out.toString());
   }
@@ -975,7 +1002,8 @@ public class StockControllerTest {
 
     assertEquals("tony 23f ", sb.toString());
     assertEquals("login screen new user portfolio types flexible user options portfolio header "
-                    + "inflexible table builder portfolio id input flexible composition view flexible table "
+                    + "inflexible table builder portfolio id input flexible "
+                    + "composition view flexible table "
                     + "builder flexible user options terminate builder view ",
             out.toString());
   }
@@ -987,8 +1015,10 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f 2022-08-12 ", sb.toString());
-    assertEquals("login screen new user portfolio types flexible user options portfolio header inflexible "
-                    + "table builder portfolio id input total portfolio value inflexible table builder builder view "
+    assertEquals("login screen new user portfolio types flexible user options "
+                    + "portfolio header inflexible "
+                    + "table builder portfolio id input total portfolio value "
+                    + "inflexible table builder builder view "
                     + "flexible user options terminate builder view ",
             out.toString());
   }
@@ -1000,8 +1030,10 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f ", sb.toString());
-    assertEquals("login screen new user portfolio types flexible user options portfolio file path header "
-                    + "inflexible table builder portfolio file path input builder view flexible user options terminate builder view ",
+    assertEquals("login screen new user portfolio types flexible user"
+                    + " options portfolio file path header "
+                    + "inflexible table builder portfolio file path input builder "
+                    + "view flexible user options terminate builder view ",
             out.toString());
   }
 
@@ -1012,7 +1044,8 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony /test.csv ", sb.toString());
-    assertEquals("login screen new user portfolio types flexible user options save portfolio save portfolio "
+    assertEquals("login screen new user portfolio types flexible "
+                    + "user options save portfolio save portfolio "
                     + "file path builder view flexible user options terminate builder view ",
             out.toString());
   }
@@ -1024,8 +1057,10 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f ", sb.toString());
-    assertEquals("login screen new user portfolio types flexible user options portfolio header inflexible table "
-                    + "builder portfolio id input flexible cost basis view builder view flexible user options terminate builder view ",
+    assertEquals("login screen new user portfolio types flexible "
+                    + "user options portfolio header inflexible table "
+                    + "builder portfolio id input flexible cost basis view builder "
+                    + "view flexible user options terminate builder view ",
             out.toString());
   }
 
@@ -1036,8 +1071,10 @@ public class StockControllerTest {
     controller.start();
 
     assertEquals("tony 23f ", sb.toString());
-    assertEquals("login screen new user portfolio types flexible user options portfolio header inflexible table "
-                    + "builder portfolio id input flexible performance view builder view builder view flexible user "
+    assertEquals("login screen new user portfolio types flexible "
+                    + "user options portfolio header inflexible table "
+                    + "builder portfolio id input flexible performance view "
+                    + "builder view builder view flexible user "
                     + "options terminate builder view ",
             out.toString());
   }

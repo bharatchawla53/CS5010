@@ -17,7 +17,8 @@ public interface StockApi {
    * @param symbol     ticker to fetch details for.
    * @return a list of hashmap of ticker with it's data.
    */
-  List<HashMap<String, List<StockApiResponse>>> getStockTradedValue(String outputSize, String symbol);
+  List<HashMap<String, List<StockApiResponse>>> getStockTradedValue(String outputSize,
+                                              String symbol);
 
   /**
    * Given a date, it parses to LocalDate.
