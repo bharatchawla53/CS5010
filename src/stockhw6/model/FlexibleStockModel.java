@@ -65,4 +65,11 @@ public interface FlexibleStockModel extends StockModel {
    * @return a list of lines that make up the graph as a whole.
    */
   List<String> getPortfolioPerformance(String date1, String date2, String portfolioUuid, User user);
+
+  boolean createPortfolioBasedOnPlan(User user, String portfolioUUID, List<String> tickers,
+                                     String startDate, String endDate,
+                                     int daySkip, int monthSkip, int yearSkip, int capital,
+                                     List<Integer> weightList);
+
+
 }

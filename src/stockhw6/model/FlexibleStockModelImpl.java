@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -62,7 +63,21 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     boolean isSuccessful = false;
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
-
+    if(Integer.parseInt(noOfShares) < 0)
+    {
+      return false;
+    }
+    try{
+      LocalDate testDate = LocalDate.parse(date);
+    }
+    catch(DateTimeParseException e)
+    {
+      return false;
+    }
+    if(LocalDate.parse(date).isAfter(LocalDate.now()))
+    {
+      return false;
+    }
 
     Double stockPrice = getStockPrice(new String[]{ticker, noOfShares},
             getCurrentDateSkippingWeekends(LocalDate.parse(date)));
@@ -110,6 +125,22 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker,
                                           String noOfShares, String date) {
+
+    try{
+      LocalDate testDate = LocalDate.parse(date);
+    }
+    catch(DateTimeParseException e)
+    {
+      return false;
+    }
+    if(Integer.parseInt(noOfShares) < 0)
+    {
+      return false;
+    }
+    if(LocalDate.parse(date).isAfter(LocalDate.now()))
+    {
+      return false;
+    }
     Map<String, Integer> tickerNumShares = getTickerNumSharesGivenDate(user, portfolioUUID,
             LocalDate.parse(date));
     if (!tickerNumShares.containsKey(ticker)) {
@@ -118,6 +149,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     if (tickerNumShares.get(ticker) < Integer.parseInt(noOfShares)) {
       return false;
     }
+
+
+
     boolean isSuccessful = false;
 
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
@@ -422,6 +456,51 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return null;
   }
+
+  @Override
+  public boolean createPortfolioBasedOnPlan(User user, String portfolioUUID, List<String> tickerList,
+                                             String startDate, String endDate,
+                                             int daySkip, int monthSkip, int yearSkip, int capital,List<Integer> weightList) {
+
+
+
+    LocalDate startDateLocal = LocalDate.parse(startDate);
+    LocalDate cursorDate = startDateLocal;
+    LocalDate endDateLocal;
+    boolean isSuccessful;
+    if(endDate.equals(""))
+    {
+      endDateLocal = LocalDate.now();
+    }
+    endDateLocal = LocalDate.parse(endDate);
+    if(endDateLocal.isAfter(LocalDate.now()))
+    {
+      endDateLocal = LocalDate.now();
+    }
+
+    for (int i =0;i<tickerList.size();i++) {
+      cursorDate = startDateLocal;
+      while (cursorDate.isBefore(endDateLocal)) {
+        double stockVal = getStockPrice(tickerList.get(i),"1",getCurrentDateSkippingWeekends(cursorDate).toString());
+
+        double numShares = (double) (capital*(weightList.get(i))/100.00)/stockVal;
+        isSuccessful = buyStockOnSpecificDate(user,portfolioUUID,tickerList.get(i),String.valueOf(numShares),getCurrentDateSkippingWeekends(cursorDate).toString());
+        cursorDate = cursorDate.plusDays(daySkip);
+        cursorDate = cursorDate.plusMonths(monthSkip);
+        cursorDate = cursorDate.plusYears(yearSkip);
+        if(!isSuccessful)
+        {
+          return isSuccessful;
+        }
+      }
+
+    }
+    isSuccessful =true;
+    return isSuccessful;
+  }
+
+
+
 
   /**
    * Checks if a ticker is in a portfolio.
