@@ -1016,6 +1016,31 @@ public abstract class AbstractStockModelTest {
     }
 
     @Test
+    public void testUpdatePortfolioBasedOnInvestment()
+    {
+      User user = User.builder().userName("test").build();
+      FlexibleStockModel stockModel = flexibleStockModel();
+      List<Integer> weightList = new ArrayList<>();
+      weightList.add(25);
+      weightList.add(50);
+      weightList.add(25);
+      String portfolioUUID = stockModel.generateUUID();
+      List<String> tickerList = new ArrayList<>();
+      tickerList.add("AAPL");
+      tickerList.add("MRO");
+      tickerList.add("DAL");
+      String startDate = "2021-08-12";
+      int capital = 4000;
+      boolean isPortfolioUpdated = stockModel.UpdatePortfolioBasedOnInvestment(user, portfolioUUID,
+              tickerList, startDate, capital, weightList);
+      assertTrue(isPortfolioUpdated);
+      List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
+      assertNotNull(portfolioContents);
+      assertEquals(9, portfolioContents.size());
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
     public void testCalculateTotalValueOfAPortfolioUnderApiLimit() {
       User user = User.builder().userName("test").build();
       FlexibleStockModel stockModel = flexibleStockModel();

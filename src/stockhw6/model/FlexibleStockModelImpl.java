@@ -405,6 +405,40 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
   }
 
+  @Override
+  public boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID, List<String> tickerList,
+                                            String startDate, int capital,List<Integer> weightList) {
+
+
+    //UUID chosen from menu in controller
+    LocalDate startDateLocal = LocalDate.parse(startDate);
+    LocalDate cursorDate = startDateLocal;
+    boolean isSuccessful;
+
+
+
+
+    for (int i =0;i<tickerList.size();i++) {
+        cursorDate = startDateLocal;
+
+        double stockVal = getStockPrice(tickerList.get(i),"1",getCurrentDateSkippingWeekends(cursorDate).toString());
+
+        double numShares = (double) (capital*(weightList.get(i))/100.00)/stockVal;
+        isSuccessful = buyStockOnSpecificDate(user,portfolioUUID,tickerList.get(i),String.valueOf(numShares),getCurrentDateSkippingWeekends(cursorDate).toString());
+
+        if(!isSuccessful)
+        {
+          return isSuccessful;
+        }
+
+
+    }
+    isSuccessful =true;
+    return isSuccessful;
+  }
+
+
+
 
   /**
    * The filepath of the file to be externally loaded as a flexible portfolio.
@@ -463,7 +497,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
                                              int daySkip, int monthSkip, int yearSkip, int capital,List<Integer> weightList) {
 
 
-
+    //UUID created in controller, not chosen
     LocalDate startDateLocal = LocalDate.parse(startDate);
     LocalDate cursorDate = startDateLocal;
     LocalDate endDateLocal;

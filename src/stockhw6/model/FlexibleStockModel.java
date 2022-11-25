@@ -71,5 +71,6 @@ public interface FlexibleStockModel extends StockModel {
                                      int daySkip, int monthSkip, int yearSkip, int capital,
                                      List<Integer> weightList);
 
-
+  boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID, List<String> tickerList,
+                                   String startDate, int capital,List<Integer> weightList);
 }
