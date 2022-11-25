@@ -984,6 +984,8 @@ public abstract class AbstractStockModelTest {
       deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
 
+
+    //Test for portfolio creation, how to test for new portfolio created
     @Test
     public void testCreatePortfolioFromPlan()
     {
@@ -1014,6 +1016,7 @@ public abstract class AbstractStockModelTest {
 
 
     }
+
 
     @Test
     public void testUpdatePortfolioBasedOnInvestment()

@@ -1,6 +1,7 @@
 package stockhw6.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface represents a FlexibleStockModel that defines the operations listed below while
@@ -73,4 +74,9 @@ public interface FlexibleStockModel extends StockModel {
 
   boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID, List<String> tickerList,
                                    String startDate, int capital,List<Integer> weightList);
+
+
+  Map<String, Integer> getBarChartContents(String date1,String date2, String portfolioUUID, User user);
+
+
 }

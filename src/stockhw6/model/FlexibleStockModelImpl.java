@@ -533,6 +533,26 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return isSuccessful;
   }
 
+  @Override
+  public Map<String,Integer> getBarChartContents(String date1,String date2, String portfolioUUID, User user)
+  {
+    List<String> graphContents = getPortfolioPerformance(date1,date2,portfolioUUID,user);
+    graphContents = graphContents.subList(0,graphContents.size()-1);
+    Map<String,Integer> barChartContents = new HashMap<>();
+    for(String item: graphContents)
+    {
+      String colName = item.split(":")[0];
+      int colVal = item.split(":")[1].strip().length();
+      barChartContents.put(colName,colVal);
+
+    }
+    return barChartContents;
+  }
+
+
+
+
+
 
 
 
