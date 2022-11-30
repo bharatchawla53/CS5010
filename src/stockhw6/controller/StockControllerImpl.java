@@ -339,7 +339,7 @@ public class StockControllerImpl implements StockController {
       // received correct combination from user to add share to their portfolio
 
       if (!input.equals("DONE") && model.saveFlexibleStock(this.user, portfolioUuid,
-              input.split(",")[0], input.split(",")[1], input.split(",")[2])) {
+              input.split(",")[0], input.split(",")[1], input.split(",")[2], 0)) {
         view.getBuilderView(Collections.singletonList("Ticker and number of shares added "
                 + "to portfolio! "
                 + "Enter DONE to exit "
@@ -398,7 +398,7 @@ public class StockControllerImpl implements StockController {
       // received correct combination from user to add share to their portfolio
 
       if (!input.equals("DONE") && model.sellFlexibleStock(this.user, portfolioUuid,
-              input.split(",")[0], input.split(",")[1], input.split(",")[2])) {
+              input.split(",")[0], input.split(",")[1], input.split(",")[2], 0)) {
         view.getBuilderView(Collections.singletonList("Ticker and number of shares sold "
                 + "from your portfolio! "
                 + "Enter DONE to exit "

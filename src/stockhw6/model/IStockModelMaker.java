@@ -150,7 +150,7 @@ public interface IStockModelMaker {
    * @return true if the stock was saved successfully, false, otherwise.
    */
   boolean saveFlexibleStock(User user, String portfolioUuid, String ticker,
-                            String noOfShares, String date);
+                            String noOfShares, String date, int commissionFees);
 
   /**
    * Sells some shares of some ticker on a date and adds it to a portfolio belonging to a user.
@@ -163,7 +163,7 @@ public interface IStockModelMaker {
    * @return if negative shares were inserted into the portfolio return true else false.
    */
   boolean sellFlexibleStock(User user, String portfolioUuid, String ticker,
-                            String noOfShares, String date);
+                            String noOfShares, String date, int commissionFees);
 
   /**
    * It calculates total value of a portfolio on a certain date.
@@ -214,4 +214,10 @@ public interface IStockModelMaker {
    */
   List<String> getFlexiblePortfolioPerformance(String date1, String date2,
                              String portfolioUuid, User user);
+
+  boolean updatePortfolioBasedOnInvestment(User user, String portfolioUUID, List<String> tickerList,
+                                           String startDate, int capital, List<Integer> weightList, int commissionFees);
+
+  Map<String, Integer> getBarChartContents(String date1,String date2, String portfolioUUID, User user);
+
 }

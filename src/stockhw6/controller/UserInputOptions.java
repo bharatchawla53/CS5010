@@ -12,7 +12,8 @@ public enum UserInputOptions {
   SIX("6"),
   SEVEN("7"),
   EIGHT("8"),
-  NINE("9");
+  NINE("9"),
+  TEN("10");
   private final String input;
 
   public String getInput() {
