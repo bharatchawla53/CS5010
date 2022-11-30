@@ -11,6 +11,10 @@ import stockhw6.view.IStockViewMaker;
 import stockhw6.view.JFrameViewImpl;
 import stockhw6.view.StockViewMaker;
 
+/**
+ * The ModelViewPairerControllerImpl class represents as a pairer to initialize concrete controller
+ * and view classes based on user input.
+ */
 public class ModelViewPairerControllerImpl implements StockController {
 
   private final Scanner scanner;
@@ -48,6 +52,9 @@ public class ModelViewPairerControllerImpl implements StockController {
 
   }
 
+  /**
+   * It initializes the text based controller and view classes.
+   */
   private void initializeTextBasedModelViewPair() {
     // create the model
     IStockModelMaker model = new StockModelMaker();
@@ -61,6 +68,9 @@ public class ModelViewPairerControllerImpl implements StockController {
     controller.start();
   }
 
+  /**
+   * It initializes the GUI based controller and view classes.
+   */
   private void initializeGUIModelViewPair() {
     // create the model
     IStockModelMaker model = new StockModelMaker();

@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import stockhw5.controller.TimeIntervalUnit;
 import stockhw6.model.IStockModelMaker;
 import stockhw6.model.User;
 import stockhw6.view.IStockGuiView;
 
+/**
+ * The StockControllerImpl class represents as a mediator between model and GUI view.
+ */
 public class StockControllerGuiImpl implements IStockGuiFeatures {
 
   private final IStockModelMaker model;
@@ -143,7 +145,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         this.view.showErrorMessage("Invalid input!, Please enter a "
                 + "valid ticker/share/date combination : ");
       }
-    } else if (!evt.getActionCommand().equals("buy") && !evt.getActionCommand().equals("cancel buy")){
+    } else if (!evt.getActionCommand().equals("buy") && !evt.getActionCommand().equals("cancel buy")) {
       // close the frame message
       this.view.showSuccessMessage("Your portfolio has been created! "
               + "You can find it at : " + portfolioUuid, evt);
@@ -168,7 +170,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         this.view.showErrorMessage("Invalid input!, Please enter a "
                 + "valid ticker/share/date combination : ");
       }
-    } else if (!evt.getActionCommand().equals("sell") && !evt.getActionCommand().equals("cancel sell")){
+    } else if (!evt.getActionCommand().equals("sell") && !evt.getActionCommand().equals("cancel sell")) {
       // close the frame message
       this.view.showSuccessMessage("Your portfolio has been updated! "
               + "You can find it at : " + portfolioUuid, evt);
@@ -255,7 +257,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         }
       }
     } else if (!evt.getActionCommand().equals("add investment")
-            && !evt.getActionCommand().equals("cancel investment") ) {
+            && !evt.getActionCommand().equals("cancel investment")) {
       if (this.user != null && this.portfolioUuid != null && this.investmentDate != null
               && this.investmentCapital != 0 && this.tickerList.size() != 0
               && this.weights.size() != 0) {
@@ -298,7 +300,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         }
       }
     } else if (!evt.getActionCommand().equals("new investment")
-            && !evt.getActionCommand().equals("cancel investment") ) {
+            && !evt.getActionCommand().equals("cancel investment")) {
       if (this.user != null && this.investmentDate != null
               && this.investmentCapital != 0 && this.tickerList.size() != 0
               && this.weights.size() != 0) {
@@ -410,12 +412,25 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     }
   }
 
+  /**
+   * It parses the commission fees to int.
+   *
+   * @param input commission fees.
+   * @return int commission fees.
+   */
   private int getCommissionFees(String input) {
     return !input.split(",")[3].equals("")
             ? Integer.parseInt(input.split(",")[3])
             : 0;
   }
 
+  /**
+   * It gets day skips based on user input.
+   *
+   * @param timeFrequency    how often the investment should occur.
+   * @param timeIntervalUnit unit selected by the user.
+   * @return converted timeFrequency to days.
+   */
   private int getDaysSkip(String timeFrequency, String timeIntervalUnit) {
     if (TimeIntervalUnit.DAYS.getInput().equals(timeIntervalUnit)) {
       return Integer.parseInt(timeFrequency);

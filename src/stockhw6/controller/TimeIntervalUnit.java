@@ -1,5 +1,8 @@
-package stockhw5.controller;
+package stockhw6.controller;
 
+/**
+ * This enum represents the values for allowed time interval unit.
+ */
 public enum TimeIntervalUnit {
   DAYS("days"),
   MONTH("month"),
