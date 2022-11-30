@@ -1468,7 +1468,7 @@ public abstract class AbstractStockModelTest {
         weightList.add(25);
         weightList.add(50);
         weightList.add(25);
-        String portfolioUUID = "";
+        String portfolioUUID = stockModel.generateUUID();
 
         List<String> tickerList = new ArrayList<>();
         tickerList.add("AAPL");
@@ -1482,7 +1482,7 @@ public abstract class AbstractStockModelTest {
         assertTrue(isPortfolioUpdated);
         List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
         assertNotNull(portfolioContents);
-        assertEquals(9, portfolioContents.size());
+        assertEquals(3, portfolioContents.size());
         deleteFileOnlyForTesting(portfolioUUID, user, true);
       }
 
@@ -1540,7 +1540,7 @@ public abstract class AbstractStockModelTest {
         tickerList.add("DAL");
         String startDate = "2021-08-12";
         String endDate = "2021-11-12";
-        int daySkip = 0;
+        int daySkip = 30;
         int monthSkip = 1;
         int yearSkip = 0;
         int capital = 3000;

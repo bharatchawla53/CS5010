@@ -11,6 +11,7 @@ import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,30 +30,60 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
-    List<String> portfolioRows = new ArrayList<>();
+    boolean isUserValid = isUserNameExists(user.getUserName());
+    boolean isPortfolioUUIDUserValid = validatePortfolioUUID(portfolioUUID, user);
+    if (isUserValid && isPortfolioUUIDUserValid) {
+      List<String> portfolioRows = new ArrayList<>();
 
-    try {
-      BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()
-              + "_" + portfolioUUID + "_" + "fl_" + ".csv"));
-      String strLine;
+      try {
+        BufferedReader fr = new BufferedReader(new FileReader(user.getUserName()
+                + "_" + portfolioUUID + "_" + "fl_" + ".csv"));
+        String strLine;
 
-      while ((strLine = fr.readLine()) != null) {
-        if (strLine.equals("")) {
-          break;
+        while ((strLine = fr.readLine()) != null) {
+          if (strLine.equals("")) {
+            break;
+          }
+          String ticker = strLine.split(",")[0];
+          String noOfShares = strLine.split(",")[1];
+          String stockPrice = strLine.split(",")[2];
+          String rdate = strLine.split(",")[3];
+          String commissionRate = strLine.split(",")[4];
+          String tickerNoOfShares = ticker + "," + noOfShares + ","
+                  + stockPrice + "," + rdate + "," + commissionRate;
+          portfolioRows.add(tickerNoOfShares);
         }
-        String ticker = strLine.split(",")[0];
-        String noOfShares = strLine.split(",")[1];
-        String stockPrice = strLine.split(",")[2];
-        String rdate = strLine.split(",")[3];
-        String commissionRate = strLine.split(",")[4];
-        String tickerNoOfShares = ticker + "," + noOfShares + ","
-                + stockPrice + "," + rdate + "," + commissionRate;
-        portfolioRows.add(tickerNoOfShares);
+        return portfolioRows;
+      } catch (IOException e) {
+        return portfolioRows;
       }
-      return portfolioRows;
-    } catch (IOException e) {
-      return portfolioRows;
+    } else {
+      return Collections.singletonList(" ");
     }
+  }
+
+  private boolean validateTransactionInputs(String noOfShares, String date, User user, String portfolioUUID, int commissionRate, String ticker) throws IllegalArgumentException {
+    if (Double.parseDouble(noOfShares) < 0) {
+      throw new IllegalArgumentException("Number of shares is negative!");
+    }
+    try {
+      LocalDate testDate = LocalDate.parse(date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (!isUserNameExists(user.getUserName()) ) {
+
+      return false;
+
+    }
+    if (commissionRate < 0) {
+      return false;
+    }
+    if (!isValidTicker(ticker)) {
+      return false;
+    }
+
+    return true;
   }
 
   @Override
@@ -63,16 +94,13 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     boolean isSuccessful = false;
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
-    if (Double.parseDouble(noOfShares) < 0) {
-      throw new IllegalArgumentException();
+    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    if (!isValidated) {
+      return false;
     }
-    try {
-      LocalDate testDate = LocalDate.parse(date);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException();
-    }
+
     if (!isFutureDateAllowed(date, false)) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Future Date is not allowed here!");
     }
     Double stockPrice = getStockPrice(new String[]{ticker, noOfShares},
             getCurrentDateSkippingWeekends(LocalDate.parse(date)));
@@ -87,7 +115,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     if (f.exists() && !f.isDirectory()) {
       String record = ticker + "," + noOfShares + "," + stockPrice + "," +
-              date + commissionRate + "\n";
+              date + "," + commissionRate + "\n";
 
       List<String> updatedPortfolioContents =
               insertIntoSortedPortfolio(portfolioUUID, user, record);
@@ -139,13 +167,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
 
-    if (Double.parseDouble(noOfShares) < 0) {
-      throw new IllegalArgumentException();
-    }
-    try {
-      LocalDate testDate = LocalDate.parse(date);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException();
+    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    if (!isValidated) {
+      return false;
     }
 
     if (!isFutureDateAllowed(date, false)) {
@@ -186,13 +210,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
                                           String noOfShares, String date, int commissionRate)
           throws IllegalArgumentException {
 
-    try {
-      LocalDate testDate = LocalDate.parse(date);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException();
-    }
-    if (Integer.parseInt(noOfShares) < 0) {
-      throw new IllegalArgumentException();
+    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    if (!isValidated) {
+      return false;
     }
     if (LocalDate.parse(date).isAfter(LocalDate.now())) {
       throw new IllegalArgumentException();
@@ -248,8 +268,29 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return isSuccessful;
   }
 
+
+  private boolean validateTransactionInputs(User user, String portfolioUUID, String date) throws IllegalArgumentException {
+
+    try {
+      LocalDate testDate = LocalDate.parse(date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (!isUserNameExists(user.getUserName()) ) {
+
+      return false;
+
+    }
+
+
+    return true;
+  }
+
   @Override
   public double calculateCostBasis(User user, String portfolioUUID, String date) {
+    if (!validateTransactionInputs(user, portfolioUUID, date)) {
+      return 0.0;
+    }
     List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
     double totalCommissionValue = 0.0;
     for (String row : portfolioContents) {
@@ -277,7 +318,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
    */
   @Override
   public boolean validateTickerShare(String tickerShareDate) {
-    Pattern pattern = Pattern.compile("([A-Z]+[,]\\d+[,]+\\d{4}-\\d{2}-\\d{2})");
+    Pattern pattern = Pattern.compile("([A-Z]+[,]\\d+[,]+\\d{4}-\\d{2}-\\d{2}[,]\\d+)");
     Matcher validator = pattern.matcher(tickerShareDate);
     return validator.matches();
   }
@@ -286,6 +327,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
                                                                     User user,
                                                                     String portfolioUUID) {
+    if (!validateTransactionInputs(user, portfolioUUID, certainDate)) {
+      Map<Integer, List<String>> valMap = new HashMap<>();
+      valMap.put(0, Collections.singletonList(" "));
+      return valMap;
+    }
     List<String> totalValueOfPortfolio = new ArrayList<>();
     List<String> portfolioContents =
             portfolioCompositionFlexible(portfolioUUID, user, certainDate);
@@ -329,8 +375,28 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
 
+  private boolean validateTransactionInputs(String ticker, String numShares, String date) throws IllegalArgumentException {
+
+    try {
+      LocalDate testDate = LocalDate.parse(date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (Double.parseDouble(numShares) < 0 || !isValidTicker(ticker)) {
+
+      return false;
+
+    }
+
+
+    return true;
+  }
+
   @Override
   public Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
+    if (!validateTransactionInputs(shareDetail[0], shareDetail[1], certainDate.toString())) {
+      return 0.0;
+    }
     Double stockPrice = null;
 
     for (HashMap<String, List<StockApiResponse>> symbolMap : stockHashMapList) {
@@ -356,6 +422,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
    * @return the total stock price.
    */
   protected Double getStockPrice(String ticker, String noOfShares, String date) {
+    if (!validateTransactionInputs(ticker, noOfShares, date.toString())) {
+      return 0.0;
+    }
     Double stockPrice;
     getStockDataFromApi(AlphaVantageOutputSize.FULL.getInput(), ticker);
     if (stockHashMapList.stream().noneMatch(map -> map.containsKey(ticker))) {
@@ -371,9 +440,30 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return stockPrice;
   }
 
+
+  private boolean validateTransactionInputs(String startDate, String endDate, String portfolioUUID, User user) throws IllegalArgumentException {
+    try {
+      LocalDate startDateL = LocalDate.parse(startDate);
+      LocalDate endDateL = LocalDate.parse(endDate);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (!isUserNameExists(user.getUserName()) ) {
+
+      return false;
+
+    }
+
+
+    return true;
+  }
+
   @Override
   public List<String> getPortfolioPerformance(String date1, String date2,
                                               String portfolioUUID, User user) {
+    if (!validateTransactionInputs(date1, date2, portfolioUUID, user)) {
+      return Collections.singletonList(" ");
+    }
     Map<Map<String, String>, Integer> nMap = getDatePerformanceMap(date1,
             date2, user, portfolioUUID);
     Map<String, String> resMap = new HashMap<>();
@@ -396,6 +486,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   @Override
   public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
+    if (!validateTransactionInputs(date, date, portfolioUUID, user)) {
+      return Collections.singletonList(" ");
+    }
     Map<String, Integer> tickerNumShareIntraDay = getTickerNumShareIntraDay(portfolioUUID, user);
     List<String> portfolioList = new ArrayList<>();
     for (String key : tickerNumShareIntraDay.keySet()) {
@@ -476,13 +569,53 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
   }
 
+
+  private boolean validateTransactionInputs(User user, String portfolioUUID, List<String> tickerList, String startDate, String endDate, int capital, List<Integer> weightList, int commissionRate) throws IllegalArgumentException {
+    if (!isUserNameExists(user.getUserName()) ) {
+
+      return false;
+
+    }
+    for (String ticker : tickerList) {
+      if (!isValidTicker(ticker)) {
+        return false;
+      }
+    }
+    try {
+      LocalDate startDateL = LocalDate.parse(startDate);
+      LocalDate endDateL = LocalDate.parse(endDate);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (capital < 0) {
+      return false;
+    }
+    int weightSum = 0;
+    for (int weight : weightList) {
+      weightSum += weight;
+      if (weight < 0) {
+
+        return false;
+      }
+    }
+    if (weightSum < 100) {
+      return false;
+    }
+    if (commissionRate < 0) {
+      return false;
+    }
+    return true;
+  }
+
   @Override
   public boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID,
                                                   List<String> tickerList,
                                                   String startDate, int capital, List<Integer> weightList,
                                                   int commissionRate) {
 
-
+    if (!validateTransactionInputs(user, portfolioUUID, tickerList, startDate, startDate, capital, weightList, commissionRate)) {
+      return false;
+    }
     //UUID chosen from menu in controller
     LocalDate startDateLocal = LocalDate.parse(startDate);
     LocalDate cursorDate = startDateLocal;
@@ -571,6 +704,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return null;
   }
 
+
   @Override
   public boolean createPortfolioBasedOnPlan(User user, String portfolioUUID,
                                             List<String> tickerList,
@@ -578,6 +712,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
                                             int daySkip, int capital, List<Integer> weightList
           , int commissionRate) {
 
+    if (!validateTransactionInputs(user, portfolioUUID, tickerList, startDate, endDate, capital, weightList, commissionRate)) {
+      return false;
+    }
 
     try {
       if (LocalDate.parse(startDate).isAfter(LocalDate.parse(endDate))) {
@@ -599,6 +736,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public Map<String, Integer> getBarChartContents(String date1, String date2, String portfolioUUID,
                                                   User user) {
+    if (!validateTransactionInputs(date1, date2, portfolioUUID, user)) {
+      Map<String, Integer> emptyChart = new HashMap<>();
+      emptyChart.put("NA", 0);
+      return emptyChart;
+    }
     List<String> graphContents = getPortfolioPerformance(date1, date2, portfolioUUID, user);
     graphContents = graphContents.subList(0, graphContents.size() - 1);
     Map<String, Integer> barChartContents = new LinkedHashMap<>();
