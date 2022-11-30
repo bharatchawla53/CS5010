@@ -1,3 +1,4 @@
+
 package stockhw6.model;
 
 import java.io.BufferedReader;
@@ -256,6 +257,52 @@ public abstract class AbstractStockModel implements StockModel {
   protected void getStockDataFromApi(String outputSize, String symbol) {
     stockHashMapList = alphaVantageApi.getStockTradedValue(outputSize, symbol);
   }
+
+
+  private List<LocalDate> getCandidateDateList(String date)
+  {
+    LocalDate currentDate = LocalDate.parse(date);
+    List<LocalDate> candidateDateList = new ArrayList<>();
+    candidateDateList.add(currentDate);
+    int i = 0;
+    while(i < 5)
+    {
+      currentDate = currentDate.minusDays(1);
+      candidateDateList.add(currentDate);
+      i = i+1;
+    }
+    return candidateDateList;
+  }
+
+
+
+  protected Double getFirstNonNullStockResp(String ticker, String date,double noOfShares) {
+
+    //[{ticker, {}}]
+    Double stockPrice = null;
+
+    List<LocalDate> LocalDateList = getCandidateDateList(date);
+
+    for (HashMap<String, List<StockApiResponse>> symbolMap : stockHashMapList) {
+      if (symbolMap.containsKey(ticker)) {
+        for(int j=0;j<symbolMap.get(ticker).size();j++)
+        {
+          StockApiResponse timeSeries = symbolMap.get(ticker).get(j);
+          for(LocalDate dateObj: getCandidateDateList(date))
+          {
+            if(timeSeries.getDate().equals(dateObj))
+              if(stockPrice != null)
+              {stockPrice = Double.parseDouble(timeSeries.getCloseVal())*noOfShares;
+                break;}
+          }
+        }
+      }
+    }
+    return stockPrice;
+
+  }
+
+
 
   /**
    * Checks if the current date is within market hours, otherwise, it uses the previous day for
