@@ -218,7 +218,7 @@ public class StockControllerGuiTest {
 
     controller.getUserOptionsView(evt);
 
-    verify(view, times(1)).flexibleUserOptionEight();
+    verify(view, times(1)).flexibleUserOptionsNine();
   }
 
   @Test
@@ -444,6 +444,86 @@ public class StockControllerGuiTest {
     ActionEvent evt = new ActionEvent(this, uniqueId, "add investment");
 
     controller.processFlexibleOptionEight("", "",
+            "", "", "", evt);
+
+    verify(view, times(1)).showErrorMessage(any());
+  }
+
+  @Test
+  public void testProcessFlexibleOptionNineAdd() {
+    ActionEvent evt = new ActionEvent(this, uniqueId, UserInputOptions.NINE.getInput());
+    controller.getUserOptionsView(evt);
+
+    ActionEvent evt1 = new ActionEvent(this, uniqueId, "new investment");
+    when(model.isValidTicker("TSLA")).thenReturn(Boolean.TRUE);
+    when(model.isValidTicker("MSFT")).thenReturn(Boolean.TRUE);
+
+    controller.processFlexibleOptionNine("1000", "TSLA", "25",
+            "2022-11-10", "2023-11-10", "25", "days",
+            "10", evt1);
+
+    controller.processFlexibleOptionNine("1000", "MSFT", "25",
+            "2022-11-10", "2023-11-10", "25", "days",
+            "10", evt1);
+
+    verify(model, times(2)).isValidTicker(anyString());
+    verify(view, times(2)).showSuccessMessage(any(), any());
+  }
+
+  @Test
+  public void testProcessFlexibleOptionNineAddInvalidSymbol() {
+    ActionEvent evt = new ActionEvent(this, uniqueId, UserInputOptions.NINE.getInput());
+    controller.getUserOptionsView(evt);
+
+    ActionEvent evt1 = new ActionEvent(this, uniqueId, "add investment");
+    when(model.isValidTicker("vfvdfbdf")).thenReturn(Boolean.FALSE);
+
+
+    controller.processFlexibleOptionNine("1000", "vfvdfbdf", "25",
+            "2022-11-10", "2023-11-10", "25", "days",
+            "10", evt1);
+
+    verify(model, times(1)).isValidTicker(anyString());
+    verify(view, times(1)).showErrorMessage(any());
+  }
+
+  @Test
+  public void testProcessFlexibleOptionNineAddSave() {
+    ActionEvent evtU = new ActionEvent(this, uniqueId, UserInput.N.name());
+    User user = User.builder().userName("test").build();
+    when(model.saveUser(any())).thenReturn(user);
+
+    controller.saveNewUser("test", evtU);
+
+    ActionEvent evt = new ActionEvent(this, uniqueId, UserInputOptions.NINE.getInput());
+    controller.getUserOptionsView(evt);
+
+    ActionEvent evt1 = new ActionEvent(this, uniqueId, "new investment");
+    when(model.isValidTicker("TSLA")).thenReturn(Boolean.TRUE);
+    when(model.isValidTicker("MSFT")).thenReturn(Boolean.TRUE);
+
+    controller.processFlexibleOptionNine("1000", "TSLA", "25",
+            "2022-11-10", "2023-11-10", "25", "days",
+            "10", evt1);
+
+    controller.processFlexibleOptionNine("1000", "MSFT", "25",
+            "2022-11-10", "2023-11-10", "25", "days",
+            "10", evt1);
+
+    ActionEvent evt2 = new ActionEvent(this, uniqueId, "save investment");
+
+    controller.processFlexibleOptionNine("1000", "", "",
+            "", "", "", "", "", evt1);
+
+    verify(model, times(2)).isValidTicker(anyString());
+    verify(view, times(3)).showSuccessMessage(any(), any());
+  }
+
+  @Test
+  public void testProcessFlexibleOptionNineNoInput() {
+    ActionEvent evt = new ActionEvent(this, uniqueId, "new investment");
+
+    controller.processFlexibleOptionNine("", "", "", "", "",
             "", "", "", evt);
 
     verify(view, times(1)).showErrorMessage(any());
