@@ -2,7 +2,6 @@ package stockhw6.controller;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -232,7 +231,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     }
   }
 
-  @Override
+  @Override // TODO prompt commission fees in GUI
   public void processFlexibleOptionEight(String date, String capital, String symbol,
                                          String weightage, String commissionFees, ActionEvent evt) {
 
@@ -248,21 +247,23 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         if (model.isValidTicker(symbol)) {
           this.tickerList.add(symbol);
           this.weights.add(Integer.valueOf(weightage));
+          this.view.showSuccessMessage("Investment added", evt);
         } else {
           this.view.showErrorMessage("Invalid symbol, enter again!");
         }
-      } else if (!evt.getActionCommand().equals("add investment")
-              && !evt.getActionCommand().equals("cancel investment") ) {
-        if (this.user != null && this.portfolioUuid != null && this.investmentDate != null
-                && this.investmentCapital != 0 && this.tickerList.size() != 0
-                && this.weights.size() != 0) {
-          if (this.model.updatePortfolioBasedOnInvestment(this.user, this.portfolioUuid, this.tickerList,
-                  this.investmentDate, this.investmentCapital, this.weights, Integer.parseInt(commissionFees))) {
-            this.view.showSuccessMessage("Your investment has been successfully "
-                    + "added to your portfolio", evt);
-          } else {
-            this.view.showErrorMessage("Couldn't save the investment to your portfolio");
-          }
+      }
+    } else if (!evt.getActionCommand().equals("add investment")
+            && !evt.getActionCommand().equals("cancel investment") ) {
+      if (this.user != null && this.portfolioUuid != null && this.investmentDate != null
+              && this.investmentCapital != 0 && this.tickerList.size() != 0
+              && this.weights.size() != 0) {
+        int cFees = !commissionFees.equals("") ? Integer.parseInt(commissionFees) : 0;
+        if (this.model.updatePortfolioBasedOnInvestment(this.user, this.portfolioUuid, this.tickerList,
+                this.investmentDate, this.investmentCapital, this.weights, cFees)) {
+          this.view.showSuccessMessage("Your investment has been successfully "
+                  + "added to your portfolio", evt);
+        } else {
+          this.view.showErrorMessage("Couldn't save the investment to your portfolio");
         }
       }
     } else {
@@ -270,19 +271,12 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     }
   }
 
-  @Override // TODO test with real functionality once model is fixed
+  @Override
   public void processFlexibleOptionTen(String date1, String date2, ActionEvent evt) {
     if (evt.getActionCommand().equals("generate")) {
       if (date1 != null && date2 != null) {
-        Map<String, Integer> barChartContents = new LinkedHashMap<>();
-        barChartContents.put("2022-11-01", 8);
-        barChartContents.put("2022-11-02", 5);
-        barChartContents.put("2022-11-03", 23);
-        barChartContents.put("2022-11-04", 15);
-        barChartContents.put("2022-11-05", 28);
-
-                //this.model
-                //.getBarChartContents(date1, date2, this.portfolioUuid, this.user);
+        Map<String, Integer> barChartContents = this.model
+                .getBarChartContents(date1, date2, this.portfolioUuid, this.user);
         if (barChartContents.size() != 0) {
           this.view.showPerformanceGraph(barChartContents);
         } else {

@@ -599,6 +599,9 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
         portfolioIdCb.setEnabled(true);
         userOptionsBg.clearSelection();
         break;
+      case "add investment":
+        JOptionPane.showMessageDialog(uOptionTwoFrame, message);
+        break;
     }
   }
 
