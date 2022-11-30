@@ -129,7 +129,7 @@ public class StockModelMaker implements IStockModelMaker {
 
   @Override
   public List<String> getFlexiblePortfolioPerformance(String date1, String date2,
-                              String portfolioUuid, User user) {
+                                                      String portfolioUuid, User user) {
     return flexibleModel.getPortfolioPerformance(date1, date2, portfolioUuid, user);
   }
 
@@ -142,8 +142,16 @@ public class StockModelMaker implements IStockModelMaker {
   }
 
   @Override
-  public Map<String, Integer> getBarChartContents(String date1,String date2, String portfolioUUID, User user) {
+  public Map<String, Integer> getBarChartContents(String date1, String date2, String portfolioUUID, User user) {
     return flexibleModel.getBarChartContents(date1, date2, portfolioUUID, user);
+  }
+
+  @Override
+  public boolean createPortfolioBasedOnPlan(User user, String portfolioUUID, List<String> tickers,
+                                            String startDate, String endDate, int daySkip,
+                                            int capital, List<Integer> weightList, int commissionRate) {
+    return flexibleModel.createPortfolioBasedOnPlan(user, portfolioUUID, tickers, startDate, endDate,
+            daySkip, capital, weightList, commissionRate);
   }
 
 }

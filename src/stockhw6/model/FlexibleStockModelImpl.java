@@ -26,6 +26,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   public FlexibleStockModelImpl() {
   }
+
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
     List<String> portfolioRows = new ArrayList<>();
@@ -45,7 +46,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         String rdate = strLine.split(",")[3];
         String commissionRate = strLine.split(",")[4];
         String tickerNoOfShares = ticker + "," + noOfShares + ","
-                + stockPrice + "," + rdate+","+commissionRate;
+                + stockPrice + "," + rdate + "," + commissionRate;
         portfolioRows.add(tickerNoOfShares);
       }
       return portfolioRows;
@@ -57,20 +58,17 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker,
                                         String noOfShares, String date, int commissionRate)
-          throws IllegalArgumentException,DateTimeParseException{
+          throws IllegalArgumentException, DateTimeParseException {
 
     boolean isSuccessful = false;
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
-    if(Double.parseDouble(noOfShares) < 0)
-    {
+    if (Double.parseDouble(noOfShares) < 0) {
       throw new IllegalArgumentException();
     }
-    try{
+    try {
       LocalDate testDate = LocalDate.parse(date);
-    }
-    catch(DateTimeParseException e)
-    {
+    } catch (DateTimeParseException e) {
       throw new IllegalArgumentException();
     }
     if (!isFutureDateAllowed(date, false)) {
@@ -82,8 +80,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       stockPrice = getStockPrice(ticker, noOfShares,
               String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
     }
-    if(stockPrice == null)
-    {
+    if (stockPrice == null) {
       stockPrice = getFirstNonNullStockResp(ticker,
               String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))),
               Double.parseDouble(noOfShares));
@@ -110,7 +107,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
           try {
             FileWriter fw = new FileWriter(portfolioFileName, true);
             fw.write(ticker + "," + noOfShares + "," + stockPrice + ","
-                    + date + ","+commissionRate+ "\n");
+                    + date + "," + commissionRate + "\n");
             isSuccessful = true;
             fw.close();
           } catch (IOException e) {
@@ -137,21 +134,17 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public boolean addBuyStockToPortfolio(User user, String portfolioUUID, String ticker,
                                         String noOfShares, String date, int commissionRate)
-          throws IllegalArgumentException
-  {
+          throws IllegalArgumentException {
 
 
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
 
-    if(Double.parseDouble(noOfShares) < 0)
-    {
+    if (Double.parseDouble(noOfShares) < 0) {
       throw new IllegalArgumentException();
     }
-    try{
+    try {
       LocalDate testDate = LocalDate.parse(date);
-    }
-    catch(DateTimeParseException e)
-    {
+    } catch (DateTimeParseException e) {
       throw new IllegalArgumentException();
     }
 
@@ -164,27 +157,25 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       stockPrice = getStockPrice(ticker, noOfShares,
               String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
     }
-    if(stockPrice == null)
-    {
-      stockPrice = getFirstNonNullStockResp(ticker,date,Double.parseDouble(noOfShares));
+    if (stockPrice == null) {
+      stockPrice = getFirstNonNullStockResp(ticker, date, Double.parseDouble(noOfShares));
     }
     String record = ticker + "," + noOfShares + "," + stockPrice + ","
-            + date + ","+commissionRate+ "\n";
+            + date + "," + commissionRate + "\n";
 
     List<String> updatedPortfolioContents =
-              insertIntoSortedPortfolio(portfolioUUID, user, record);
+            insertIntoSortedPortfolio(portfolioUUID, user, record);
     try {
-        FileWriter fw = new FileWriter(portfolioFileName, false);
-        for (String row : updatedPortfolioContents) {
-          fw.write(row + "\n");
-        }
-        fw.close();
-        return true;
-    }
-    catch (IOException e) {
-        e.printStackTrace();
-        return false;
+      FileWriter fw = new FileWriter(portfolioFileName, false);
+      for (String row : updatedPortfolioContents) {
+        fw.write(row + "\n");
       }
+      fw.close();
+      return true;
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
 
 
   }
@@ -195,19 +186,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
                                           String noOfShares, String date, int commissionRate)
           throws IllegalArgumentException {
 
-    try{
+    try {
       LocalDate testDate = LocalDate.parse(date);
-    }
-    catch(DateTimeParseException e)
-    {
+    } catch (DateTimeParseException e) {
       throw new IllegalArgumentException();
     }
-    if(Integer.parseInt(noOfShares) < 0)
-    {
+    if (Integer.parseInt(noOfShares) < 0) {
       throw new IllegalArgumentException();
     }
-    if(LocalDate.parse(date).isAfter(LocalDate.now()))
-    {
+    if (LocalDate.parse(date).isAfter(LocalDate.now())) {
       throw new IllegalArgumentException();
     }
     Map<String, Integer> tickerNumShares = getTickerNumSharesGivenDate(user, portfolioUUID,
@@ -232,15 +219,14 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
               String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
 
     }
-    if(stockPrice == null)
-    {
+    if (stockPrice == null) {
       stockPrice = getFirstNonNullStockResp(ticker,
               String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))),
               Double.parseDouble(noOfShares));
     }
     if (f.exists() && !f.isDirectory()) {
       String record = ticker + "," + "-" + noOfShares + ","
-              + stockPrice + "," + date + ","+ commissionRate+ "\n";
+              + stockPrice + "," + date + "," + commissionRate + "\n";
 
       List<String> updatedPortfolioContents =
               insertIntoSortedPortfolio(portfolioUUID, user, record);
@@ -324,10 +310,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
           }
           stockPrice = getStockPrice(shareDetail,
                   getCurrentDateSkippingWeekends(dateParser(certainDate)));
-          if(stockPrice == null)
-          {
+          if (stockPrice == null) {
             stockPrice = getFirstNonNullStockResp(shareDetail[0],
-                    certainDate,Double.parseDouble(shareDetail[1]));
+                    certainDate, Double.parseDouble(shareDetail[1]));
           }
         }
 
@@ -342,9 +327,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       }
     };
   }
-
-
-
 
 
   @Override
@@ -426,8 +408,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         String shareValue = String.valueOf(getStockPrice(ticker, numShares,
                 String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(bDate)))));
 
-        if(shareValue==null)
-        {
+        if (shareValue == null) {
           shareValue = String.valueOf(getFirstNonNullStockResp(ticker,
                   String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(bDate))),
                   Double.parseDouble(numShares)));
@@ -498,7 +479,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID,
                                                   List<String> tickerList,
-                                            String startDate, int capital,List<Integer> weightList,
+                                                  String startDate, int capital, List<Integer> weightList,
                                                   int commissionRate) {
 
 
@@ -508,39 +489,32 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     boolean isSuccessful;
 
 
+    for (int i = 0; i < tickerList.size(); i++) {
+      cursorDate = startDateLocal;
+      Double stockVal;
+      stockVal = getStockPrice(tickerList.get(i), "1",
+              getCurrentDateSkippingWeekends(cursorDate).toString());
+      if (stockVal == null) {
+        stockVal = getFirstNonNullStockResp(tickerList.get(i),
+                String.valueOf(getCurrentDateSkippingWeekends(cursorDate)), 1);
+      }
+      if (stockVal == null) {
+        stockVal = getFirstNonNullStockResp(tickerList.get(i),
+                getCurrentDateSkippingWeekends(cursorDate).toString(), 1);
+      }
 
+      double numShares = (double) (capital * (weightList.get(i)) / 100.00) / stockVal;
+      isSuccessful = buyStockOnSpecificDate(user, portfolioUUID, tickerList.get(i),
+              String.valueOf(numShares), getCurrentDateSkippingWeekends(cursorDate).toString(),
+              commissionRate);
 
-    for (int i =0;i<tickerList.size();i++) {
-        cursorDate = startDateLocal;
-        Double stockVal;
-        stockVal = getStockPrice(tickerList.get(i),"1",
-                getCurrentDateSkippingWeekends(cursorDate).toString());
-        if(stockVal==null)
-        {
-          stockVal = getFirstNonNullStockResp(tickerList.get(i),
-                String.valueOf(getCurrentDateSkippingWeekends(cursorDate)),1);
-        }
-        if(stockVal == null)
-        {
-            stockVal = getFirstNonNullStockResp(tickerList.get(i),
-                    getCurrentDateSkippingWeekends(cursorDate).toString(),1);
-        }
-
-        double numShares = (double) (capital*(weightList.get(i))/100.00)/stockVal;
-        isSuccessful = buyStockOnSpecificDate(user,portfolioUUID,tickerList.get(i),
-                String.valueOf(numShares),getCurrentDateSkippingWeekends(cursorDate).toString(),
-                commissionRate);
-
-        if(!isSuccessful)
-        {
-          return isSuccessful;
-        }
+      if (!isSuccessful) {
+        return isSuccessful;
+      }
     }
-    isSuccessful =true;
+    isSuccessful = true;
     return isSuccessful;
   }
-
-
 
 
   /**
@@ -567,7 +541,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
           String date = strLine.split(",")[3];
           String commissionRate = strLine.split(",")[4];
           String tickerNoOfShares = ticker + " " + noOfShares + " "
-                  + stockPrice + " " + date +","+ commissionRate;
+                  + stockPrice + " " + date + "," + commissionRate;
           portfolioContents.add(tickerNoOfShares);
         } else {
           return null;
@@ -580,7 +554,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
             fw.write(s.split(" ")[0] + "," + s.split(" ")[1]
                     + "," + s.split(" ")[2]
                     + "," + s.split(" ")[3]
-                    +"," + s.split(" ")[4]
+                    + "," + s.split(" ")[4]
                     + "\n");
           }
 
@@ -600,44 +574,38 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public boolean createPortfolioBasedOnPlan(User user, String portfolioUUID,
                                             List<String> tickerList,
-                                             String startDate, String endDate,
-                                             int daySkip,  int capital,List<Integer> weightList
+                                            String startDate, String endDate,
+                                            int daySkip, int capital, List<Integer> weightList
           , int commissionRate) {
 
 
     try {
-      if(LocalDate.parse(startDate).isAfter(LocalDate.parse(endDate)))
-      {
+      if (LocalDate.parse(startDate).isAfter(LocalDate.parse(endDate))) {
         return false;
       }
 
       StockPlan dollarCostPlan = new DollarCostAveragingPlan(tickerList, weightList, capital,
               startDate,
-              endDate, daySkip,  "quantum", 10000000);
+              endDate, daySkip, "quantum", 10000000);
 
-      boolean isSuccessful = dollarCostPlan.createPortfolio(portfolioUUID, user,commissionRate);
+      boolean isSuccessful = dollarCostPlan.createPortfolio(portfolioUUID, user, commissionRate);
       return isSuccessful;
-    }
-    catch(DateTimeParseException e)
-    {
+    } catch (DateTimeParseException e) {
       return false;
     }
   }
 
 
-
   @Override
-  public Map<String,Integer> getBarChartContents(String date1,String date2, String portfolioUUID,
-                                                 User user)
-  {
-    List<String> graphContents = getPortfolioPerformance(date1,date2,portfolioUUID,user);
-    graphContents = graphContents.subList(0,graphContents.size()-1);
-    Map<String,Integer> barChartContents = new LinkedHashMap<>();
-    for(String item: graphContents)
-    {
+  public Map<String, Integer> getBarChartContents(String date1, String date2, String portfolioUUID,
+                                                  User user) {
+    List<String> graphContents = getPortfolioPerformance(date1, date2, portfolioUUID, user);
+    graphContents = graphContents.subList(0, graphContents.size() - 1);
+    Map<String, Integer> barChartContents = new LinkedHashMap<>();
+    for (String item : graphContents) {
       String colName = item.split(":")[0];
       int colVal = item.split(":")[1].strip().length();
-      barChartContents.put(colName,colVal);
+      barChartContents.put(colName, colVal);
     }
     return barChartContents;
   }
@@ -732,8 +700,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
    * @return a Hashmap with datewise values of portfolio and a scale to map these values to *.
    */
   private Map<Map<String, String>, Integer> getDatePerformanceMap(String date1, String date2,
-                                                                  User user, String portfolioUUID)
-  {
+                                                                  User user, String portfolioUUID) {
 
     List<LocalDate> numDays = getNumDays(date1, date2);
     List<LocalDate> numMonths = getNumMonths(date1, date2);
@@ -745,7 +712,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       graphContentsDate = numMonths;
     } else {
 
-      graphContentsDate = numDays.subList(0,30);
+      graphContentsDate = numDays.subList(0, 30);
     }
     Map<String, Double> graphContentsMap = new HashMap<>();
     for (LocalDate gDate : graphContentsDate) {
@@ -1032,9 +999,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return tickerNumShareIntraDay;
   }
-
-
-
 
 
 }
