@@ -13,6 +13,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import stockhw6.controller.IStockGuiFeatures;
 
+/**
+ * The StockViewImpl class represents user portfolio's features for GUI user interface.
+ */
 public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
   private JPanel loginPanel, userOptionsPanel;
@@ -331,7 +334,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       if (evt.getStateChange() == ItemEvent.SELECTED) {
         portfolioIdCb.setEnabled(false);
         switch (uOptionNumber) {
-          case "2" :
+          case "2":
             features.getPortfolioIdInputForOptionTwo(String.valueOf(item));
             break;
           case "3":
@@ -520,7 +523,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     uOptionOneFrame.setVisible(true);*/
 
     //if (uOptionTwoFrame == null) {
-      setUpFrame("Buy Stocks");
+    setUpFrame("Buy Stocks");
     //}
 
     JPanel panel = getPanelForBuyAndSell();
@@ -540,7 +543,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     panel.add(cancelSellStockButton);
 
     uOptionTwoFrame.add(panel);
-    uOptionTwoFrame.setSize(350,240);
+    uOptionTwoFrame.setSize(350, 240);
     uOptionTwoFrame.setVisible(true);
   }
 
@@ -743,7 +746,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       uOptionTwoFrame.dispose();
     }
     uOptionTwoFrame = new JFrame(title);
-    uOptionTwoFrame.setSize(350,210);
+    uOptionTwoFrame.setSize(350, 210);
     uOptionTwoFrame.setLocation(225, 225);
     uOptionTwoFrame.setLayout(new FlowLayout());
     uOptionTwoFrame.setVisible(true);
@@ -760,7 +763,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     }
 
     portfolioValueFrame = new JFrame();
-    portfolioValueFrame.setSize(800,500);
+    portfolioValueFrame.setSize(800, 500);
     portfolioValueFrame.setLocation(225, 225);
     portfolioValueFrame.setLayout(new BorderLayout());
     portfolioValueFrame.setVisible(true);
@@ -794,7 +797,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
     // frame
     uOptionTwoFrame = new JFrame();
-    uOptionTwoFrame.setSize(350,210);
+    uOptionTwoFrame.setSize(350, 210);
     uOptionTwoFrame.setLocation(225, 225);
     uOptionTwoFrame.setLayout(new FlowLayout());
     uOptionTwoFrame.setVisible(true);
@@ -827,6 +830,11 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
   }
 
+  /**
+   * It returns a panel for buy and sell view.
+   *
+   * @return a JPanel
+   */
   private JPanel getPanelForBuyAndSell() {
     JLabel l1 = new JLabel("Enter stock symbol: ");
     JLabel l2 = new JLabel("Enter number of shares: ");
@@ -846,6 +854,13 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     return panel;
   }
 
+  /**
+   * It returns a panel for dollar cost averaging view.
+   *
+   * @param rows for grid layout.
+   * @param cols for grid layout.
+   * @return a JPanel.
+   */
   private JPanel getDollarCostPanel(int rows, int cols) {
     JLabel l2 = new JLabel("Enter the amount for investment (in $): ");
     JLabel l3 = new JLabel("Enter stock symbol: ");

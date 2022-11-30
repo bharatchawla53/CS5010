@@ -8,6 +8,9 @@ import java.util.Random;
 
 import javax.swing.*;
 
+/**
+ * A class to render bar chart for portfolio performance over time.
+ */
 public class BarChartPanel extends JPanel {
   public static final int TOP_BUFFER = 30; // where additional text is drawn
   public static final int AXIS_OFFSET = 20;
