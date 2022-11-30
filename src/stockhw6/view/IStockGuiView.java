@@ -20,6 +20,7 @@ public interface IStockGuiView {
   void flexibleUserOptionFour();
   void flexibleUserOptionFiveAndSix(String message);
   void flexibleUserOptionEight();
+  void flexibleUserOptionsNine();
   void flexibleUserOptionTen();
   void showSuccessMessage(String message, ActionEvent evt);
   void comboBoxBuilder(List<String> data, String title, String uOption);

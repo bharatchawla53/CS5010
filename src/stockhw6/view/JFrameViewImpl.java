@@ -6,6 +6,7 @@ import java.awt.event.ItemEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,15 +18,17 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
   private JPanel loginPanel, userOptionsPanel;
   private JLabel title, comboBoxDisplay;
   private JRadioButton r1, r2, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10;
-  private JTextField uName, symbol, noOfShares, date, commissionFees, capital, weightage, date2;
+  private JTextField uName, symbol, noOfShares, date, commissionFees, capital, weightage, date2, timeFrequency;
   private JButton uNameSubmitButton, buyStockButton, cancelBuyStockButton,
           saveBuyStockButton, sellStockButton, cancelSellStockButton, saveSellStockButton,
           costBasisButton, cancelCostBasisButton, portfolioValueButton, cancelPortfolioValueButton,
-          fileOpenButton, saveUnameSubmitButton, addInvestmentStockButton, saveInvestmentStockButton,
-          cancelInvestmentStockButton, generateGraphButton;
+          fileOpenButton, saveUnameSubmitButton, addExistingPortfolioInvestmentStockButton,
+          saveExistingPortfolioInvestmentStockButton, cancelExistingPortfolioInvestmentStockButton,
+          generateGraphButton, addInvestmentStockButton, saveInvestmentStockButton,
+          cancelInvestmentStockButton;
   private JFrame uOptionTwoFrame, portfolioValueFrame, barChartFrame;
   private ButtonGroup userOptionsBg;
-  private JComboBox<String> portfolioIdCb;
+  private JComboBox<String> portfolioIdCb, timeInterval;
   private JTable portfolioValueTable;
   private String uOptionNumber;
   private BarChartPanel chartPanel;
@@ -91,6 +94,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     date2 = new JTextField(10);
     capital = new JTextField(10);
     weightage = new JTextField(5);
+    timeFrequency = new JTextField(4);
 
     // text button to buy stock
     buyStockButton = new JButton("Buy");
@@ -144,8 +148,27 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     saveUnameSubmitButton.setActionCommand("submit new user button");
 
     // text button to add stock and its weightage for investment
+    addExistingPortfolioInvestmentStockButton = new JButton("Add");
+    addExistingPortfolioInvestmentStockButton.setActionCommand("add investment");
+
+    // text button to save all stock and its weightage for investment
+    saveExistingPortfolioInvestmentStockButton = new JButton("Save");
+    saveExistingPortfolioInvestmentStockButton.setActionCommand("save investment");
+
+    // text button to cancel stock and its weightage for investment
+    cancelExistingPortfolioInvestmentStockButton = new JButton("Cancel");
+    cancelExistingPortfolioInvestmentStockButton.setActionCommand("cancel investment");
+
+    // text button to generate graph
+    generateGraphButton = new JButton("Generate Bar Chart");
+    generateGraphButton.setActionCommand("generate");
+
+    // combo box for time interval
+    timeInterval = new JComboBox<>();
+
+    // text button to add stock and its weightage for investment
     addInvestmentStockButton = new JButton("Add");
-    addInvestmentStockButton.setActionCommand("add investment");
+    addInvestmentStockButton.setActionCommand("new investment");
 
     // text button to save all stock and its weightage for investment
     saveInvestmentStockButton = new JButton("Save");
@@ -154,10 +177,6 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     // text button to cancel stock and its weightage for investment
     cancelInvestmentStockButton = new JButton("Cancel");
     cancelInvestmentStockButton.setActionCommand("cancel investment");
-
-    // text button to generate graph
-    generateGraphButton = new JButton("Generate Bar Chart");
-    generateGraphButton.setActionCommand("generate");
 
     //pack();
     setVisible(true);
@@ -387,7 +406,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
         userOptionsBg.clearSelection();
       }
     });
-    addInvestmentStockButton.addActionListener(evt -> {
+    addExistingPortfolioInvestmentStockButton.addActionListener(evt -> {
       features.processFlexibleOptionEight(date.getText(), capital.getText(),
               symbol.getText(), weightage.getText(), commissionFees.getText(), evt);
       date.setEnabled(false);
@@ -395,7 +414,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       symbol.setText(null);
       weightage.setText(null);
     });
-    saveInvestmentStockButton.addActionListener(evt -> {
+    saveExistingPortfolioInvestmentStockButton.addActionListener(evt -> {
       features.processFlexibleOptionEight(date.getText(), date.getText(), capital.getText(),
               symbol.getText(), weightage.getText(), evt);
       uOptionTwoFrame.dispose();
@@ -407,7 +426,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       portfolioIdCb.setEnabled(true);
       userOptionsBg.clearSelection();
     });
-    cancelInvestmentStockButton.addActionListener(evt -> {
+    cancelExistingPortfolioInvestmentStockButton.addActionListener(evt -> {
       uOptionTwoFrame.dispose();
       date.setText(null);
       capital.setText(null);
@@ -422,6 +441,71 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       uOptionTwoFrame.dispose();
       date.setText(null);
       date2.setText(null);
+      portfolioIdCb.removeAllItems();
+      portfolioIdCb.setEnabled(true);
+      userOptionsBg.clearSelection();
+    });
+
+    AtomicReference<String> timeIntervalUnit = new AtomicReference<>();
+    timeInterval.addItemListener(iEvt -> {
+      Object item = iEvt.getItem();
+      if (iEvt.getStateChange() == ItemEvent.SELECTED) {
+        timeInterval.setEnabled(false);
+      }
+      timeIntervalUnit.set(String.valueOf(item));
+    });
+
+    addInvestmentStockButton.addActionListener(evt -> {
+      features.processFlexibleOptionNine(capital.getText(), symbol.getText(), weightage.getText(),
+              date.getText(), date2.getText(), timeIntervalUnit.get(), timeFrequency.getText(),
+              commissionFees.getText(), evt);
+      date.setEnabled(false);
+      date2.setEnabled(false);
+      capital.setEnabled(false);
+      timeFrequency.setEnabled(false);
+      commissionFees.setEnabled(false);
+      symbol.setText(null);
+      weightage.setText(null);
+    });
+
+    saveInvestmentStockButton.addActionListener(evt -> {
+      features.processFlexibleOptionNine(capital.getText(), symbol.getText(), weightage.getText(),
+              date.getText(), date2.getText(), timeIntervalUnit.get(), timeFrequency.getText(),
+              commissionFees.getText(), evt);
+
+      uOptionTwoFrame.dispose();
+      date.setText(null);
+      date.setEnabled(true);
+      date2.setText(null);
+      date2.setEnabled(true);
+      capital.setText(null);
+      capital.setEnabled(true);
+      symbol.setText(null);
+      symbol.setEnabled(true);
+      weightage.setText(null);
+      weightage.setEnabled(true);
+      timeFrequency.setText(null);
+      timeFrequency.setEnabled(true);
+      commissionFees.setText(null);
+      commissionFees.setEnabled(true);
+      timeInterval.setEnabled(true);
+      timeInterval.removeAllItems();
+      portfolioIdCb.removeAllItems();
+      portfolioIdCb.setEnabled(true);
+      userOptionsBg.clearSelection();
+    });
+
+    cancelInvestmentStockButton.addActionListener(evt -> {
+      uOptionTwoFrame.dispose();
+      date.setText(null);
+      date2.setText(null);
+      capital.setText(null);
+      symbol.setText(null);
+      weightage.setText(null);
+      commissionFees.setText(null);
+      timeFrequency.setText(null);
+      timeInterval.setEnabled(true);
+      timeInterval.removeAllItems();
       portfolioIdCb.removeAllItems();
       portfolioIdCb.setEnabled(true);
       userOptionsBg.clearSelection();
@@ -506,27 +590,53 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
   @Override
   public void flexibleUserOptionEight() {
     setUpFrame("Dollar-Cost Averaging");
-    JLabel l1 = new JLabel("Enter date (yyyy-MM-dd): ");
-    JLabel l2 = new JLabel("Enter the amount for investment: ");
-    JLabel l3 = new JLabel("Enter stock symbol: ");
-    JLabel l4 = new JLabel("Enter stock weightage: ");
+    JPanel panel = getDollarCostPanel(7, 3);
 
-    JPanel panel = new JPanel();
-    panel.setLayout(new GridLayout(7, 3));
+    JLabel l1 = new JLabel("Enter date (yyyy-MM-dd): ");
+    panel.add(l1);
+    panel.add(date);
+    panel.add(addExistingPortfolioInvestmentStockButton);
+    panel.add(saveExistingPortfolioInvestmentStockButton);
+    panel.add(cancelExistingPortfolioInvestmentStockButton);
+
+    uOptionTwoFrame.add(panel);
+    uOptionTwoFrame.setSize(new Dimension(500, 250));
+    uOptionTwoFrame.setVisible(true);
+  }
+
+  @Override
+  public void flexibleUserOptionsNine() {
+    setUpFrame("Dollar-Cost Averaging");
+    JPanel panel = getDollarCostPanel(12, 4);
+
+    JLabel l = new JLabel("Enter time interval: ");
+    JLabel l1 = new JLabel("Enter start date: ");
+    JLabel l2 = new JLabel("Enter end date (optional): ");
+
+    comboBoxDisplay = new JLabel();
+    comboBoxDisplay.setHorizontalAlignment(JLabel.RIGHT);
+
+    timeInterval.addItem(null);
+    timeInterval.addItem("Days");
+    timeInterval.addItem("Months");
+    timeInterval.addItem("Years");
+
     panel.add(l1);
     panel.add(date);
     panel.add(l2);
-    panel.add(capital);
-    panel.add(l3);
-    panel.add(symbol);
-    panel.add(l4);
-    panel.add(weightage);
+    panel.add(date2);
+
+    panel.add(l);
+    panel.add(timeFrequency);
+    panel.add(comboBoxDisplay);
+    panel.add(timeInterval);
+
     panel.add(addInvestmentStockButton);
     panel.add(saveInvestmentStockButton);
     panel.add(cancelInvestmentStockButton);
 
     uOptionTwoFrame.add(panel);
-    uOptionTwoFrame.setSize(new Dimension(450, 250));
+    uOptionTwoFrame.setSize(new Dimension(600, 330));
     uOptionTwoFrame.setVisible(true);
   }
 
@@ -600,8 +710,11 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
         userOptionsBg.clearSelection();
         break;
       case "add investment":
+      case "new investment":
+      case "save investment":
         JOptionPane.showMessageDialog(uOptionTwoFrame, message);
         break;
+
     }
   }
 
@@ -729,6 +842,25 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     panel.add(l3);
     panel.add(date);
     panel.add(l4);
+    panel.add(commissionFees);
+    return panel;
+  }
+
+  private JPanel getDollarCostPanel(int rows, int cols) {
+    JLabel l2 = new JLabel("Enter the amount for investment (in $): ");
+    JLabel l3 = new JLabel("Enter stock symbol: ");
+    JLabel l4 = new JLabel("Enter stock weightage (in %): ");
+    JLabel l5 = new JLabel("Enter commission fees (in $) : ");
+
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridLayout(rows, cols));
+    panel.add(l2);
+    panel.add(capital);
+    panel.add(l3);
+    panel.add(symbol);
+    panel.add(l4);
+    panel.add(weightage);
+    panel.add(l5);
     panel.add(commissionFees);
     return panel;
   }

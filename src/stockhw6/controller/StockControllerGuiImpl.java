@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import stockhw5.controller.TimeIntervalUnit;
 import stockhw6.model.IStockModelMaker;
 import stockhw6.model.User;
 import stockhw6.view.IStockGuiView;
@@ -18,6 +19,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
   private List<String> tickerList;
   private List<Integer> weights;
   private String investmentDate;
+  private String investmentDate2;
   private int investmentCapital;
 
   public StockControllerGuiImpl(IStockModelMaker model) {
@@ -116,7 +118,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
       List<String> portfolioIds = model.getPortfoliosForUser(this.user);
       this.view.comboBoxBuilder(portfolioIds, "Existing Portfolio Investment", input);
     } else if (input.equals(UserInputOptions.NINE.getInput())) {
-      this.view.flexibleUserOptionEight();
+      this.view.flexibleUserOptionsNine();
     } else if (input.equals(UserInputOptions.TEN.getInput())) {
       List<String> portfolioIds = model.getPortfoliosForUser(this.user);
       this.view.comboBoxBuilder(portfolioIds, "Portfolio Performance", input);
@@ -231,7 +233,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     }
   }
 
-  @Override // TODO prompt commission fees in GUI
+  @Override
   public void processFlexibleOptionEight(String date, String capital, String symbol,
                                          String weightage, String commissionFees, ActionEvent evt) {
 
@@ -270,6 +272,51 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
       this.view.showErrorMessage("Nothing to save");
     }
   }
+
+  @Override
+  public void processFlexibleOptionNine(String capital, String symbol, String weightage,
+                                        String date, String date2, String timeIntervalUnit,
+                                        String timeFrequency,
+                                        String commissionFees, ActionEvent evt) {
+    if (!capital.equals("") && !symbol.equals("") && !weightage.equals("") && !date.equals("")
+            && !date2.equals("") && !timeIntervalUnit.equals("")) {
+      if (!evt.getActionCommand().equals("cancel investment")
+              && !evt.getActionCommand().equals("save investment")) {
+        // set date and capital once
+        if (this.investmentDate == null && this.investmentCapital == 0) {
+          this.investmentDate = date;
+          this.investmentDate2 = date2;
+          this.investmentCapital = Integer.parseInt(capital);
+        }
+
+        if (model.isValidTicker(symbol)) {
+          this.tickerList.add(symbol);
+          this.weights.add(Integer.valueOf(weightage));
+          this.view.showSuccessMessage("Investment added", evt);
+        } else {
+          this.view.showErrorMessage("Invalid symbol, enter again!");
+        }
+      }
+    } else if (!evt.getActionCommand().equals("new investment")
+            && !evt.getActionCommand().equals("cancel investment") ) {
+      if (this.user != null && this.investmentDate != null
+              && this.investmentCapital != 0 && this.tickerList.size() != 0
+              && this.weights.size() != 0) {
+        int cFees = !commissionFees.equals("") ? Integer.parseInt(commissionFees) : 0;
+        if (this.model.createPortfolioBasedOnPlan(this.user, model.generateUUID(), this.tickerList,
+                this.investmentDate, this.investmentDate2, getDaysSkip(timeFrequency, timeIntervalUnit),
+                this.investmentCapital, this.weights, cFees)) {
+          this.view.showSuccessMessage("Your strategy has been successfully "
+                  + "created", evt);
+        } else {
+          this.view.showErrorMessage("Couldn't save the strategy");
+        }
+      }
+    } else {
+      this.view.showErrorMessage("Nothing to save");
+    }
+  }
+
 
   @Override
   public void processFlexibleOptionTen(String date1, String date2, ActionEvent evt) {
@@ -367,5 +414,16 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     return !input.split(",")[3].equals("")
             ? Integer.parseInt(input.split(",")[3])
             : 0;
+  }
+
+  private int getDaysSkip(String timeFrequency, String timeIntervalUnit) {
+    if (TimeIntervalUnit.DAYS.getInput().equals(timeIntervalUnit)) {
+      return Integer.parseInt(timeFrequency);
+    } else if (TimeIntervalUnit.MONTH.getInput().equals(timeIntervalUnit)) {
+      return Integer.parseInt(timeFrequency) * 30;
+    } else if (TimeIntervalUnit.YEAR.getInput().equals(timeIntervalUnit)) {
+      return Integer.parseInt(timeFrequency) * 365;
+    }
+    return 0;
   }
 }

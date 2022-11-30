@@ -11,7 +11,13 @@ public interface IStockGuiFeatures {
   void processFlexibleOptionTwo(String input, ActionEvent evt);
   void processFlexibleOptionThree(String input, ActionEvent evt);
   void processFlexibleOptionFour(String input, ActionEvent evt);
-  void processFlexibleOptionEight(String date, String capital, String symbol, String weightage, String commissionFees, ActionEvent evt);
+  void processFlexibleOptionEight(String date, String capital, String symbol, String weightage,
+                                  String commissionFees, ActionEvent evt);
+
+  void processFlexibleOptionNine(String capital, String symbol, String weightage,
+                                 String date, String date2, String timeIntervalUnit,
+                                 String timeFrequency, String commissionFees, ActionEvent evt);
+
   void processFlexibleOptionTen(String date1, String date2, ActionEvent evt);
   void getPortfolioIdInputForOptionTwo(String input);
   void getPortfolioIdInputForOptionThree(String input);
