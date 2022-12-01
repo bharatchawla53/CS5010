@@ -1423,8 +1423,7 @@ public abstract class AbstractStockModelTest {
 
 
     @Test
-    public void testCreatePortfolioFromPlanFromFuture()
-    {
+    public void testCreatePortfolioFromPlanFromFuture() {
       User user = User.builder().userName("test").build();
       FlexibleStockModel stockModel = flexibleStockModel();
       List<Integer> weightList = new ArrayList<>();
