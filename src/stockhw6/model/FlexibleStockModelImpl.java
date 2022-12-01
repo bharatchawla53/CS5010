@@ -102,16 +102,23 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     if (!isFutureDateAllowed(date, false)) {
       throw new IllegalArgumentException("Future Date is not allowed here!");
     }
-    Double stockPrice = getStockPrice(new String[]{ticker, noOfShares},
-            getCurrentDateSkippingWeekends(LocalDate.parse(date)));
-    if (stockPrice == null) {
-      stockPrice = getStockPrice(ticker, noOfShares,
-              String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
+    Double stockPrice;
+    if(LocalDate.parse(date).isAfter(LocalDate.now()))
+    {
+      stockPrice = null;
     }
-    if (stockPrice == null) {
-      stockPrice = getFirstNonNullStockResp(ticker,
-              String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))),
-              Double.parseDouble(noOfShares));
+    else {
+      stockPrice = getStockPrice(new String[]{ticker, noOfShares},
+              getCurrentDateSkippingWeekends(LocalDate.parse(date)));
+      if (stockPrice == null) {
+        stockPrice = getStockPrice(ticker, noOfShares,
+                String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))));
+      }
+      if (stockPrice == null) {
+        stockPrice = getFirstNonNullStockResp(ticker,
+                String.valueOf(getCurrentDateSkippingWeekends(LocalDate.parse(date))),
+                Double.parseDouble(noOfShares));
+      }
     }
     if (f.exists() && !f.isDirectory()) {
       String record = ticker + "," + noOfShares + "," + stockPrice + "," +
@@ -1192,6 +1199,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
     return tickerNumShareIntraDay;
   }
+
+
+
+
+
 
 
 }

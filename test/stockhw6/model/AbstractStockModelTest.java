@@ -895,6 +895,80 @@ public abstract class AbstractStockModelTest {
     }
 
     @Test
+    public void testCalculateCostBasisPlannedPortfolioMultipleDates()
+    {
+      User user = User.builder().userName("test").build();
+      FlexibleStockModel stockModel = flexibleStockModel();
+      String portfolioUUID = stockModel.generateUUID();
+      int commissionRate = 2;
+      List<String> tickerList = new ArrayList<String>();
+      tickerList.add("AAPL");
+      tickerList.add("MRO");
+      tickerList.add("DAL");
+      tickerList.add("TSLA");
+      String startDate = "2021-12-27";
+      String endDate = "2022-02-27";
+      int daySkip = 30;
+      int monthSkip = 1;
+      int yearSkip = 0;
+
+      int capital = 1000;
+      List<Integer> weightList = new ArrayList<>();
+      weightList.add(25);
+      weightList.add(25);
+      weightList.add(25);
+      weightList.add(25);
+      boolean isSuccessful = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID, tickerList, startDate,
+              endDate, daySkip, capital, weightList, commissionRate);
+
+      assertTrue(isSuccessful);
+
+      List<String> result = stockModel.getPortfolioContents(user, portfolioUUID);
+
+      assertEquals(12, result.size());
+
+      String date = "2022-01-27";
+      double expectedCostBasis = 0;
+
+      for (String row : result) {
+        String[] split = row.split(",");
+        if (LocalDate.parse(split[3]).isBefore(LocalDate.parse(date))) {
+          double totalShareValue = Double.parseDouble(split[1]) * Double.parseDouble(split[2]);
+
+          expectedCostBasis += totalShareValue + commissionRate;
+        }
+      }
+
+      double costBasis = stockModel.calculateCostBasis(user, portfolioUUID, date);
+
+      assertEquals(expectedCostBasis, costBasis, 0.4);
+
+      String date_2 = "2022-06-27";
+      expectedCostBasis = 0;
+
+      for (String row : result) {
+        String[] split = row.split(",");
+        if (LocalDate.parse(split[3]).isBefore(LocalDate.parse(date))) {
+          double totalShareValue = Double.parseDouble(split[1]) * Double.parseDouble(split[2]);
+
+          expectedCostBasis += totalShareValue + commissionRate;
+        }
+      }
+
+      costBasis = stockModel.calculateCostBasis(user, portfolioUUID, date);
+
+      assertEquals(expectedCostBasis, costBasis, 0.4);
+
+
+
+      // only for testing
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+
+
+
+    @Test
     public void testCalculateCostBasisWithNoMatchingRecords() {
       User user = User.builder().userName("test").build();
 
@@ -1464,18 +1538,22 @@ public abstract class AbstractStockModelTest {
       boolean isPlannedPortfolioCreated = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID,
               tickerList, startDate, endDate, daySkip, capital, weightList, commissionRate);
       assertTrue(isPlannedPortfolioCreated);
+      List<String> dateList = new ArrayList<>();
+      dateList.add("2021-10-12");
+      dateList.add("2021-11-12");
+      dateList.add("2021-12-12");
+      for (String date: dateList) {
+        Map<Integer, List<String>> result = stockModel
+                .calculateTotalValueOfAPortfolio("2021-10-30", user, portfolioUUID);
 
-      Map<Integer, List<String>> result = stockModel
-              .calculateTotalValueOfAPortfolio("2021-10-30", user, portfolioUUID);
 
-
-      assertNotNull(result);
-      for (Map.Entry<Integer, List<String>> entry : result.entrySet()) {
-        Integer key = entry.getKey();
-        int size = entry.getValue().size();
-        assertEquals(String.valueOf(key), String.valueOf(size));
+        assertNotNull(result);
+        for (Map.Entry<Integer, List<String>> entry : result.entrySet()) {
+          Integer key = entry.getKey();
+          int size = entry.getValue().size();
+          assertEquals(String.valueOf(key), String.valueOf(size));
+        }
       }
-
       // only for testing
       deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
