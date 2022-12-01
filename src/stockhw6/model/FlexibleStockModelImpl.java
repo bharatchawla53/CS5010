@@ -240,7 +240,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public double calculateCostBasis(User user, String portfolioUUID, String date) {
     if (!validateTransactionInputs(user, portfolioUUID, date)) {
-      return 0.0;
+      return -1.0;
     }
     List<String> portfolioContents = getPortfolioContents(user, portfolioUUID);
     double totalCommissionValue = 0.0;
@@ -1113,6 +1113,10 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       LocalDate testDate = LocalDate.parse(date);
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("This date is not valid!");
+    }
+    if(LocalDate.parse(date).isAfter(LocalDate.now()))
+    {
+      return false;
     }
     return isUserNameExists(user.getUserName());
   }

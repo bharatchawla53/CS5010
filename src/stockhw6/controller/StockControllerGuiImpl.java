@@ -196,9 +196,13 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     if (!evt.getActionCommand().equals("cancel cost basis")) {
       if (input != null && !input.equals("")) {
         double costBasis = model.calculateCostBasis(user, portfolioUuid, input);
-        // successful message
-        this.view.showSuccessMessage("The total amount of money invested in "
-                + "a portfolio : $" + costBasis, evt);
+        if (costBasis < 0) {
+          this.view.showErrorMessage("Invalid input, please enter a valid date.");
+        } else {
+          // successful message
+          this.view.showSuccessMessage("The total amount of money invested in "
+                  + "a portfolio : $" + costBasis, evt);
+        }
       } else {
         // error message
         this.view.showErrorMessage("Invalid input!, Please enter a "
@@ -231,7 +235,15 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
           }
 
           for (String row : totalValueOfAPortfolio.values().stream().findFirst().get()) {
-            totalPortfolioValueSum += Double.parseDouble(row.split(",")[2]);
+            try {
+              totalPortfolioValueSum += Double.parseDouble(row.split(",")[2]);
+            }
+            catch(IndexOutOfBoundsException e)
+            {
+              this.view.showErrorMessage("Invalid input!, Please enter a "
+                      + "valid date. ");
+              return;
+            }
           }
 
           List<String> columns = new ArrayList<>();
@@ -320,12 +332,13 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
               && this.investmentCapital != 0 && this.tickerList.size() != 0
               && this.weights.size() != 0) {
         int cFees = !commissionFees.equals("") ? Integer.parseInt(commissionFees) : 0;
-        if (this.model.createPortfolioBasedOnPlan(this.user, model.generateUUID(),
+        String strategyUUID = model.generateUUID();
+        if (this.model.createPortfolioBasedOnPlan(this.user, strategyUUID,
                 this.tickerList, this.investmentDate, this.investmentDate2,
                 getDaysSkip(timeFrequency, timeIntervalUnit),
                 this.investmentCapital, this.weights, cFees)) {
           this.view.showSuccessMessage("Your strategy has been successfully "
-                  + "created", evt);
+                  + "created at "+strategyUUID, evt);
         } else {
           this.view.showErrorMessage("Couldn't save the strategy");
         }

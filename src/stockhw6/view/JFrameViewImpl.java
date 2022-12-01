@@ -472,6 +472,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
               symbol.getText(), weightage.getText(), commissionFees.getText(), evt);
       date.setEnabled(false);
       capital.setEnabled(false);
+      commissionFees.setEnabled(false);
       symbol.setText(null);
       weightage.setText(null);
     });
@@ -479,9 +480,13 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       features.processFlexibleOptionEight(date.getText(), date.getText(), capital.getText(),
               symbol.getText(), weightage.getText(), evt);
       uOptionTwoFrame.dispose();
+      date.setEnabled(true);
+      capital.setEnabled(true);
+      commissionFees.setEnabled(true);
       date.setText(null);
       capital.setText(null);
       symbol.setText(null);
+      commissionFees.setText(null);
       weightage.setText(null);
       portfolioIdCb.removeAllItems();
       portfolioIdCb.setEnabled(true);
@@ -489,10 +494,14 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     });
     cancelExistingPortfolioInvestmentStockButton.addActionListener(evt -> {
       uOptionTwoFrame.dispose();
+      date.setEnabled(true);
+      capital.setEnabled(true);
+      commissionFees.setEnabled(true);
       date.setText(null);
       capital.setText(null);
       symbol.setText(null);
       weightage.setText(null);
+      commissionFees.setText(null);
       portfolioIdCb.removeAllItems();
       portfolioIdCb.setEnabled(true);
       userOptionsBg.clearSelection();
