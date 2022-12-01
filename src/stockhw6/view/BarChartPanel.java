@@ -15,10 +15,17 @@ public class BarChartPanel extends JPanel {
   public static final int TOP_BUFFER = 30; // where additional text is drawn
   public static final int AXIS_OFFSET = 20;
   private final Map<String, Integer> barChartContents;
-  private Map<Integer, Integer> counts = new LinkedHashMap<>();
+  private final Map<Integer, Integer> barCount = new LinkedHashMap<>();
   private int chartWidth, chartHeight, chartX, chartY;
   private String xLabel, yLabel;
 
+  /**
+   * Constructs a BarChartPanel constructor.
+   *
+   * @param barChartContents map containing dates, number of stars for each date.
+   * @param xl               label for x axis.
+   * @param yl               label for y axis.
+   */
   public BarChartPanel(Map<String, Integer> barChartContents, String xl, String yl) {
     super();
     this.barChartContents = barChartContents;
@@ -28,7 +35,7 @@ public class BarChartPanel extends JPanel {
   }
 
   public void paintComponent(Graphics g) {
-    setupCounts();
+    setupNumberOfBars();
     computeSize();
 
     Graphics2D g2 = (Graphics2D) g;
@@ -39,22 +46,22 @@ public class BarChartPanel extends JPanel {
   private void drawBars(Graphics2D g2) {
     Color original = g2.getColor();
 
-    double numBars = counts.keySet().size();
+    double numBars = barCount.keySet().size();
+    int barWidth = (int) (chartWidth / numBars);
+
     double max = 0.;
-
-    for (Integer wrapper : counts.values()) {
-      if (max < wrapper)
+    for (Integer wrapper : barCount.values()) {
+      if (max < wrapper) {
         max = wrapper;
+      }
     }
-
-    int barWidth = (int) (chartWidth /numBars);
 
     int value, height, xLeft, yTopLeft;
     int counter = 0;
-    for (Integer bar : counts.keySet()) {
-      value = counts.get(bar);
+    for (Integer bar : barCount.keySet()) {
+      value = barCount.get(bar);
 
-      double height2 = (value/max)* chartHeight;
+      double height2 = (value / max) * chartHeight;
       height = (int) height2;
 
       xLeft = AXIS_OFFSET + counter * barWidth;
@@ -83,17 +90,8 @@ public class BarChartPanel extends JPanel {
     AffineTransform affineTransform = new AffineTransform();
     affineTransform.rotate(Math.toRadians(-90), 0, 0);
     g2.setFont(g2.getFont().deriveFont(affineTransform));
-    g2.drawString(yLabel,AXIS_OFFSET / 2 + 3, chartY - chartHeight / 2);
+    g2.drawString(yLabel, AXIS_OFFSET / 2 + 3, chartY - chartHeight / 2);
   }
-
-/*  private void drawText(Graphics2D g2) {
-
-    int size = counts.keySet().size();
-
-    g2.drawString("Number of classes: " + size, AXIS_OFFSET +10, 15) ;
-
-    g2.drawString("Number of counts: " + list.size(), AXIS_OFFSET +10, 30) ;
-  }*/
 
   private Color getRandomColor() {
     Random rand = new Random();
@@ -105,12 +103,12 @@ public class BarChartPanel extends JPanel {
     return new Color(r, g, b);
   }
 
-  private void setupCounts() {
-    counts.clear();
+  private void setupNumberOfBars() {
+    barCount.clear();
     int i = 0;
     for (Map.Entry<String, Integer> entry : barChartContents.entrySet()) {
       int stars = entry.getValue();
-      counts.put(i++, stars);
+      barCount.put(i++, stars);
     }
   }
 
@@ -120,10 +118,10 @@ public class BarChartPanel extends JPanel {
     int height = this.getHeight();
 
     // chart area size
-    chartWidth = width - 2*AXIS_OFFSET;
-    chartHeight = height - 2*AXIS_OFFSET - TOP_BUFFER;
+    chartWidth = width - 2 * AXIS_OFFSET;
+    chartHeight = height - 2 * AXIS_OFFSET - TOP_BUFFER;
 
-    // Chart origin coords
+    // Chart origin co-ordinates
     chartX = AXIS_OFFSET;
     chartY = height - AXIS_OFFSET;
 

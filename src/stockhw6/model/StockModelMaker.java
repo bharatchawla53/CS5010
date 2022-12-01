@@ -137,7 +137,7 @@ public class StockModelMaker implements IStockModelMaker {
   public boolean updatePortfolioBasedOnInvestment(User user, String portfolioUUID,
                                                   List<String> tickerList, String startDate,
                                                   int capital, List<Integer> weightList, int commissionFees) {
-    return flexibleModel.UpdatePortfolioBasedOnInvestment(user, portfolioUUID, tickerList, startDate,
+    return flexibleModel.updatePortfolioBasedOnInvestment(user, portfolioUUID, tickerList, startDate,
             capital, weightList, commissionFees);
   }
 

@@ -104,7 +104,7 @@ public interface FlexibleStockModel extends StockModel {
    * @return true if the transaction was successfully performed, false if atmost 1 transaction.
    * failed in the generated list of transactions from the plan.
    */
-  boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID, List<String> tickerList,
+  boolean updatePortfolioBasedOnInvestment(User user, String portfolioUUID, List<String> tickerList,
                                            String startDate, int capital, List<Integer> weightList, int commissionRate);
 
 

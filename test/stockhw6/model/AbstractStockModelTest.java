@@ -1366,7 +1366,7 @@ public abstract class AbstractStockModelTest {
       String startDate = "2021-08-12";
       int capital = 4000;
       int commissionRate = 2;
-      boolean isPortfolioUpdated = stockModel.UpdatePortfolioBasedOnInvestment(user, portfolioUUID,
+      boolean isPortfolioUpdated = stockModel.updatePortfolioBasedOnInvestment(user, portfolioUUID,
               tickerList, startDate, capital, weightList, commissionRate);
       assertTrue(isPortfolioUpdated);
       List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
@@ -1394,7 +1394,7 @@ public abstract class AbstractStockModelTest {
       String startDate = "2021-08-12";
       int capital = 4000;
       int commissionRate = 2;
-      boolean isPortfolioUpdated = stockModel.UpdatePortfolioBasedOnInvestment(user, portfolioUUID,
+      boolean isPortfolioUpdated = stockModel.updatePortfolioBasedOnInvestment(user, portfolioUUID,
               tickerList, startDate, capital, weightList, commissionRate);
       assertTrue(isPortfolioUpdated);
       List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);

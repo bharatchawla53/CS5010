@@ -609,7 +609,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
   @Override
-  public boolean UpdatePortfolioBasedOnInvestment(User user, String portfolioUUID,
+  public boolean updatePortfolioBasedOnInvestment(User user, String portfolioUUID,
                                                   List<String> tickerList,
                                                   String startDate, int capital, List<Integer> weightList,
                                                   int commissionRate) {
