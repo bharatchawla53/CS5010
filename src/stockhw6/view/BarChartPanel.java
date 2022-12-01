@@ -9,7 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+
 
 /**
  * A class to render bar chart for portfolio performance over time.

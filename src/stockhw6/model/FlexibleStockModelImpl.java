@@ -1117,7 +1117,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("This date is not valid!");
     }
-    return (!(Double.parseDouble(numShares) < 0)) && isValidTicker(ticker);
+
+    if (Double.parseDouble(numShares) < 0) {
+      return false;
+    }
+    return isValidTicker(ticker);
   }
 
   private boolean validateTransactionInputs(String startDate, String endDate,
