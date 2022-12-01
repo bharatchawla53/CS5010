@@ -651,6 +651,13 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
         return false;
       }
 
+
+      if ((LocalDate.parse(startDate).isAfter(LocalDate.now())
+              && LocalDate.parse(endDate).isAfter(LocalDate.now())))
+      {
+        return true;
+      }
+
       StockPlan dollarCostPlan = new DollarCostAveragingPlan(tickerList, weightList, capital,
               startDate,
               endDate, daySkip, "quantum", 10000000);

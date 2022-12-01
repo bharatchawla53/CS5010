@@ -1423,6 +1423,38 @@ public abstract class AbstractStockModelTest {
 
 
     @Test
+    public void testCreatePortfolioFromPlanFromFuture()
+    {
+      User user = User.builder().userName("test").build();
+      FlexibleStockModel stockModel = flexibleStockModel();
+      List<Integer> weightList = new ArrayList<>();
+      int w1 = 25;
+      int w2 = 30;
+      int w3 = 45;
+      weightList.add(w1);
+      weightList.add(w2);
+      weightList.add(w3);
+      String portfolioUUID = stockModel.generateUUID();
+      List<String> tickerList = new ArrayList<>();
+      tickerList.add("AAPL");
+      tickerList.add("MRO");
+      tickerList.add("DAL");
+      String startDate = "2023-06-12";
+      String endDate = "2023-11-12";
+      int daySkip = 30;
+      int monthSkip = 1;
+      int commissionRate = 2;
+      int yearSkip = 0;
+      int capital = 3000;
+      boolean isPlannedPortfolioCreated = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID,
+              tickerList, startDate, endDate, daySkip, capital, weightList, commissionRate);
+
+
+      assertTrue(isPlannedPortfolioCreated);
+      deleteFileOnlyForTesting(portfolioUUID, user, true);
+    }
+
+    @Test
     public void testUpdatePortfolioBasedOnInvestment() {
       User user = User.builder().userName("test").build();
       FlexibleStockModel stockModel = flexibleStockModel();
@@ -1541,7 +1573,7 @@ public abstract class AbstractStockModelTest {
       dateList.add("2021-12-12");
       for (String date : dateList) {
         Map<Integer, List<String>> result = stockModel
-                .calculateTotalValueOfAPortfolio("2021-10-30", user, portfolioUUID);
+                .calculateTotalValueOfAPortfolio(date, user, portfolioUUID);
 
 
         assertNotNull(result);
