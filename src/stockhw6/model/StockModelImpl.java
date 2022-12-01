@@ -23,7 +23,8 @@ public class StockModelImpl extends AbstractStockModel {
 
   @Override
   public Map<Integer, List<String>> calculateTotalValueOfAPortfolio(String certainDate,
-                                                                    User user, String portfolioUUID) {
+                                                                    User user,
+                                                                    String portfolioUUID) {
     List<String> totalValueOfPortfolio = new ArrayList<>();
 
     List<String> portfolioContents = this.getPortfolioContents(user, portfolioUUID);

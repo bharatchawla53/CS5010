@@ -274,11 +274,8 @@ public abstract class AbstractStockModel implements StockModel {
 
 
   protected Double getFirstNonNullStockResp(String ticker, String date, double noOfShares) {
-
     //[{ticker, {}}]
     Double stockPrice = null;
-
-    List<LocalDate> LocalDateList = getCandidateDateList(date);
 
     for (HashMap<String, List<StockApiResponse>> symbolMap : stockHashMapList) {
       if (symbolMap.containsKey(ticker)) {
@@ -295,7 +292,6 @@ public abstract class AbstractStockModel implements StockModel {
       }
     }
     return stockPrice;
-
   }
 
 

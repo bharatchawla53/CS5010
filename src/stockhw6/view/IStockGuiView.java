@@ -113,7 +113,8 @@ public interface IStockGuiView {
    * @param columns                list of columns.
    * @param totalPortfolioValueSum sum of total value of portfolio.
    */
-  void portfolioValueTableView(List<String> data, List<String> columns, double totalPortfolioValueSum);
+  void portfolioValueTableView(List<String> data, List<String> columns,
+                               double totalPortfolioValueSum);
 
   /**
    * It renders view to get external portfolio file path from user.

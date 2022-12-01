@@ -15,7 +15,7 @@ public interface StockPlan {
    * @param user           the user using the app.
    * @param commissionRate the commission rate that the user wants to apply to each transaction.
    * @return true if the transaction was successfully performed, false if atmost 1 transaction
-   * failed in the generated list of transactions from the plan.
+   *         failed in the generated list of transactions from the plan.
    */
   boolean createPortfolio(String portfolioUUID, User user, int commissionRate);
 

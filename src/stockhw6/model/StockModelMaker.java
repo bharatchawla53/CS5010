@@ -96,14 +96,18 @@ public class StockModelMaker implements IStockModelMaker {
 
   @Override
   public boolean saveFlexibleStock(User user, String portfolioUuid,
-                                   String ticker, String noOfShares, String date, int commissionFees) {
-    return flexibleModel.buyStockOnSpecificDate(user, portfolioUuid, ticker, noOfShares, date, commissionFees);
+                                   String ticker, String noOfShares,
+                                   String date, int commissionFees) {
+    return flexibleModel.buyStockOnSpecificDate(user, portfolioUuid, ticker,
+            noOfShares, date, commissionFees);
   }
 
   @Override
   public boolean sellFlexibleStock(User user, String portfolioUuid,
-                                   String ticker, String noOfShares, String date, int commissionFees) {
-    return flexibleModel.sellStockOnSpecifiedDate(user, portfolioUuid, ticker, noOfShares, date, commissionFees);
+                                   String ticker, String noOfShares,
+                                   String date, int commissionFees) {
+    return flexibleModel.sellStockOnSpecifiedDate(user, portfolioUuid, ticker,
+            noOfShares, date, commissionFees);
   }
 
   @Override
@@ -136,22 +140,25 @@ public class StockModelMaker implements IStockModelMaker {
   @Override
   public boolean updatePortfolioBasedOnInvestment(User user, String portfolioUUID,
                                                   List<String> tickerList, String startDate,
-                                                  int capital, List<Integer> weightList, int commissionFees) {
-    return flexibleModel.updatePortfolioBasedOnInvestment(user, portfolioUUID, tickerList, startDate,
-            capital, weightList, commissionFees);
+                                                  int capital, List<Integer> weightList,
+                                                  int commissionFees) {
+    return flexibleModel.updatePortfolioBasedOnInvestment(user, portfolioUUID, tickerList,
+            startDate, capital, weightList, commissionFees);
   }
 
   @Override
-  public Map<String, Integer> getBarChartContents(String date1, String date2, String portfolioUUID, User user) {
+  public Map<String, Integer> getBarChartContents(String date1, String date2,
+                                                  String portfolioUUID, User user) {
     return flexibleModel.getBarChartContents(date1, date2, portfolioUUID, user);
   }
 
   @Override
   public boolean createPortfolioBasedOnPlan(User user, String portfolioUUID, List<String> tickers,
                                             String startDate, String endDate, int daySkip,
-                                            int capital, List<Integer> weightList, int commissionRate) {
-    return flexibleModel.createPortfolioBasedOnPlan(user, portfolioUUID, tickers, startDate, endDate,
-            daySkip, capital, weightList, commissionRate);
+                                            int capital, List<Integer> weightList,
+                                            int commissionRate) {
+    return flexibleModel.createPortfolioBasedOnPlan(user, portfolioUUID, tickers, startDate,
+            endDate, daySkip, capital, weightList, commissionRate);
   }
 
 }

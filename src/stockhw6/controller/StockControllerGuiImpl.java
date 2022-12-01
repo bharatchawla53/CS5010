@@ -69,12 +69,12 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         this.view.showSuccessMessage("User created successfully", evt);
         this.view.getUserOptionsView(this.user.getUserName());
       } else {
-        this.view.showErrorMessage("Username already exists, Please " +
-                "try another valid username.");
+        this.view.showErrorMessage("Username already exists, Please "
+                + "try another valid username.");
       }
     } else if (userName.length() > 8) {
-      this.view.showErrorMessage("Username can't be longer than 8 characters, Please " +
-              "enter a valid username.");
+      this.view.showErrorMessage("Username can't be longer than 8 characters, Please "
+              + "enter a valid username.");
     }
   }
 
@@ -129,7 +129,8 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
 
   @Override
   public void processFlexibleOptionOne(String input, ActionEvent evt) {
-    if (!evt.getActionCommand().equals("cancel buy") && !evt.getActionCommand().equals("save buy")) {
+    if (!evt.getActionCommand().equals("cancel buy")
+            && !evt.getActionCommand().equals("save buy")) {
       if (model.validateFlexibleTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
         if (model.saveFlexibleStock(this.user, this.portfolioUuid,
                 input.split(",")[0], input.split(",")[1],
@@ -145,7 +146,8 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         this.view.showErrorMessage("Invalid input!, Please enter a "
                 + "valid ticker/share/date combination : ");
       }
-    } else if (!evt.getActionCommand().equals("buy") && !evt.getActionCommand().equals("cancel buy")) {
+    } else if (!evt.getActionCommand().equals("buy")
+            && !evt.getActionCommand().equals("cancel buy")) {
       // close the frame message
       this.view.showSuccessMessage("Your portfolio has been created! "
               + "You can find it at : " + portfolioUuid, evt);
@@ -154,7 +156,8 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
 
   @Override
   public void processFlexibleOptionTwo(String input, ActionEvent evt) {
-    if (!evt.getActionCommand().equals("cancel sell") && !evt.getActionCommand().equals("save sell")) {
+    if (!evt.getActionCommand().equals("cancel sell")
+            && !evt.getActionCommand().equals("save sell")) {
       if (model.validateFlexibleTickerShare(input) && model.isValidTicker(input.split(",")[0])) {
         if (model.sellFlexibleStock(this.user, this.portfolioUuid,
                 input.split(",")[0], input.split(",")[1],
@@ -170,7 +173,8 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         this.view.showErrorMessage("Invalid input!, Please enter a "
                 + "valid ticker/share/date combination : ");
       }
-    } else if (!evt.getActionCommand().equals("sell") && !evt.getActionCommand().equals("cancel sell")) {
+    } else if (!evt.getActionCommand().equals("sell")
+            && !evt.getActionCommand().equals("cancel sell")) {
       // close the frame message
       this.view.showSuccessMessage("Your portfolio has been updated! "
               + "You can find it at : " + portfolioUuid, evt);
@@ -262,8 +266,9 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
               && this.investmentCapital != 0 && this.tickerList.size() != 0
               && this.weights.size() != 0) {
         int cFees = !commissionFees.equals("") ? Integer.parseInt(commissionFees) : 0;
-        if (this.model.updatePortfolioBasedOnInvestment(this.user, this.portfolioUuid, this.tickerList,
-                this.investmentDate, this.investmentCapital, this.weights, cFees)) {
+        if (this.model.updatePortfolioBasedOnInvestment(this.user, this.portfolioUuid,
+                this.tickerList, this.investmentDate, this.investmentCapital,
+                this.weights, cFees)) {
           this.view.showSuccessMessage("Your investment has been successfully "
                   + "added to your portfolio", evt);
         } else {
@@ -305,8 +310,9 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
               && this.investmentCapital != 0 && this.tickerList.size() != 0
               && this.weights.size() != 0) {
         int cFees = !commissionFees.equals("") ? Integer.parseInt(commissionFees) : 0;
-        if (this.model.createPortfolioBasedOnPlan(this.user, model.generateUUID(), this.tickerList,
-                this.investmentDate, this.investmentDate2, getDaysSkip(timeFrequency, timeIntervalUnit),
+        if (this.model.createPortfolioBasedOnPlan(this.user, model.generateUUID(),
+                this.tickerList, this.investmentDate, this.investmentDate2,
+                getDaysSkip(timeFrequency, timeIntervalUnit),
                 this.investmentCapital, this.weights, cFees)) {
           this.view.showSuccessMessage("Your strategy has been successfully "
                   + "created", evt);
@@ -365,7 +371,8 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
     if (portfolioUuid != null) {
       if (model.validatePortfolioUUID(input, this.user)) {
         String portfolioFilePath = this.user.getUserName() + "_" + input + ".csv";
-        String message = "Your portfolio has been serialized! You can find it at: " + portfolioFilePath;
+        String message = "Your portfolio has been serialized! You can find it at: "
+                + portfolioFilePath;
         this.view.flexibleUserOptionFiveAndSix(message);
       }
     }
@@ -373,12 +380,13 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
 
   @Override
   public void getFilePathForOptionSix(String input) {
-    if (input != null && model.validateFlexibleUserPortfolioExternalPathAndContentsStructure(input)) {
+    if (input != null && model
+            .validateFlexibleUserPortfolioExternalPathAndContentsStructure(input)) {
       String pUUID = model.saveExternalFlexibleUserPortfolio(input, this.user);
       if (pUUID != null) {
-        String message = "The external portfolio file has " +
-                "been saved successfully. " +
-                "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv";
+        String message = "The external portfolio file has "
+                + "been saved successfully. "
+                + "You can find it at : " + this.user.getUserName() + "_" + pUUID + ".csv";
         this.view.flexibleUserOptionFiveAndSix(message);
       }
     } else {

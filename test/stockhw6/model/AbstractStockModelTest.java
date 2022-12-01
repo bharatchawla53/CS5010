@@ -865,7 +865,8 @@ public abstract class AbstractStockModelTest {
       weightList.add(25);
       weightList.add(25);
       weightList.add(25);
-      boolean isSuccessful = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID, tickerList, startDate,
+      boolean isSuccessful = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID,
+              tickerList, startDate,
               endDate, daySkip, capital, weightList, commissionRate);
 
       assertTrue(isSuccessful);
@@ -895,8 +896,7 @@ public abstract class AbstractStockModelTest {
     }
 
     @Test
-    public void testCalculateCostBasisPlannedPortfolioMultipleDates()
-    {
+    public void testCalculateCostBasisPlannedPortfolioMultipleDates() {
       User user = User.builder().userName("test").build();
       FlexibleStockModel stockModel = flexibleStockModel();
       String portfolioUUID = stockModel.generateUUID();
@@ -918,7 +918,8 @@ public abstract class AbstractStockModelTest {
       weightList.add(25);
       weightList.add(25);
       weightList.add(25);
-      boolean isSuccessful = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID, tickerList, startDate,
+      boolean isSuccessful = stockModel.createPortfolioBasedOnPlan(user, portfolioUUID,
+              tickerList, startDate,
               endDate, daySkip, capital, weightList, commissionRate);
 
       assertTrue(isSuccessful);
@@ -960,12 +961,9 @@ public abstract class AbstractStockModelTest {
       assertEquals(expectedCostBasis, costBasis, 0.4);
 
 
-
       // only for testing
       deleteFileOnlyForTesting(portfolioUUID, user, true);
     }
-
-
 
 
     @Test
@@ -1450,7 +1448,6 @@ public abstract class AbstractStockModelTest {
     }
 
 
-
     @Test
     public void testUpdatePortfolioBasedOnInvestmentPresentPortfolio() {
       User user = User.builder().userName("test").build();
@@ -1542,7 +1539,7 @@ public abstract class AbstractStockModelTest {
       dateList.add("2021-10-12");
       dateList.add("2021-11-12");
       dateList.add("2021-12-12");
-      for (String date: dateList) {
+      for (String date : dateList) {
         Map<Integer, List<String>> result = stockModel
                 .calculateTotalValueOfAPortfolio("2021-10-30", user, portfolioUUID);
 
@@ -1602,7 +1599,7 @@ public abstract class AbstractStockModelTest {
   }
 
   private static final String[] tickers = new String[]{
-          "AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
+    "AAPL", "MSFT", "TSLA", "MRO", "DAL", "AMZN"};
 
 
   @Test

@@ -25,9 +25,6 @@ import java.util.regex.Pattern;
  */
 public class FlexibleStockModelImpl extends AbstractStockModel implements FlexibleStockModel {
 
-  public FlexibleStockModelImpl() {
-  }
-
   @Override
   public List<String> getPortfolioContents(User user, String portfolioUUID) {
     boolean isUserValid = isUserNameExists(user.getUserName());
@@ -62,30 +59,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
   }
 
-  private boolean validateTransactionInputs(String noOfShares, String date, User user, String portfolioUUID, int commissionRate, String ticker) throws IllegalArgumentException {
-    if (Double.parseDouble(noOfShares) < 0) {
-      throw new IllegalArgumentException("Number of shares is negative!");
-    }
-    try {
-      LocalDate testDate = LocalDate.parse(date);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("This date is not valid!");
-    }
-    if (!isUserNameExists(user.getUserName()) ) {
-
-      return false;
-
-    }
-    if (commissionRate < 0) {
-      return false;
-    }
-    if (!isValidTicker(ticker)) {
-      return false;
-    }
-
-    return true;
-  }
-
   @Override
   public boolean buyStockOnSpecificDate(User user, String portfolioUUID, String ticker,
                                         String noOfShares, String date, int commissionRate)
@@ -94,7 +67,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     boolean isSuccessful = false;
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
-    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    boolean isValidated = validateTransactionInputs(noOfShares, date, user,
+            portfolioUUID, commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -103,11 +77,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       throw new IllegalArgumentException("Future Date is not allowed here!");
     }
     Double stockPrice;
-    if(LocalDate.parse(date).isAfter(LocalDate.now()))
-    {
+    if (LocalDate.parse(date).isAfter(LocalDate.now())) {
       stockPrice = null;
-    }
-    else {
+    } else {
       stockPrice = getStockPrice(new String[]{ticker, noOfShares},
               getCurrentDateSkippingWeekends(LocalDate.parse(date)));
       if (stockPrice == null) {
@@ -121,8 +93,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       }
     }
     if (f.exists() && !f.isDirectory()) {
-      String record = ticker + "," + noOfShares + "," + stockPrice + "," +
-              date + "," + commissionRate + "\n";
+      String record = ticker + "," + noOfShares + "," + stockPrice + ","
+              + date + "," + commissionRate + "\n";
 
       List<String> updatedPortfolioContents =
               insertIntoSortedPortfolio(portfolioUUID, user, record);
@@ -157,16 +129,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return isSuccessful;
   }
 
-
-  private boolean isFutureDateAllowed(String date, boolean isFutureDateAllowed) {
-    if (!isFutureDateAllowed) {
-      if (LocalDate.parse(date).isAfter(LocalDate.now())) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public boolean addBuyStockToPortfolio(User user, String portfolioUUID, String ticker,
                                         String noOfShares, String date, int commissionRate)
@@ -175,7 +137,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
 
-    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    boolean isValidated = validateTransactionInputs(noOfShares, date, user,
+            portfolioUUID, commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -208,17 +171,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       e.printStackTrace();
       return false;
     }
-
-
   }
-
 
   @Override
   public boolean sellStockOnSpecifiedDate(User user, String portfolioUUID, String ticker,
                                           String noOfShares, String date, int commissionRate)
           throws IllegalArgumentException {
 
-    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    boolean isValidated = validateTransactionInputs(noOfShares, date, user,
+            portfolioUUID, commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -274,24 +235,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     }
 
     return isSuccessful;
-  }
-
-
-  private boolean validateTransactionInputs(User user, String portfolioUUID, String date) throws IllegalArgumentException {
-
-    try {
-      LocalDate testDate = LocalDate.parse(date);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("This date is not valid!");
-    }
-    if (!isUserNameExists(user.getUserName()) ) {
-
-      return false;
-
-    }
-
-
-    return true;
   }
 
   @Override
@@ -382,24 +325,6 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     };
   }
 
-
-  private boolean validateTransactionInputs(String ticker, String numShares, String date) throws IllegalArgumentException {
-
-    try {
-      LocalDate testDate = LocalDate.parse(date);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("This date is not valid!");
-    }
-    if (Double.parseDouble(numShares) < 0 || !isValidTicker(ticker)) {
-
-      return false;
-
-    }
-
-
-    return true;
-  }
-
   @Override
   public Double getStockPrice(String[] shareDetail, LocalDate certainDate) {
     if (!validateTransactionInputs(shareDetail[0], shareDetail[1], certainDate.toString())) {
@@ -430,7 +355,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
    * @return the total stock price.
    */
   protected Double getStockPrice(String ticker, String noOfShares, String date) {
-    if (!validateTransactionInputs(ticker, noOfShares, date.toString())) {
+    if (!validateTransactionInputs(ticker, noOfShares, date)) {
       return 0.0;
     }
     Double stockPrice;
@@ -448,28 +373,10 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return stockPrice;
   }
 
-
-  private boolean validateTransactionInputs(String startDate, String endDate, String portfolioUUID, User user) throws IllegalArgumentException {
-    try {
-      LocalDate startDateL = LocalDate.parse(startDate);
-      LocalDate endDateL = LocalDate.parse(endDate);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("This date is not valid!");
-    }
-    if (!isUserNameExists(user.getUserName()) ) {
-
-      return false;
-
-    }
-
-
-    return true;
-  }
-
   @Override
   public List<String> getPortfolioPerformance(String date1, String date2,
                                               String portfolioUUID, User user) {
-    if (!validateTransactionInputs(date1, date2, portfolioUUID, user)) {
+    if (!validateTransactionInputs(date1, date2, user)) {
       return Collections.singletonList(" ");
     }
     Map<Map<String, String>, Integer> nMap = getDatePerformanceMap(date1,
@@ -494,7 +401,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
   @Override
   public List<String> portfolioCompositionFlexible(String portfolioUUID, User user, String date) {
-    if (!validateTransactionInputs(date, date, portfolioUUID, user)) {
+    if (!validateTransactionInputs(date, date, user)) {
       return Collections.singletonList(" ");
     }
     Map<String, Double> tickerNumShareIntraDay = getTickerNumShareIntraDay(portfolioUUID, user);
@@ -578,50 +485,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   }
 
 
-  private boolean validateTransactionInputs(User user, String portfolioUUID, List<String> tickerList, String startDate, String endDate, int capital, List<Integer> weightList, int commissionRate) throws IllegalArgumentException {
-    if (!isUserNameExists(user.getUserName()) ) {
-
-      return false;
-
-    }
-    for (String ticker : tickerList) {
-      if (!isValidTicker(ticker)) {
-        return false;
-      }
-    }
-    try {
-      LocalDate startDateL = LocalDate.parse(startDate);
-      LocalDate endDateL = LocalDate.parse(endDate);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("This date is not valid!");
-    }
-    if (capital < 0) {
-      return false;
-    }
-    int weightSum = 0;
-    for (int weight : weightList) {
-      weightSum += weight;
-      if (weight < 0) {
-
-        return false;
-      }
-    }
-    if (weightSum < 100) {
-      return false;
-    }
-    if (commissionRate < 0) {
-      return false;
-    }
-    return true;
-  }
-
   @Override
   public boolean updatePortfolioBasedOnInvestment(User user, String portfolioUUID,
                                                   List<String> tickerList,
-                                                  String startDate, int capital, List<Integer> weightList,
+                                                  String startDate, int capital,
+                                                  List<Integer> weightList,
                                                   int commissionRate) {
 
-    if (!validateTransactionInputs(user, portfolioUUID, tickerList, startDate, startDate, capital, weightList, commissionRate)) {
+    if (!validateTransactionInputs(user, tickerList, startDate,
+            startDate, capital, weightList, commissionRate)) {
       return false;
     }
     //UUID chosen from menu in controller
@@ -657,12 +529,15 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return isSuccessful;
   }
 
-  private boolean buyStockOnSpecificDateGivenPortfolio(User user, String portfolioUUID, String ticker,
-                                                       String noOfShares, String date, int commissionRate) {
+  private boolean buyStockOnSpecificDateGivenPortfolio(User user, String portfolioUUID,
+                                                       String ticker,
+                                                       String noOfShares, String date,
+                                                       int commissionRate) {
     boolean isSuccessful = false;
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
-    boolean isValidated = validateTransactionInputs(noOfShares, date, user, portfolioUUID, commissionRate, ticker);
+    boolean isValidated = validateTransactionInputs(noOfShares, date,
+            user, portfolioUUID, commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -682,8 +557,8 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
               Double.parseDouble(noOfShares));
     }
     if (f.exists() && !f.isDirectory()) {
-      String record = ticker + "," + noOfShares + "," + stockPrice + "," +
-              date + "," + commissionRate + "\n";
+      String record = ticker + "," + noOfShares + "," + stockPrice + ","
+              + date + "," + commissionRate + "\n";
 
       List<String> updatedPortfolioContents =
               insertIntoSortedPortfolio(portfolioUUID, user, record);
@@ -697,14 +572,10 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }
-    else
-    {
+    } else {
       return false;
     }
     return false;
-
-
   }
 
 
@@ -767,10 +638,11 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   public boolean createPortfolioBasedOnPlan(User user, String portfolioUUID,
                                             List<String> tickerList,
                                             String startDate, String endDate,
-                                            int daySkip, int capital, List<Integer> weightList
-          , int commissionRate) {
+                                            int daySkip, int capital, List<Integer> weightList,
+                                            int commissionRate) {
 
-    if (!validateTransactionInputs(user, portfolioUUID, tickerList, startDate, endDate, capital, weightList, commissionRate)) {
+    if (!validateTransactionInputs(user, tickerList, startDate,
+            endDate, capital, weightList, commissionRate)) {
       return false;
     }
 
@@ -783,8 +655,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
               startDate,
               endDate, daySkip, "quantum", 10000000);
 
-      boolean isSuccessful = dollarCostPlan.createPortfolio(portfolioUUID, user, commissionRate);
-      return isSuccessful;
+      return dollarCostPlan.createPortfolio(portfolioUUID, user, commissionRate);
     } catch (DateTimeParseException e) {
       return false;
     }
@@ -794,7 +665,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
   @Override
   public Map<String, Integer> getBarChartContents(String date1, String date2, String portfolioUUID,
                                                   User user) {
-    if (!validateTransactionInputs(date1, date2, portfolioUUID, user)) {
+    if (!validateTransactionInputs(date1, date2, user)) {
       Map<String, Integer> emptyChart = new HashMap<>();
       emptyChart.put("NA", 0);
       return emptyChart;
@@ -1200,10 +1071,99 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return tickerNumShareIntraDay;
   }
 
+  private boolean isFutureDateAllowed(String date, boolean isFutureDateAllowed) {
+    if (!isFutureDateAllowed) {
+      if (LocalDate.parse(date).isAfter(LocalDate.now())) {
+        return false;
+      }
+    }
+    return true;
+  }
 
+  private boolean validateTransactionInputs(String noOfShares, String date, User user, String portfolioUUID,
+                                            int commissionRate, String ticker) throws IllegalArgumentException {
+    if (Double.parseDouble(noOfShares) < 0) {
+      throw new IllegalArgumentException("Number of shares is negative!");
+    }
+    try {
+      LocalDate testDate = LocalDate.parse(date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (!isUserNameExists(user.getUserName())) {
+      return false;
+    }
+    if (commissionRate < 0) {
+      return false;
+    }
+    return isValidTicker(ticker);
+  }
 
+  private boolean validateTransactionInputs(User user, String portfolioUUID, String date)
+          throws IllegalArgumentException {
+    try {
+      LocalDate testDate = LocalDate.parse(date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    return isUserNameExists(user.getUserName());
+  }
 
+  private boolean validateTransactionInputs(String ticker, String numShares, String date)
+          throws IllegalArgumentException {
+    try {
+      LocalDate testDate = LocalDate.parse(date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    return !(Double.parseDouble(numShares) < 0) && isValidTicker(ticker);
+  }
 
+  private boolean validateTransactionInputs(String startDate, String endDate,
+                                            User user) throws IllegalArgumentException {
+    try {
+      LocalDate startDateL = LocalDate.parse(startDate);
+      LocalDate endDateL = LocalDate.parse(endDate);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    return isUserNameExists(user.getUserName());
+  }
 
+  private boolean validateTransactionInputs(User user, List<String> tickerList,
+                                            String startDate, String endDate, int capital,
+                                            List<Integer> weightList, int commissionRate)
+          throws IllegalArgumentException {
+    if (!isUserNameExists(user.getUserName())) {
+      return false;
+    }
+
+    for (String ticker : tickerList) {
+      if (!isValidTicker(ticker)) {
+        return false;
+      }
+    }
+    try {
+      LocalDate startDateL = LocalDate.parse(startDate);
+      LocalDate endDateL = LocalDate.parse(endDate);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("This date is not valid!");
+    }
+    if (capital < 0) {
+      return false;
+    }
+    int weightSum = 0;
+    for (int weight : weightList) {
+      weightSum += weight;
+      if (weight < 0) {
+
+        return false;
+      }
+    }
+    if (weightSum < 100) {
+      return false;
+    }
+    return commissionRate >= 0;
+  }
 
 }

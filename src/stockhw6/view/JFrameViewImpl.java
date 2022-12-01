@@ -1,6 +1,10 @@
 package stockhw6.view;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.io.File;
@@ -8,7 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import stockhw6.controller.IStockGuiFeatures;
@@ -18,24 +35,64 @@ import stockhw6.controller.IStockGuiFeatures;
  */
 public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
-  private JPanel loginPanel, userOptionsPanel;
-  private JLabel title, comboBoxDisplay;
-  private JRadioButton r1, r2, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10;
-  private JTextField uName, symbol, noOfShares, date, commissionFees, capital, weightage, date2, timeFrequency;
-  private JButton uNameSubmitButton, buyStockButton, cancelBuyStockButton,
-          saveBuyStockButton, sellStockButton, cancelSellStockButton, saveSellStockButton,
-          costBasisButton, cancelCostBasisButton, portfolioValueButton, cancelPortfolioValueButton,
-          fileOpenButton, saveUnameSubmitButton, addExistingPortfolioInvestmentStockButton,
-          saveExistingPortfolioInvestmentStockButton, cancelExistingPortfolioInvestmentStockButton,
-          generateGraphButton, addInvestmentStockButton, saveInvestmentStockButton,
-          cancelInvestmentStockButton;
-  private JFrame uOptionTwoFrame, portfolioValueFrame, barChartFrame;
+  private JPanel loginPanel;
+  private JPanel userOptionsPanel;
+  private JLabel title;
+  private JLabel comboBoxDisplay;
+  private JRadioButton r1;
+  private JRadioButton r2;
+  private JRadioButton u1;
+  private JRadioButton u2;
+  private JRadioButton u3;
+  private JRadioButton u4;
+  private JRadioButton u5;
+  private JRadioButton u6;
+  private JRadioButton u7;
+  private JRadioButton u8;
+  private JRadioButton u9;
+  private JRadioButton u10;
+  private JTextField uName;
+  private JTextField symbol;
+  private JTextField noOfShares;
+  private JTextField date;
+  private JTextField commissionFees;
+  private JTextField capital;
+  private JTextField weightage;
+  private JTextField date2;
+  private JTextField timeFrequency;
+  private JButton uNameSubmitButton;
+  private JButton buyStockButton;
+  private JButton cancelBuyStockButton;
+  private JButton saveBuyStockButton;
+  private JButton sellStockButton;
+  private JButton cancelSellStockButton;
+  private JButton saveSellStockButton;
+  private JButton costBasisButton;
+  private JButton cancelCostBasisButton;
+  private JButton portfolioValueButton;
+  private JButton cancelPortfolioValueButton;
+  private JButton fileOpenButton;
+  private JButton saveUnameSubmitButton;
+  private JButton addExistingPortfolioInvestmentStockButton;
+  private JButton saveExistingPortfolioInvestmentStockButton;
+  private JButton cancelExistingPortfolioInvestmentStockButton;
+  private JButton generateGraphButton;
+  private JButton addInvestmentStockButton;
+  private JButton saveInvestmentStockButton;
+  private JButton cancelInvestmentStockButton;
+  private JFrame uOptionTwoFrame;
+  private JFrame portfolioValueFrame;
+  private JFrame barChartFrame;
   private ButtonGroup userOptionsBg;
-  private JComboBox<String> portfolioIdCb, timeInterval;
+  private JComboBox<String> portfolioIdCb;
+  private JComboBox<String> timeInterval;
   private JTable portfolioValueTable;
   private String uOptionNumber;
   private BarChartPanel chartPanel;
 
+  /**
+   * Constructor to initialize JFrame and it's components.
+   */
   public JFrameViewImpl() {
     super();
     setTitle("Welcome to flexible portfolio manager");
@@ -45,17 +102,12 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
     // initial login screen panel
     loginPanel = new JPanel();
-    //loginPanel.setLayout(new FlowLayout());
-    //loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.PAGE_AXIS));
-    //loginPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
     // label for the panel
     title = new JLabel("Portfolio Manager");
     title.setFont(new Font("Arial", Font.PLAIN, 15));
     title.setHorizontalAlignment(JLabel.CENTER);
     title.setVerticalAlignment(JLabel.CENTER);
-    //title.setSize(300, 30);
-    //title.setLocation(300, 100);
     loginPanel.add(title);
     this.add(loginPanel);
 
@@ -68,21 +120,27 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     uNameSubmitButton.setActionCommand("submit button");
 
     // radio buttons for flexible portfolio functionality
-    u1 = new JRadioButton("Would you like to create a portfolio with shares of one or more stock on a specific date?");
+    u1 = new JRadioButton("Would you like to create a portfolio with shares "
+            + "of one or more stock on a specific date?");
     u1.setActionCommand("1");
-    u2 = new JRadioButton("Would you like to sell a specific number of shares of a specific stock on a specified date from a given portfolio?");
+    u2 = new JRadioButton("Would you like to sell a specific number of shares "
+            + "of a specific stock on a specified date from a given portfolio?");
     u2.setActionCommand("2");
-    u3 = new JRadioButton("Would you like to determine the cost basis of a portfolio by a specific date?");
+    u3 = new JRadioButton("Would you like to determine the cost basis "
+            + "of a portfolio by a specific date?");
     u3.setActionCommand("3");
-    u4 = new JRadioButton("Would you like to determine the total value of a portfolio on a certain date?");
+    u4 = new JRadioButton("Would you like to determine the total value "
+            + "of a portfolio on a certain date?");
     u4.setActionCommand("4");
     u5 = new JRadioButton("Would you like to persist a portfolio so that it can be saved?");
     u5.setActionCommand("5");
     u6 = new JRadioButton("Would you like to load an external portfolio?");
     u6.setActionCommand("6");
-    u7 = new JRadioButton("Would you like to buy a specific number of shares of one or more stock on a specific date from a given portfolio?");
+    u7 = new JRadioButton("Would you like to buy a specific number of shares of "
+            + "one or more stock on a specific date from a given portfolio?");
     u7.setActionCommand("7");
-    u8 = new JRadioButton("Would you like to invest a specific amount by specifying the weights on a specific date from a given portfolio?");
+    u8 = new JRadioButton("Would you like to invest a specific amount by specifying "
+            + "the weights on a specific date from a given portfolio?");
     u8.setActionCommand("8");
     u9 = new JRadioButton("Would you like to create a portfolio using dollar-cost averaging?");
     u9.setActionCommand("9");
@@ -217,7 +275,8 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     userOptionsPanel.setLayout(new BoxLayout(userOptionsPanel, BoxLayout.PAGE_AXIS));
 
     JPanel radioPanel = new JPanel();
-    radioPanel.setBorder(BorderFactory.createTitledBorder("Welcome " + userName + " to Flexible Portfolio Panel"));
+    radioPanel.setBorder(BorderFactory.createTitledBorder("Welcome " + userName
+            + " to Flexible Portfolio Panel"));
     radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.PAGE_AXIS));
 
     JLabel l = new JLabel("Select one of the options from below");
@@ -290,7 +349,8 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
   @Override
   public void showErrorMessage(String message) {
-    JOptionPane.showMessageDialog(loginPanel, message, "Portfolio Manager", JOptionPane.ERROR_MESSAGE);
+    JOptionPane.showMessageDialog(loginPanel, message, "Portfolio Manager",
+            JOptionPane.ERROR_MESSAGE);
   }
 
   @Override
@@ -354,6 +414,9 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
             break;
           case "10":
             features.getPortfolioIdInputForOptionTen(String.valueOf(item));
+            break;
+          default:
+            break;
         }
       }
     });
@@ -372,7 +435,8 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       portfolioIdCb.setEnabled(true);
       userOptionsBg.clearSelection();
     });
-    costBasisButton.addActionListener(evt -> features.processFlexibleOptionThree(date.getText(), evt));
+    costBasisButton.addActionListener(evt -> features
+            .processFlexibleOptionThree(date.getText(), evt));
     cancelCostBasisButton.addActionListener(evt -> {
       uOptionTwoFrame.dispose();
       date.setText(null);
@@ -717,7 +781,8 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       case "save investment":
         JOptionPane.showMessageDialog(uOptionTwoFrame, message);
         break;
-
+      default:
+        break;
     }
   }
 
@@ -753,7 +818,8 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
   }
 
   @Override
-  public void portfolioValueTableView(List<String> data, List<String> columns, double totalPortfolioValueSum) {
+  public void portfolioValueTableView(List<String> data, List<String> columns,
+                                      double totalPortfolioValueSum) {
     Object[][] rows = new Object[data.size()][data.size() * 3];
     for (int i = 0; i < data.size(); i++) {
       String[] split = data.get(i).split(",");

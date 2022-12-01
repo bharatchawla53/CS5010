@@ -6,7 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+
 
 /**
  * A class to render bar chart for portfolio performance over time.
@@ -16,8 +17,12 @@ public class BarChartPanel extends JPanel {
   public static final int AXIS_OFFSET = 20;
   private final Map<String, Integer> barChartContents;
   private final Map<Integer, Integer> barCount = new LinkedHashMap<>();
-  private int chartWidth, chartHeight, chartX, chartY;
-  private String xLabel, yLabel;
+  private int chartWidth;
+  private int chartHeight;
+  private int chartX;
+  private int chartY;
+  private String xLabel;
+  private String yLabel;
 
   /**
    * Constructs a BarChartPanel constructor.
@@ -34,6 +39,11 @@ public class BarChartPanel extends JPanel {
     yLabel = yl;
   }
 
+  /**
+   * Component to process bar chart and it's axes.
+   *
+   * @param g Graphics object
+   */
   public void paintComponent(Graphics g) {
     setupNumberOfBars();
     computeSize();
@@ -56,7 +66,10 @@ public class BarChartPanel extends JPanel {
       }
     }
 
-    int value, height, xLeft, yTopLeft;
+    int value;
+    int height;
+    int xLeft;
+    int yTopLeft;
     int counter = 0;
     for (Integer bar : barCount.keySet()) {
       value = barCount.get(bar);

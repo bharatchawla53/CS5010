@@ -12,10 +12,10 @@ public class DollarCostAveragingPlan implements StockPlan {
   private List<Integer> weightList;
   private int capital;
   private int capitalCeiling;
-  private String date_1, date_2;
+  private String date1;
+  private String date2;
   private int daySkip;
   private String investmentTiming;
-
   private FlexibleStockModelImpl model;
 
   /**
@@ -37,15 +37,15 @@ public class DollarCostAveragingPlan implements StockPlan {
    *                         iteration.
    */
   public DollarCostAveragingPlan(List<String> tickerList, List<Integer> weightList, int capital,
-                                 String date_1,
-                                 String date_2, int daySkip,
+                                 String date1,
+                                 String date2, int daySkip,
                                  String investmentTiming, int capitalCeiling) {
     this.tickerList = tickerList;
     this.weightList = weightList;
     this.capital = capital;
     this.capitalCeiling = capitalCeiling;
-    this.date_1 = date_1;
-    this.date_2 = date_2;
+    this.date1 = date1;
+    this.date2 = date2;
     this.daySkip = daySkip;
 
     this.investmentTiming = investmentTiming;
@@ -72,8 +72,8 @@ public class DollarCostAveragingPlan implements StockPlan {
 
 
       if (investmentTiming.equals("quantum")) {
-        LocalDate localDate2 = LocalDate.parse(date_2);
-        LocalDate localDate1 = LocalDate.parse(date_1);
+        LocalDate localDate2 = LocalDate.parse(date2);
+        LocalDate localDate1 = LocalDate.parse(date1);
 
         LocalDate cursorDate;
         boolean isSuccessful;
@@ -103,7 +103,8 @@ public class DollarCostAveragingPlan implements StockPlan {
               numShares = (double) (capital * (weightList.get(i)) / (100.00 * qCount)) / stockVal;
               isSuccessful = model.buyStockOnSpecificDate(user, portfolioUUID, tickerList.get(i),
                       String.valueOf(numShares),
-                      model.getCurrentDateSkippingWeekends(LocalDate.now()).toString(), commissionRate);
+                      model.getCurrentDateSkippingWeekends(LocalDate.now()).toString(),
+                      commissionRate);
             } else {
               stockVal = model.getStockPrice(tickerList.get(i), "1",
                       model.getCurrentDateSkippingWeekends(cursorDate).toString());

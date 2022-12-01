@@ -27,6 +27,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Test class for StockControllerGuiImpl.
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class StockControllerGuiTest {
 
@@ -162,7 +165,8 @@ public class StockControllerGuiTest {
     controller.getUserOptionsView(evt);
 
     verify(view, times(1))
-            .comboBoxBuilder(new ArrayList<>(), "Portfolio Value", UserInputOptions.FOUR.getInput());
+            .comboBoxBuilder(new ArrayList<>(), "Portfolio Value",
+                    UserInputOptions.FOUR.getInput());
     verify(model, times(1)).getPortfoliosForUser(any());
   }
 
@@ -208,7 +212,8 @@ public class StockControllerGuiTest {
     controller.getUserOptionsView(evt);
 
     verify(view, times(1))
-            .comboBoxBuilder(new ArrayList<>(), "Existing Portfolio Investment", UserInputOptions.EIGHT.getInput());
+            .comboBoxBuilder(new ArrayList<>(), "Existing Portfolio Investment",
+                    UserInputOptions.EIGHT.getInput());
     verify(model, times(1)).getPortfoliosForUser(any());
   }
 
@@ -229,7 +234,8 @@ public class StockControllerGuiTest {
     controller.getUserOptionsView(evt);
 
     verify(view, times(1))
-            .comboBoxBuilder(new ArrayList<>(), "Portfolio Performance", UserInputOptions.TEN.getInput());
+            .comboBoxBuilder(new ArrayList<>(), "Portfolio Performance",
+                    UserInputOptions.TEN.getInput());
     verify(model, times(1)).getPortfoliosForUser(any());
   }
 
