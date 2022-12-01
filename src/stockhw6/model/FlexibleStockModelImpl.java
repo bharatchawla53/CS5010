@@ -786,7 +786,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     List<LocalDate> graphContentsDate;
     if (numYears.size() > 5 && numYears.size() <= 30) {
       graphContentsDate = numYears;
-    } else if (numMonths.size() > 5 && numYears.size() <= 30) {
+    } else if (numMonths.size() > 5 && numMonths.size() <= 30) {
       graphContentsDate = numMonths;
     } else {
       graphContentsDate = numDays.subList(0, Math.min(numDays.size(), 30));
