@@ -796,8 +796,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     graphContents = graphContents.subList(0, graphContents.size() - 1);
     Map<String, Integer> barChartContents = new LinkedHashMap<>();
     for (String item : graphContents) {
-      String colName = item.split(":")[0];
-      int colVal = item.split(":")[1].strip().length();
+      String[] split = item.split(":");
+      String colName = split[0];
+      int colVal = split.length > 1 ? item.split(":")[1].strip().length() : 0;
       barChartContents.put(colName, colVal);
     }
     return barChartContents;
