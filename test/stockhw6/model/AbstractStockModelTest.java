@@ -310,7 +310,7 @@ public abstract class AbstractStockModelTest {
 
       List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
-      assertEquals(3, portfoliosForUser.size());
+      assertEquals(1, portfoliosForUser.size());
 
       String portfolioUuid = null;
       for (String portfolioId : portfoliosForUser) {

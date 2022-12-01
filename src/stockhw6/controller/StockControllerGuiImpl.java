@@ -294,7 +294,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
         if (model.isValidTicker(symbol)) {
           this.tickerList.add(symbol);
           this.weights.add(Integer.valueOf(weightage));
-          this.view.showSuccessMessage("Investment added", evt);
+          this.view.showSuccessMessage("Investment added, keeping adding or click save", evt);
         } else {
           this.view.showErrorMessage("Invalid symbol, enter again!");
         }
