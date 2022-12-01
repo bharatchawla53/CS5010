@@ -36,8 +36,6 @@ import stockhw6.controller.IStockGuiFeatures;
 public class JFrameViewImpl extends JFrame implements IStockGuiView {
 
   private JPanel loginPanel;
-  private JPanel userOptionsPanel;
-  private JLabel title;
   private JLabel comboBoxDisplay;
   private JRadioButton r1;
   private JRadioButton r2;
@@ -81,14 +79,10 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
   private JButton saveInvestmentStockButton;
   private JButton cancelInvestmentStockButton;
   private JFrame uOptionTwoFrame;
-  private JFrame portfolioValueFrame;
-  private JFrame barChartFrame;
   private ButtonGroup userOptionsBg;
   private JComboBox<String> portfolioIdCb;
   private JComboBox<String> timeInterval;
-  private JTable portfolioValueTable;
   private String uOptionNumber;
-  private BarChartPanel chartPanel;
 
   /**
    * Constructor to initialize JFrame and it's components.
@@ -104,7 +98,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     loginPanel = new JPanel();
 
     // label for the panel
-    title = new JLabel("Portfolio Manager");
+    JLabel title = new JLabel("Portfolio Manager");
     title.setFont(new Font("Arial", Font.PLAIN, 15));
     title.setHorizontalAlignment(JLabel.CENTER);
     title.setVerticalAlignment(JLabel.CENTER);
@@ -271,7 +265,7 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     // remove previous panel
     this.remove(loginPanel);
     // add new user options panel
-    userOptionsPanel = new JPanel();
+    JPanel userOptionsPanel = new JPanel();
     userOptionsPanel.setLayout(new BoxLayout(userOptionsPanel, BoxLayout.PAGE_AXIS));
 
     JPanel radioPanel = new JPanel();
@@ -828,13 +822,13 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
       }
     }
 
-    portfolioValueFrame = new JFrame();
+    JFrame portfolioValueFrame = new JFrame();
     portfolioValueFrame.setSize(800, 500);
     portfolioValueFrame.setLocation(225, 225);
     portfolioValueFrame.setLayout(new BorderLayout());
     portfolioValueFrame.setVisible(true);
 
-    portfolioValueTable = new JTable(rows, columns.toArray());
+    JTable portfolioValueTable = new JTable(rows, columns.toArray());
     portfolioValueTable.setEnabled(false);
     JScrollPane scrollPane = new JScrollPane(portfolioValueTable);
 
@@ -877,22 +871,22 @@ public class JFrameViewImpl extends JFrame implements IStockGuiView {
     uOptionTwoFrame.setVisible(true);
   }
 
-  @Override // TODO add scale to bar chart
+  @Override
   public void showPerformanceGraph(Map<String, Integer> barChartContents) {
-    this.barChartFrame = new JFrame();
-    this.barChartFrame.setSize(800, 500);
-    this.barChartFrame.setTitle("BarChart");
+    JFrame barChartFrame = new JFrame();
+    barChartFrame.setSize(800, 500);
+    barChartFrame.setTitle("BarChart");
 
-    this.chartPanel = new BarChartPanel(barChartContents, "Dates", "Stock Price");
+    BarChartPanel chartPanel = new BarChartPanel(barChartContents, "Dates", "Stock Price");
 
     JLabel title = new JLabel("Portfolio Performance Overview");
     title.setFont(new Font("Arial", Font.BOLD, 25));
     title.setHorizontalAlignment(JLabel.CENTER);
 
-    this.barChartFrame.setLayout(new BorderLayout(2, 2));
-    this.barChartFrame.add(title, BorderLayout.NORTH);
-    this.barChartFrame.add(chartPanel, BorderLayout.CENTER);
-    this.barChartFrame.setVisible(true);
+    barChartFrame.setLayout(new BorderLayout(2, 2));
+    barChartFrame.add(title, BorderLayout.NORTH);
+    barChartFrame.add(chartPanel, BorderLayout.CENTER);
+    barChartFrame.setVisible(true);
 
   }
 

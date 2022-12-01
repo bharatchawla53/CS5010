@@ -1,13 +1,15 @@
 package stockhw6.view;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.JPanel;
-
+import javax.swing.*;
 
 /**
  * A class to render bar chart for portfolio performance over time.

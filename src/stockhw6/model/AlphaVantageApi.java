@@ -35,7 +35,7 @@ public class AlphaVantageApi implements StockApi {
    */
   @Override
   public List<HashMap<String, List<StockApiResponse>>> getStockTradedValue(String outputSize,
-                                     String symbol) {
+                String symbol) {
     URL url;
     try {
       /*

@@ -68,7 +68,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
     boolean isValidated = validateTransactionInputs(noOfShares, date, user,
-            portfolioUUID, commissionRate, ticker);
+            commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -138,7 +138,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
 
     boolean isValidated = validateTransactionInputs(noOfShares, date, user,
-            portfolioUUID, commissionRate, ticker);
+            commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -179,7 +179,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
           throws IllegalArgumentException {
 
     boolean isValidated = validateTransactionInputs(noOfShares, date, user,
-            portfolioUUID, commissionRate, ticker);
+            commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -537,7 +537,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     String portfolioFileName = user.getUserName() + "_" + portfolioUUID + "_fl_" + ".csv";
     File f = new File(portfolioFileName);
     boolean isValidated = validateTransactionInputs(noOfShares, date,
-            user, portfolioUUID, commissionRate, ticker);
+            user, commissionRate, ticker);
     if (!isValidated) {
       return false;
     }
@@ -1080,8 +1080,9 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     return true;
   }
 
-  private boolean validateTransactionInputs(String noOfShares, String date, User user, String portfolioUUID,
-                                            int commissionRate, String ticker) throws IllegalArgumentException {
+  private boolean validateTransactionInputs(String noOfShares, String date, User user,
+                                            int commissionRate, String ticker)
+          throws IllegalArgumentException {
     if (Double.parseDouble(noOfShares) < 0) {
       throw new IllegalArgumentException("Number of shares is negative!");
     }
@@ -1116,7 +1117,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("This date is not valid!");
     }
-    return !(Double.parseDouble(numShares) < 0) && isValidTicker(ticker);
+    return (!(Double.parseDouble(numShares) < 0)) && isValidTicker(ticker);
   }
 
   private boolean validateTransactionInputs(String startDate, String endDate,

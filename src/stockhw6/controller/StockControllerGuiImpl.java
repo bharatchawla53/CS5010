@@ -24,10 +24,20 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
   private String investmentDate2;
   private int investmentCapital;
 
+  /**
+   * Constructor to initialize the model.
+   *
+   * @param model IStockModelMaker
+   */
   public StockControllerGuiImpl(IStockModelMaker model) {
     this.model = model;
   }
 
+  /**
+   * It constructors the view and delegate it over to view to start the GUI.
+   *
+   * @param view IStockGuiView
+   */
   public void setView(IStockGuiView view) {
     this.view = view;
     this.view.getLoginScreenView();
@@ -391,8 +401,8 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
       }
     } else {
       // error message
-      this.view.showErrorMessage("Invalid File Path entered or Structure of " +
-              "File is malformed! Please enter a valid file path ");
+      this.view.showErrorMessage("Invalid File Path entered or Structure of "
+              + "File is malformed! Please enter a valid file path ");
     }
   }
 
