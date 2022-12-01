@@ -653,8 +653,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
 
 
       if ((LocalDate.parse(startDate).isAfter(LocalDate.now())
-              && LocalDate.parse(endDate).isAfter(LocalDate.now())))
-      {
+              && LocalDate.parse(endDate).isAfter(LocalDate.now()))) {
         return true;
       }
 
