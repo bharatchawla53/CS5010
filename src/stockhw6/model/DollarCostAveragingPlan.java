@@ -18,10 +18,6 @@ public class DollarCostAveragingPlan implements StockPlan {
 
   private FlexibleStockModelImpl model;
 
-  public DollarCostAveragingPlan() {
-    this.model = new FlexibleStockModelImpl();
-  }
-
   /**
    * Constructor for defining a dollar cost averaging plan.
    *
@@ -55,6 +51,7 @@ public class DollarCostAveragingPlan implements StockPlan {
     this.investmentTiming = investmentTiming;
     this.capitalCeiling = capitalCeiling;
 
+    this.model = new FlexibleStockModelImpl();
   }
 
   @Override

@@ -674,7 +674,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
           String date = strLine.split(",")[3];
           String commissionRate = strLine.split(",")[4];
           String tickerNoOfShares = ticker + " " + noOfShares + " "
-                  + stockPrice + " " + date + "," + commissionRate;
+                  + stockPrice + " " + date + " " + commissionRate;
           portfolioContents.add(tickerNoOfShares);
         } else {
           return null;
@@ -853,8 +853,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     } else if (numMonths.size() > 5 && numYears.size() <= 30) {
       graphContentsDate = numMonths;
     } else {
-
-      graphContentsDate = numDays.subList(0, 30);
+      graphContentsDate = numDays.subList(0, Math.min(numDays.size(), 30));
     }
     Map<String, Double> graphContentsMap = new HashMap<>();
     for (LocalDate gDate : graphContentsDate) {
