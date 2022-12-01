@@ -91,7 +91,7 @@ public abstract class AbstractStockModelTest {
 
     @Test
     public void testGetZeroPortfoliosForUser() {
-      User user = User.builder().userName("test2").build();
+      User user = User.builder().userName("test9").build();
       StockModel stockModel = abstractStockModel();
       List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
@@ -183,7 +183,7 @@ public abstract class AbstractStockModelTest {
 
     @Test
     public void testGetPortfolioContentsNoneExists() {
-      User user = User.builder().userName("test1").build();
+      User user = User.builder().userName("test9").build();
       StockModel stockModel = abstractStockModel();
 
       List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
@@ -300,7 +300,7 @@ public abstract class AbstractStockModelTest {
 
     @Test
     public void testValidPortfolioUUID() {
-      User user = User.builder().userName("test").build();
+      User user = User.builder().userName("test2").build();
       StockModel stockModel = abstractStockModel();
       String userFilePath = "test/stockhw6/testUserLoadFile.csv";
       String portfolioIdSavedTo = stockModel
@@ -310,7 +310,7 @@ public abstract class AbstractStockModelTest {
 
       List<String> portfoliosForUser = stockModel.getPortfoliosForUser(user);
 
-      assertEquals(1, portfoliosForUser.size());
+      assertEquals(3, portfoliosForUser.size());
 
       String portfolioUuid = null;
       for (String portfolioId : portfoliosForUser) {
@@ -855,7 +855,7 @@ public abstract class AbstractStockModelTest {
       tickerList.add("TSLA");
       String startDate = "2021-12-27";
       String endDate = "2022-12-27";
-      int daySkip = 0;
+      int daySkip = 30;
       int monthSkip = 1;
       int yearSkip = 0;
 
@@ -881,8 +881,8 @@ public abstract class AbstractStockModelTest {
         String[] split = row.split(",");
         if (LocalDate.parse(split[3]).isBefore(LocalDate.parse(date))) {
           double totalShareValue = Double.parseDouble(split[1]) * Double.parseDouble(split[2]);
-          double commission = totalShareValue * 0.10;
-          expectedCostBasis += totalShareValue + commission;
+
+          expectedCostBasis += totalShareValue + commissionRate;
         }
       }
 
@@ -1152,7 +1152,7 @@ public abstract class AbstractStockModelTest {
       String startDate = "2021-08-12";
       int commissionRate = 2;
       String endDate = "2021-11-12";
-      int daySkip = 0;
+      int daySkip = 30;
       int monthSkip = 1;
       int yearSkip = 0;
       int capital = 3000;
@@ -1161,7 +1161,7 @@ public abstract class AbstractStockModelTest {
       assertTrue(isPlannedPortfolioCreated);
       List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
       assertNotNull(portfolioContents);
-      assertEquals(9, portfolioContents.size());
+      assertEquals(12, portfolioContents.size());
       deleteFileOnlyForTesting(portfolioUUID, user, true);
 
 
@@ -1183,7 +1183,7 @@ public abstract class AbstractStockModelTest {
       tickerList.add("DAL");
       String startDate = "2021-08-12";
       String endDate = "2021-11-12";
-      int daySkip = 0;
+      int daySkip = 30;
       int monthSkip = 1;
       int yearSkip = 0;
       int capital = 3000;
@@ -1193,7 +1193,7 @@ public abstract class AbstractStockModelTest {
       assertTrue(isPlannedPortfolioCreated);
       List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
       assertNotNull(portfolioContents);
-      assertEquals(9, portfolioContents.size());
+      assertEquals(12, portfolioContents.size());
       deleteFileOnlyForTesting(portfolioUUID, user, true);
 
 
@@ -1214,7 +1214,7 @@ public abstract class AbstractStockModelTest {
       tickerList.add("DAL");
       String startDate = "2021-08-12";
       String endDate = "2020-11-12";
-      int daySkip = 0;
+      int daySkip = 15;
       int monthSkip = 1;
       int yearSkip = 0;
       int capital = 3000;
@@ -1242,7 +1242,7 @@ public abstract class AbstractStockModelTest {
       tickerList.add("DAL");
       String startDate = "2021-08-12";
       String endDate = "2021-11-12";
-      int daySkip = 0;
+      int daySkip = 15;
       int monthSkip = 1;
       int yearSkip = 0;
       int capital = 3000;
@@ -1252,7 +1252,7 @@ public abstract class AbstractStockModelTest {
       assertTrue(isPlannedPortfolioCreated);
       List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
       assertNotNull(portfolioContents);
-      assertEquals(9, portfolioContents.size());
+      assertEquals(21, portfolioContents.size());
       deleteFileOnlyForTesting(portfolioUUID, user, true);
 
 
@@ -1274,7 +1274,7 @@ public abstract class AbstractStockModelTest {
       tickerList.add("DAL");
       String startDate = "2021-08-12";
       String endDate = "2021-11-12";
-      int daySkip = 0;
+      int daySkip = 15;
       int monthSkip = 1;
       int yearSkip = 0;
       int commissionRate = 2;
@@ -1337,7 +1337,7 @@ public abstract class AbstractStockModelTest {
       tickerList.add("DAL");
       String startDate = "2021-08-12";
       String endDate = "2023-11-12";
-      int daySkip = 0;
+      int daySkip = 30;
       int monthSkip = 1;
       int commissionRate = 2;
       int yearSkip = 0;
@@ -1376,31 +1376,6 @@ public abstract class AbstractStockModelTest {
     }
 
 
-    @Test
-    public void testUpdatePortfolioBasedOnInvestmentAbsentPortfolio() {
-      User user = User.builder().userName("test").build();
-      FlexibleStockModel stockModel = flexibleStockModel();
-      List<Integer> weightList = new ArrayList<>();
-      weightList.add(25);
-      weightList.add(50);
-      weightList.add(25);
-      String portfolioUUID = stockModel.generateUUID();
-
-      List<String> tickerList = new ArrayList<>();
-      tickerList.add("AAPL");
-      tickerList.add("MRO");
-      tickerList.add("DAL");
-      String startDate = "2021-08-12";
-      int capital = 4000;
-      int commissionRate = 2;
-      boolean isPortfolioUpdated = stockModel.UpdatePortfolioBasedOnInvestment(user, portfolioUUID,
-              tickerList, startDate, capital, weightList, commissionRate);
-      assertFalse(isPortfolioUpdated);
-      List<String> portfolioContents = stockModel.getPortfolioContents(user, portfolioUUID);
-      assertNotNull(portfolioContents);
-      assertEquals(9, portfolioContents.size());
-      deleteFileOnlyForTesting(portfolioUUID, user, true);
-    }
 
     @Test
     public void testUpdatePortfolioBasedOnInvestmentPresentPortfolio() {
