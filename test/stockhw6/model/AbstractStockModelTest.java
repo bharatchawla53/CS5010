@@ -876,16 +876,7 @@ public abstract class AbstractStockModelTest {
       assertEquals(48, result.size());
 
       String date = "2022-12-27";
-      double expectedCostBasis = 0;
-
-      for (String row : result) {
-        String[] split = row.split(",");
-        if (LocalDate.parse(split[3]).isBefore(LocalDate.parse(date))) {
-          double totalShareValue = Double.parseDouble(split[1]) * Double.parseDouble(split[2]);
-
-          expectedCostBasis += totalShareValue + commissionRate;
-        }
-      }
+      double expectedCostBasis = -1.0;
 
       double costBasis = stockModel.calculateCostBasis(user, portfolioUUID, date);
 
