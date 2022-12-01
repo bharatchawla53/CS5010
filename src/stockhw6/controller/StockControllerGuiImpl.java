@@ -237,9 +237,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
           for (String row : totalValueOfAPortfolio.values().stream().findFirst().get()) {
             try {
               totalPortfolioValueSum += Double.parseDouble(row.split(",")[2]);
-            }
-            catch(IndexOutOfBoundsException e)
-            {
+            } catch (IndexOutOfBoundsException e) {
               this.view.showErrorMessage("Invalid input!, Please enter a "
                       + "valid date. ");
               return;
@@ -338,7 +336,7 @@ public class StockControllerGuiImpl implements IStockGuiFeatures {
                 getDaysSkip(timeFrequency, timeIntervalUnit),
                 this.investmentCapital, this.weights, cFees)) {
           this.view.showSuccessMessage("Your strategy has been successfully "
-                  + "created at "+strategyUUID, evt);
+                  + "created at " + strategyUUID, evt);
         } else {
           this.view.showErrorMessage("Couldn't save the strategy");
         }

@@ -1113,8 +1113,7 @@ public class FlexibleStockModelImpl extends AbstractStockModel implements Flexib
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("This date is not valid!");
     }
-    if(LocalDate.parse(date).isAfter(LocalDate.now()))
-    {
+    if (LocalDate.parse(date).isAfter(LocalDate.now())) {
       return false;
     }
     return isUserNameExists(user.getUserName());
