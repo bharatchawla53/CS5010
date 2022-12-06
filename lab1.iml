@@ -44,5 +44,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="org.mockito:mockito-core:4.9.0" level="project" />
   </component>
 </module>
