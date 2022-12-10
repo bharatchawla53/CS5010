@@ -63,6 +63,7 @@ public class InvestmentViewImpl implements InvestmentView {
     this.out.append("4. Purchase Stock\n");
     this.out.append("5. Sell Stock\n");
     this.out.append("6. Dollar Cost-Average\n");
+    this.out.append("7: Rebalanced Portfolio\n");
   }
 
   @Override

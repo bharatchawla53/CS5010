@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -25,6 +27,7 @@ public class GUIControllerImpl extends InvestmentControllerImpl
 
   private final InvestmentModelFlexImpl model;
   private final IGUIView view;
+  private final List<String> stocksList;
 
   /**
    * GUIControllerImpl is the constructor that takes in a GUI View and a model.
@@ -35,7 +38,7 @@ public class GUIControllerImpl extends InvestmentControllerImpl
     super(new InputStreamReader(System.in), System.out);
     this.model = model;
     this.view = view;
-
+    this.stocksList = new ArrayList<>();
   }
 
   @Override
@@ -73,6 +76,9 @@ public class GUIControllerImpl extends InvestmentControllerImpl
       case "New Frac":
         view.newFractionalState();
         break;
+      case "Rebalance Portfolio":
+        view.newRebalanceState();
+      break;
       case "ValuePanel":
         valuePanel(input);
         break;
@@ -94,6 +100,9 @@ public class GUIControllerImpl extends InvestmentControllerImpl
       case "BuySellPanel":
         buySellPanel(e, input);
         break;
+      case "RebalancePanel":
+        updateStocksList();
+        rebalancePanel(e, input);
       case "AddAmountPanel":
         test0 = view.findPanel(input);
         //TODO: Deprecate
@@ -163,10 +172,10 @@ public class GUIControllerImpl extends InvestmentControllerImpl
   private void dcaPanel(ActionEvent e, String input) {
 
     if (e.getSource().toString().split(",")[1].equals("Add S")) {
-      view.addStock(view.findPanel(input).split(" ")[0]);
+      view.addDcaStock(view.findPanel(input).split(" ")[0]);
 
     } else if (e.getSource().toString().split(",")[1].equals("Add %")) {
-      view.addPercent(Double.valueOf(view.findPanel(input).split(" ")[1]));
+      view.addPercent("dca", Double.valueOf(view.findPanel(input).split(" ")[1]));
 
     } else if (e.getSource().toString().split(",")[1].equals("Clear")) {
       view.clearDCA();
@@ -250,6 +259,41 @@ public class GUIControllerImpl extends InvestmentControllerImpl
         view.updateLog(ex.toString());
       }
     }
+  }
 
+  private void rebalancePanel(ActionEvent e, String input) {
+    if (e.getSource().toString().split(",")[1].equals("Add S")) {
+      view.addRebalanceStock(view.findPanel(input).split(" ")[0], stocksList);
+    } else if (e.getSource().toString().split(",")[1].equals("Add %")) {
+      view.addPercent("rebalance", Double.valueOf(view.findPanel(input).split(" ")[1]));
+    } else if (e.getSource().toString().split(",")[1].equals("Clear")) {
+      view.clearRebalance();
+    } else {
+      String[] splitInput = view.findPanel(input).split(" ");
+      //String[] stocks = view.getRebalanceStocks().split(",");
+      String[] percent = view.getRebalancePanelPercent().split(",");
+      double[] weights = new double[percent.length];
+      int index = 0;
+      for (String weight : percent) {
+        weights[index++] = Double.parseDouble(weight);
+      }
+
+      model.rebalancePortfolio(splitInput[2], Double.parseDouble(splitInput[3]), weights);
+      view.updateLog(model.printStocks());
+      view.flexibleState();
+
+    }
+  }
+
+  private void updateStocksList() {
+    // get list of stocks that are in this portfolio
+    if (stocksList.size() == 0) {
+      String[] splitStocks = model.printStocks().split("\n");
+      for (String index : splitStocks) {
+        if (index.contains(",")) {
+          this.stocksList.add(index.split(",")[1]);
+        }
+      }
+    }
   }
 }

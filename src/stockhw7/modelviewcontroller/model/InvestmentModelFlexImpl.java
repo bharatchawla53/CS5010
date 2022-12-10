@@ -81,4 +81,9 @@ public class InvestmentModelFlexImpl implements InvestmentModelFlex {
             stockList, percentList);
   }
 
+  @Override
+  public void rebalancePortfolio(String date, double investmentTotal, double[] percentList) {
+    this.portfolio.rebalancePortfolio(date, investmentTotal, percentList);
+  }
+
 }

@@ -43,4 +43,6 @@ public interface FlexPortfolio extends Portfolio {
   void dollarCostProcessing(String startDate, String endDate, int intervalDays,
                             double investmentTotal, String[] stockList,
                             double[] percentList);
+
+  Portfolio rebalancePortfolio(String date, double investmentTotal, double[] percentList);
 }

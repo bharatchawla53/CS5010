@@ -3,6 +3,8 @@ package stockhw7.modelviewcontroller.controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -260,7 +262,11 @@ public class InvestmentControllerImpl implements InvestmentController {
         case 6:
           dollarCostAverage(model, sc, view);
           break;
+        case 7:
+          rebalancedPortfolio(model, sc, view);
+          break;
         default:
+          break;
       }
     }
   }
@@ -682,50 +688,9 @@ public class InvestmentControllerImpl implements InvestmentController {
         view.print("Bad ticker. Try again.\n");
       }
     }
-    //now do the same sort of thing with percentages
-    double[] percentList = new double[numStocks];
-    //fill in each array in linear manner
-    stockCounter = 0;
-    double totalPercent = 0.0;
-    while (stockCounter < numStocks) {
-      view.print("Please enter % weight for " + stockList[stockCounter] + ". You currently have " +
-              String.format("%,.2f", 100 - totalPercent) + " percent remaining \n");
-      String nextPercTry = sc.next();
-      try {
-        double nextPerc = Double.parseDouble(nextPercTry);
-        if (nextPerc <= 0) {
-          throw new IllegalArgumentException("Too low.");
-        }
-        if (totalPercent + nextPerc > 100) {
-          throw new IllegalArgumentException("Too high.");
-        }
-        totalPercent += nextPerc;
-        percentList[stockCounter] = nextPerc;
-        ++stockCounter;
-      } catch (Exception e) {
-        view.print("Bad number. Try again.\n");
-      }
-      if (stockCounter == numStocks && totalPercent < 100) {
-        view.print("Total percent does not total 100. Resetting percentages. Try again.\n");
-        stockCounter = 0;
-        totalPercent = 0;
-      }
-    }
-    //ask for total money amount that will be split
-    double d = 0.0;
-    while (d == 0.0) {
-      view.print("How much money will you invest at each interval?\n");
-      String moneyString = sc.next();
-      try {
-        double placeholder = Double.parseDouble(moneyString);
-        if (placeholder <= 0) {
-          throw new IllegalArgumentException("Bad money\n");
-        }
-        d = placeholder;
-      } catch (Exception e) {
-        view.print("Bad Money. Try again.\n");
-      }
-    }
+    double[] percentList = getWeightList(sc, view, numStocks, stockList);
+    //get total money amount that will be split
+    double d = getInvestmentMoney(sc, view);
     //ask for initial date
     boolean worked = false;
     while (!worked) {
@@ -805,6 +770,112 @@ public class InvestmentControllerImpl implements InvestmentController {
       view.print(stockList[i] + " -- " + percentList[i] + "%\n");
     }
     model.dollarCostProcessing(startDate, endDate, intervalDays, d, stockList, percentList);
+  }
+
+  private void rebalancedPortfolio(InvestmentModelFlex model, Scanner sc, InvestmentView view)
+          throws IOException {
+    int year = 0;
+    int month = 0;
+    int day = 0;
+
+    view.print("Let's rebalance your portfolio");
+    //get total money amount that will be split
+    double d = getInvestmentMoney(sc, view);
+
+    //ask for the date to rebalance a portfolio on
+    boolean worked = false;
+    while (!worked) {
+      view.print("Which day would you like this portfolio to be rebalanced?"
+              + "Please enter in MM/DD/YYYY form\n");
+      String dateString = sc.next();
+      try {
+        String[] dateBlocked = dateString.split("/");
+        day = Integer.parseInt(dateBlocked[1]);
+        month = Integer.parseInt(dateBlocked[0]);
+        year = Integer.parseInt(dateBlocked[2]);
+        worked = true;
+      } catch (Exception e) {
+        view.print("Invalid date format.\n");
+        break;
+      }
+    }
+
+    // get list of stocks that are in this portfolio
+    String stocks = model.printStocks();
+    String[] splitStocks = stocks.split("\n");
+    List<String> stocksList = new ArrayList<>();
+    for (String index : splitStocks) {
+      if (index.contains(",")) {
+        stocksList.add(index.split(",")[1]);
+      }
+    }
+
+    // get weightage percent list from the user and the size should match with
+    // number of stocks they have in their portfolio
+    double[] percentList = getWeightList(sc, view, stocksList.size(), stocksList.toArray(String[]::new));
+
+    String date = "" + month + "/" + day + "/" + year;
+    view.print("Rebalancing " + d + " worth of stocks below from "
+            + date + "with following ratios:\n");
+    for (int i = 0; i < stocksList.size(); ++i) {
+      view.print(stocksList.get(i) + " -- " + percentList[i] + "%\n");
+    }
+
+    model.rebalancePortfolio(date, d, percentList);
+  }
+
+  private double getInvestmentMoney(Scanner sc, InvestmentView view) throws IOException {
+    //ask for total money amount that will be split
+    double d = 0.0;
+    while (d == 0.0) {
+      view.print("How much money will you invest at each interval?\n");
+      String moneyString = sc.next();
+      try {
+        double placeholder = Double.parseDouble(moneyString);
+        if (placeholder <= 0) {
+          throw new IllegalArgumentException("Bad money\n");
+        }
+        d = placeholder;
+      } catch (Exception e) {
+        view.print("Bad Money. Try again.\n");
+      }
+    }
+    return d;
+  }
+
+  private double[] getWeightList(Scanner sc, InvestmentView view, int numStocks, String[] stockList)
+          throws IOException {
+    int stockCounter;
+    //now do the same sort of thing with percentages
+    double[] percentList = new double[numStocks];
+    //fill in each array in linear manner
+    stockCounter = 0;
+    double totalPercent = 0.0;
+    while (stockCounter < numStocks) {
+      view.print("Please enter % weight for " + stockList[stockCounter] + ". You currently have " +
+              String.format("%,.2f", 100 - totalPercent) + " percent remaining \n");
+      String nextPercTry = sc.next();
+      try {
+        double nextPerc = Double.parseDouble(nextPercTry);
+        if (nextPerc <= 0) {
+          throw new IllegalArgumentException("Too low.");
+        }
+        if (totalPercent + nextPerc > 100) {
+          throw new IllegalArgumentException("Too high.");
+        }
+        totalPercent += nextPerc;
+        percentList[stockCounter] = nextPerc;
+        ++stockCounter;
+      } catch (Exception e) {
+        view.print("Bad number. Try again.\n");
+      }
+      if (stockCounter == numStocks && totalPercent < 100) {
+        view.print("Total percent does not total 100. Resetting percentages. Try again.\n");
+        stockCounter = 0;
+        totalPercent = 0;
+      }
+    }
+    return percentList;
   }
 }
 

@@ -20,7 +20,7 @@ public class LoadPortPanel extends ModularPanel {
    * and initializes the rest of the JComponents.
    */
   public LoadPortPanel() {
-    super("LoadPortPanel", new Dimension(200, 100),
+    super("LoadPortPanel", new Dimension(300, 100),
             new GridLayout(3, 1, 5, 5));
 
     JLabel title = new JLabel();

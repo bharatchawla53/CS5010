@@ -1,6 +1,7 @@
 package stockhw7.modelviewcontroller.pannel;
 
 import java.awt.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -8,15 +9,16 @@ public class RebalancePanel extends ModularPanel {
 
   private final JTextArea stockTextArea;
   private final JTextArea percentTextArea;
+  private final JTextField stockInput;
+  private final JTextField percentInput;
 
   /**
-   * this is the constructor that calls super for the style
-   * and initializes the rest of the JComponents.
+   * this is the constructor that calls super for the style and initializes the rest of the
+   * JComponents.
    */
   public RebalancePanel() {
-    super("RebalancePanel", new Dimension(200, 500),
+    super("RebalancePanel", new Dimension(250, 500),
             new GridLayout(12, 4, 5, 5));
-
     // 12 rows
     JLabel title = new JLabel();
     title.setText("     Rebalance Portfolio");
@@ -26,7 +28,7 @@ public class RebalancePanel extends ModularPanel {
 
     JPanel row3 = new JPanel(new FlowLayout());
     JLabel stock = new JLabel("Stock:");
-    JTextField stockInput = shortUniformTextField("stockInput");
+    stockInput = shortUniformTextField("stockInput");
     JButton stockAdd = uniformButton("Add S");
 
     stockTextArea = new JTextArea();
@@ -34,27 +36,15 @@ public class RebalancePanel extends ModularPanel {
 
     JPanel row5 = new JPanel(new FlowLayout());
     JLabel percent = new JLabel("%:");
-    JTextField percentInput = shortUniformTextField("percentInput");
+    percentInput = shortUniformTextField("percentInput");
     JButton percentAdd = uniformButton("Add %");
 
     percentTextArea = new JTextArea();
     percentTextArea.setText("");
 
-    JPanel row7 = new JPanel(new FlowLayout());
-    JLabel name = new JLabel("name:");
-    JTextField nameInput = uniformTextField("nameInput");
-
     JPanel row8 = new JPanel(new FlowLayout());
-    JLabel start = new JLabel("Start:");
+    JLabel start = new JLabel("Date:");
     JTextField startInput = uniformTextField("startInput");
-
-    JPanel row9 = new JPanel(new FlowLayout());
-    JLabel end = new JLabel("End:");
-    JTextField endInput = uniformTextField("endInput");
-
-    JPanel row10 = new JPanel(new FlowLayout());
-    JLabel interval = new JLabel("Interval:");
-    JTextField intervalInput = uniformTextField("intervalInput");
 
     JPanel row11 = new JPanel(new FlowLayout());
     JLabel amount = new JLabel("Amount:");
@@ -71,14 +61,8 @@ public class RebalancePanel extends ModularPanel {
     row5.add(percent);
     row5.add(percentInput);
     row5.add(percentAdd);
-    row7.add(name);
-    row7.add(nameInput);
     row8.add(start);
     row8.add(startInput);
-    row9.add(end);
-    row9.add(endInput);
-    row10.add(interval);
-    row10.add(intervalInput);
     row11.add(amount);
     row11.add(amountInput);
     row12.add(go);
@@ -90,10 +74,7 @@ public class RebalancePanel extends ModularPanel {
     this.add(stockTextArea);
     this.add(row5);
     this.add(percentTextArea);
-    this.add(row7);
     this.add(row8);
-    this.add(row9);
-    this.add(row10);
     this.add(row11);
     this.add(row12);
 
@@ -121,10 +102,23 @@ public class RebalancePanel extends ModularPanel {
   /**
    * adds a given stock value to the list of stocks.
    *
-   * @param stock the stock to be added
+   * @param stock      the stock to be added
+   * @param stocksList
    */
-  public void addStock(String stock) {
-    String result = stockTextArea.getText() + ", " + stock;
+  public void addStock(String stock, List<String> stocksList) {
+    if (!stockTextArea.getText().equals("")) {
+      String[] split = stockTextArea.getText().split(",");
+      if (stocksList.size() == split.length) {
+        JOptionPane.showMessageDialog(null, "Can't add new shares to the existing portfolio");
+        stockInput.setEnabled(false);
+        stockTextArea.setEnabled(false);
+        return;
+      }
+    }
+
+    String result = stockTextArea.getText().equals("")
+            ? stockTextArea.getText() + stock
+            : stockTextArea.getText() + ", " + stock;
     stockTextArea.setText(result);
     this.revalidate();
     this.repaint();
@@ -136,7 +130,30 @@ public class RebalancePanel extends ModularPanel {
    * @param percent the given percent
    */
   public void addPercent(Double percent) {
-    String result = percentTextArea.getText() + ", " + percent;
+    String result = percentTextArea.getText().equals("")
+            ? percentTextArea.getText() + percent
+            : percentTextArea.getText() + ", " + percent;
+
+    if (!result.equals("")) {
+      String[] split = result.split(",");
+      double totalPercent = 0.0;
+
+      for (String weight : split) {
+        totalPercent += Double.parseDouble(weight);
+      }
+
+
+      if (totalPercent <= 0) {
+        JOptionPane.showMessageDialog(null, "Tow low");
+      }
+      if (totalPercent > 100) {
+        result = result.substring(0, result.length() - String.valueOf(percent).length() - 2);
+        percentInput.setEnabled(false);
+        percentTextArea.setEnabled(false);
+        JOptionPane.showMessageDialog(null, "Tow high");
+      }
+    }
+
     percentTextArea.setText(result);
     this.revalidate();
     this.repaint();

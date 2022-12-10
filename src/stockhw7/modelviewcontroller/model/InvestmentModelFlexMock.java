@@ -90,4 +90,9 @@ public class InvestmentModelFlexMock implements InvestmentModelFlex {
     log.append("DOLLAR COST " + intervalDays + " " + investmentTotal);
   }
 
+  @Override
+  public void rebalancePortfolio(String date, double investmentTotal, double[] percentList) {
+    log.append("REBALANCE PORTFOLIO " + date + " " + investmentTotal);
+  }
+
 }

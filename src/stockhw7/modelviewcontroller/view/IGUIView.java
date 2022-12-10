@@ -1,6 +1,7 @@
 package stockhw7.modelviewcontroller.view;
 
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * A Jpanel View Interface that implements methods
@@ -67,6 +68,8 @@ public interface IGUIView {
    */
   String getDCAPanelStocks();
 
+  String getRebalanceStocks();
+
   /**
    * gets % text for the controller to use.
    *
@@ -74,24 +77,30 @@ public interface IGUIView {
    */
   String getDCAPanelPercent();
 
+  String getRebalancePanelPercent();
+
   /**
    * adds a given stock value to the list of stocks.
    *
    * @param stock the stock to be added
    */
-  void addStock(String stock);
+  void addDcaStock(String stock);
+
+  void addRebalanceStock(String stock, List<String> stocksList);
 
   /**
    * adds a given percentage value to the list of %.
    *
    * @param percent the given percent
    */
-  void addPercent(Double percent);
+  void addPercent(String panel, Double percent);
 
   /**
    * clears the DCA inputs for percent and stocks.
    */
   void clearDCA();
 
+  void clearRebalance();
 
+  void newRebalanceState();
 }

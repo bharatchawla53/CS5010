@@ -19,6 +19,7 @@ import stockhw7.modelviewcontroller.pannel.GraphPanel;
 import stockhw7.modelviewcontroller.pannel.LoadPortPanel;
 import stockhw7.modelviewcontroller.pannel.LogPanel;
 import stockhw7.modelviewcontroller.pannel.ModularPanel;
+import stockhw7.modelviewcontroller.pannel.RebalancePanel;
 import stockhw7.modelviewcontroller.pannel.ValuePanel;
 
 /**
@@ -37,6 +38,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
   private final ModularPanel valuePanel;
   private final ModularPanel buySellPanel;
   private final ModularPanel addAmountPanel;
+  private final RebalancePanel rebalancePanel;
 
 
   private final List<ModularPanel> westPanelList;
@@ -62,7 +64,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
 
     westPanel = new JPanel();
     westPanel.setLayout(new FlowLayout());
-    westPanel.setPreferredSize(new Dimension(200, 800));
+    westPanel.setPreferredSize(new Dimension(800, 800));
     westPanelList = new ArrayList<ModularPanel>();
 
     loadPortPanel = new LoadPortPanel();
@@ -73,6 +75,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
     valuePanel = new ValuePanel();
     buySellPanel = new BuySellPanel();
     addAmountPanel = new AddAmountPanel();
+    rebalancePanel = new RebalancePanel();
 
     westPanelList.add(loadPortPanel);
     westPanelList.add(createFlexPanel);
@@ -82,6 +85,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
     westPanelList.add(valuePanel);
     westPanelList.add(buySellPanel);
     westPanelList.add(addAmountPanel);
+    westPanelList.add(rebalancePanel);
 
 
     topPanelList = new ArrayList<JButton>();
@@ -89,6 +93,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
     topPanelList.add(new ExtendedButton("", "Load"));
     topPanelList.add(new ExtendedButton("", "New Flex"));
     topPanelList.add(new ExtendedButton("", "New Frac"));
+    //topPanelList.add(new ExtendedButton("", "Rebalance Portfolio"));
 
     for (JButton jb : topPanelList) {
       topPanel.add(jb);
@@ -102,7 +107,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
 
     this.add(logPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
-    this.add(westPanel, BorderLayout.WEST);
+    this.add(westPanel, BorderLayout.CENTER);
     loadState();
 
     this.pack();
@@ -143,6 +148,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
     westPanel.add(coastBasisPanel);
     westPanel.add(valuePanel);
     westPanel.add(buySellPanel);
+    westPanel.add(rebalancePanel);
     westPanel.revalidate();
     westPanel.repaint();
   }
@@ -163,6 +169,11 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
     return dcaPanel.getStockText();
   }
 
+  @Override
+  public String getRebalanceStocks() {
+    return rebalancePanel.getStockText();
+  }
+
 
   @Override
   public String getDCAPanelPercent() {
@@ -170,18 +181,45 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
   }
 
   @Override
-  public void addStock(String stock) {
+  public String getRebalancePanelPercent() {
+    return rebalancePanel.getPercentText();
+  }
+
+  @Override
+  public void addDcaStock(String stock) {
     dcaPanel.addStock(stock);
   }
 
   @Override
-  public void addPercent(Double percent) {
-    dcaPanel.addPercent(percent);
+  public void addRebalanceStock(String stock, List<String> stocksList) {
+    rebalancePanel.addStock(stock, stocksList);
+  }
+
+  @Override
+  public void addPercent(String panel, Double percent) {
+    if (panel.equals("dca")) {
+      dcaPanel.addPercent(percent);
+    } else if (panel.equals("rebalance")) {
+      rebalancePanel.addPercent(percent);
+    }
   }
 
   @Override
   public void clearDCA() {
     dcaPanel.clear();
+  }
+
+  @Override
+  public void clearRebalance() {
+    rebalancePanel.clear();
+  }
+
+  @Override
+  public void newRebalanceState() {
+    westPanel.removeAll();
+    westPanel.add(rebalancePanel);
+    westPanel.revalidate();
+    westPanel.repaint();
   }
 
   @Override
@@ -207,6 +245,7 @@ public class InvestmentGUIViewImpl extends JFrame implements IGUIView {
     buySellPanel.setButtonListener(actionEvent);
     addAmountPanel.setButtonListener(actionEvent);
     dcaPanel.setButtonListener(actionEvent);
+    rebalancePanel.setButtonListener(actionEvent);
 
   }
 }

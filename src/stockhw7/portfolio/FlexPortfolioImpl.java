@@ -484,6 +484,12 @@ public class FlexPortfolioImpl implements FlexPortfolio {
     }
   }
 
+  @Override
+  public Portfolio rebalancePortfolio(String date, double investmentTotal, double[] percentList) {
+    // TODO
+    return null;
+  }
+
   // retrieves the 6 values form a log in the order they are displayed
   // ex."BUY: 10, GOOG, 10/17/2022"
   // 0 - BUY

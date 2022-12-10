@@ -34,4 +34,6 @@ public interface InvestmentModelFlex extends InvestmentModel {
   void dollarCostProcessing(String startDate, String endDate, int intervalDays,
                             double investmentTotal, String[] stockList,
                             double[] percentList);
+
+  void rebalancePortfolio(String date, double investmentTotal, double[] percentList);
 }
