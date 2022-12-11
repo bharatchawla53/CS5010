@@ -733,5 +733,19 @@ public class InvestmentControllerImplTest {
     assertEquals("GOOG -- 50.0%", lines[32]);
     assertEquals("AAPL -- 50.0%", lines[33]);
   }
+
+  @Test
+  public void rebalancePortfolioTest() throws IOException {
+    StringBuffer out = new StringBuffer();
+    Reader in = new StringReader("2 1 MOCK 10 7 " +
+            "2000 12/07/2022 50 50 0 0 n");
+    InvestmentController ctrl = new InvestmentControllerImpl(in, out);
+    StringBuilder log = new StringBuilder();
+    ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
+    assertEquals("ADD PORT MOCK 10.0 123 PRINT STOCK REBALANCE PORTFOLIO 12/7/2022 2000.0PRINT "
+            + "STOCK REBALANCE PORTFOLIO 0/0/0 50.0", log.toString());
+    String[] lines = out.toString().split("\n");
+    assertEquals("Rebalancing 2000.0 worth of stocks below from 12/7/2022with following ratios:", lines[21]);
+  }
 }
 
