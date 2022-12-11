@@ -3,7 +3,9 @@ package stockhw7.portfolio;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import stockhw7.resources.FileIO;
 import stockhw7.resources.Indices;
@@ -14,8 +16,8 @@ import stockhw7.resources.IndicesImpl;
 //TODO adjust save/load to add new feature -- should not adjust actual portfolio contents
 
 /**
- * Flex Portfolio implementation  of the Flex portfolio interface.
- * designed to have more functionality than a generic Portfolio.
+ * Flex Portfolio implementation  of the Flex portfolio interface. designed to have more
+ * functionality than a generic Portfolio.
  */
 public class FlexPortfolioImpl implements FlexPortfolio {
 
@@ -26,16 +28,15 @@ public class FlexPortfolioImpl implements FlexPortfolio {
   private Indices indices;
 
   /**
-   * creates an empty FlexPortfolio so that information
-   * can be added later.
+   * creates an empty FlexPortfolio so that information can be added later.
    */
   public FlexPortfolioImpl() {
     //this is a dummy portfolio for information to be added
   }
 
   /**
-   * this constructor is used primarily for file IO to create a portfolio
-   * with the all the information given.
+   * this constructor is used primarily for file IO to create a portfolio with the all the
+   * information given.
    *
    * @param name      the name of the portfolio
    * @param brokerFee the broker fee of the portfolio
@@ -53,8 +54,7 @@ public class FlexPortfolioImpl implements FlexPortfolio {
   }
 
   /**
-   * the initial constructor that creates a new portfolio
-   * with fresh fields.
+   * the initial constructor that creates a new portfolio with fresh fields.
    *
    * @param name      the name of the stock
    * @param brokerFee the broker fee of the stock
@@ -117,7 +117,7 @@ public class FlexPortfolioImpl implements FlexPortfolio {
       if (s.charAt(0) == 'B' || s.charAt(0) == 'S') {
         String[] purchaseAndShares = components[0].split(" ");
         purchase = purchaseAndShares[0];
-        shares = Integer.parseInt(purchaseAndShares[1]);
+        shares = Double.parseDouble(purchaseAndShares[1]);
         name = components[1].replaceAll("\\s", "");
         dateString = components[2].split("/");
         //split date for validation
@@ -252,7 +252,7 @@ public class FlexPortfolioImpl implements FlexPortfolio {
 
   //Should be similar to old one except we need date in here
   @Override
-  public Portfolio deleteStock(String ticker, int num, String date) {
+  public Portfolio deleteStock(String ticker, double num, String date) {
     for (Stock stock : stocks) {
       if (ticker.equals(stock.getTicker())) {
         if (stock.getShares() - num < 0) {
@@ -486,8 +486,69 @@ public class FlexPortfolioImpl implements FlexPortfolio {
 
   @Override
   public Portfolio rebalancePortfolio(String date, double investmentTotal, double[] percentList) {
-    // TODO
-    return null;
+    Map<String, Double> newStockPriceMap = new HashMap<>();
+    for (String s : log) {
+      String[] split = date.split("/");
+      String[] logValues = getLogValues(s);
+      double value = indices.getValue(logValues[2], Integer.parseInt(split[2]),
+              Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+      newStockPriceMap.put(logValues[2], value);
+    }
+
+    Map<String, Double> newStockCostMap = new HashMap<>();
+    for (Map.Entry<String, Double> entry : newStockPriceMap.entrySet()) {
+      for (Stock stock : stocks) {
+        if (entry.getKey().equals(stock.getTicker())) {
+          newStockCostMap.put(entry.getKey(), stock.getShares() * entry.getValue());
+          break;
+        }
+      }
+    }
+
+    // check if new cost of all stocks exceeded investmentTotal
+    double totalStockCost = 0;
+    for (Map.Entry<String, Double> entry : newStockCostMap.entrySet()) {
+      totalStockCost += entry.getValue();
+    }
+
+    // build percentage distribution
+    double[] percentageDistribution = new double[percentList.length];
+    int percentIndex = 0;
+    for (double percent : percentList) {
+      percentageDistribution[percentIndex] = totalStockCost * percent / 100;
+      percentIndex++;
+    }
+
+    // decide whether to buy or sell stocks
+    percentIndex = 0;
+    for (Map.Entry<String, Double> entry : newStockCostMap.entrySet()) {
+      Double stockCost = entry.getValue();
+      double percentageBasedStockCost = percentageDistribution[percentIndex++];
+      double pricePerShare = getPricePerShare(newStockPriceMap, entry);
+
+      if (stockCost - percentageBasedStockCost < 0) {
+        // buy stocks
+        double totalSharesToBuy = Math.abs(stockCost - percentageBasedStockCost) / pricePerShare;
+        addStock(new StockImpl(totalSharesToBuy, entry.getKey(), indices.getIndex(entry.getKey()).getIndex()), date);
+      } else {
+        // sell stocks
+        double totalSharesToSell = (stockCost - percentageBasedStockCost) / pricePerShare;
+        deleteStock(entry.getKey(), totalSharesToSell, date);
+      }
+    }
+
+    return new PortfolioImpl(this.name, stocks);
+  }
+
+  private double getPricePerShare(Map<String, Double> newStockPriceMap, Map.Entry<String, Double> entry) {
+    double pricePerShare = 0;
+    for (Map.Entry<String, Double> entryPrice : newStockPriceMap.entrySet()) {
+      if (entry.getKey().equals(entryPrice.getKey())) {
+        pricePerShare = entryPrice.getValue();
+        break;
+      }
+    }
+    return pricePerShare;
   }
 
   // retrieves the 6 values form a log in the order they are displayed

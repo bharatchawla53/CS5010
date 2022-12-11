@@ -127,7 +127,7 @@ public class FileIO {
       String num = firstLine.split(",")[0];
       String name = firstLine.split(",")[1].trim();
 
-      stocks.add(new StockImpl(Integer.valueOf(num), name, ""));
+      stocks.add(new StockImpl(Double.parseDouble(num), name, ""));
     }
     // indices
     Indices indices = new IndicesImpl();

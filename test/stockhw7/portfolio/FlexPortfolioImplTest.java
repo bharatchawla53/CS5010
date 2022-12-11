@@ -12,6 +12,7 @@ import stockhw7.resources.AlphaVantageDemo;
 import stockhw7.resources.IndicesImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -21,7 +22,7 @@ public class FlexPortfolioImplTest {
   private static final String stockData = AlphaVantageDemo.getStockValues("GOOG");
   private final double[] index = initializeGoogValues();
   private Portfolio p1;
-  private Portfolio p2;
+  private FlexPortfolio p2;
   private Portfolio p3;
 
   @Before
@@ -30,16 +31,16 @@ public class FlexPortfolioImplTest {
     p2 = new FlexPortfolioImpl("test", 200);
     p3 = new FlexPortfolioImpl("test", 200);
 
-    p2.addStock(new StockImpl(1, "GOOG", stockData), "11/14/2022");
-    p3.addStock(new StockImpl(6, "GOOG", stockData), "11/16/2022");
-    p3.addStock(new StockImpl(3, "IBM", stockData), "10/27/2021");
-    p3.addStock(new StockImpl(10, "TSCO", stockData), "09/01/2020");
+    p2.addStock(new StockImpl(1.0, "GOOG", stockData), "11/14/2022");
+    p3.addStock(new StockImpl(6.0, "GOOG", stockData), "11/16/2022");
+    p3.addStock(new StockImpl(3.0, "IBM", stockData), "10/27/2021");
+    p3.addStock(new StockImpl(10.0, "TSCO", stockData), "09/01/2020");
   }
 
   //----------Constructor--------------
   @Test
   public void Constructor() {
-    p1.addStock(new StockImpl(1, "GOOG", stockData), "11/14/2022");
+    p1.addStock(new StockImpl(1.0, "GOOG", stockData), "11/14/2022");
     p1.examineValue(2005, 12, 1);
     assertEquals(p1.toString(), p2.toString());
   }
@@ -102,7 +103,7 @@ public class FlexPortfolioImplTest {
   //toStringTest
   @Test
   public void toStringTest() {
-    assertEquals("FLEX PORTFOLIO test\n200.0\n" + "BUY: 1, GOOG, 11/14/2022\n", p2.toString());
+    assertEquals("FLEX PORTFOLIO test\n200.0\n" + "BUY: 1.0, GOOG, 11/14/2022\n", p2.toString());
   }
 
   //--------------Print----------------
@@ -126,10 +127,36 @@ public class FlexPortfolioImplTest {
 
     p2.deleteStock("GOOG", 1, "11/16/2022");
     assertEquals("FLEX PORTFOLIO test\n200.0\n"
-            + "BUY: 1, GOOG, 11/14/2022\n"
-            + "SELL: 1, GOOG, 11/16/2022\n", p2.toString());
+            + "BUY: 1.0, GOOG, 11/14/2022\n"
+            + "SELL: 1.0, GOOG, 11/16/2022\n", p2.toString());
   }
   //deleteBadStockTest
+
+  @Test
+  public void rebalanceEqualWeightsPortfolioTest() {
+    Portfolio portfolio = p2.rebalancePortfolio("11/18/2022", 1000.0, new double[]{50, 50});
+
+    assertNotNull(portfolio);
+    assertEquals("FLEX PORTFOLIO test\n200.0\n"
+                    + "BUY: 1.0, GOOG, 11/14/2022\n"
+            +  "SELL: 0.5, GOOG, 11/18/2022\n", p2.toString());
+    assertEquals("PORTFOLIO test\n"
+            + "0.5, GOOG", portfolio.toString());
+
+  }
+
+  @Test
+  public void rebalanceDifferentWeightsPortfolioTest() {
+    Portfolio portfolio = p2.rebalancePortfolio("11/18/2022", 1000.0, new double[]{75, 25});
+
+    assertNotNull(portfolio);
+    assertEquals("FLEX PORTFOLIO test\n200.0\n"
+            + "BUY: 1.0, GOOG, 11/14/2022\n"
+            +  "SELL: 0.25, GOOG, 11/18/2022\n", p2.toString());
+    assertEquals("PORTFOLIO test\n"
+            + "0.75, GOOG", portfolio.toString());
+
+  }
 
   private double[] initializeGoogValues() {
     String[] newLineData = stockData.split("\n");

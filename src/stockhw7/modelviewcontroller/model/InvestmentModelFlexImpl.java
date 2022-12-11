@@ -29,7 +29,7 @@ public class InvestmentModelFlexImpl implements InvestmentModelFlex {
 
   @Override
   public void addStock(int shares, String name, String index, String date) {
-    this.portfolio.addStock(new StockImpl(shares, name, index), date);
+    this.portfolio.addStock(new StockImpl(Double.parseDouble(String.valueOf(shares)), name, index), date);
   }
 
   @Override

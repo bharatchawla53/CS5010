@@ -94,7 +94,7 @@ public class PortfolioImpl implements Portfolio {
   }
 
   @Override
-  public Portfolio deleteStock(String ticker, int num, String date) {
+  public Portfolio deleteStock(String ticker, double num, String date) {
     if (num == 0) {
       for (Stock stock : stocks) {
         if (ticker.equals(stock.getTicker())) {

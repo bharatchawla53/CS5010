@@ -58,7 +58,7 @@ public interface Portfolio {
    * @param num    the number of stocks to be deleted
    * @return the new portfolio with the stock removed
    */
-  Portfolio deleteStock(String ticker, int num, String date);
+  Portfolio deleteStock(String ticker, double num, String date);
 
   /**
    * Gets stock information.

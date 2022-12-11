@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
  */
 public class StockImpl implements Stock {
 
-  private final int shares;
+  private final double shares;
   private final String name;
   //separated by new line character
   private final String[][] index;
@@ -25,7 +25,7 @@ public class StockImpl implements Stock {
    * @param name   string representing ticker number of stock.
    */
 
-  public StockImpl(int shares, String name, String index) {
+  public StockImpl(double shares, String name, String index) {
     if (shares < 0) {
       throw new IllegalArgumentException("Shares must be a positive value");
     }
@@ -108,7 +108,7 @@ public class StockImpl implements Stock {
   }
 
   @Override
-  public int getShares() {
+  public double getShares() {
     return this.shares;
   }
 

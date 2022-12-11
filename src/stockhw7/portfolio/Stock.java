@@ -36,7 +36,7 @@ public interface Stock {
    *
    * @return the number of stocks in this stock
    */
-  int getShares();
+  double getShares();
 
   /**
    * gets the string value of the index.

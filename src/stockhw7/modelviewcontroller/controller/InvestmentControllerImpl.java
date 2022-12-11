@@ -821,7 +821,11 @@ public class InvestmentControllerImpl implements InvestmentController {
       view.print(stocksList.get(i) + " -- " + percentList[i] + "%\n");
     }
 
-    model.rebalancePortfolio(date, d, percentList);
+    try {
+      model.rebalancePortfolio(date, d, percentList);
+    } catch (Exception e) {
+      view.print(e.getLocalizedMessage() + "\n");
+    }
   }
 
   private double getInvestmentMoney(Scanner sc, InvestmentView view) throws IOException {
