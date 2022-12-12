@@ -44,5 +44,11 @@ public interface FlexPortfolio extends Portfolio {
                             double investmentTotal, String[] stockList,
                             double[] percentList);
 
+  /**
+   * Rebalanced an existing portfolio.
+   * @param date when to rebalanced to.
+   * @param investmentTotal amount invested in a portfolio.
+   * @param percentList weights for each stock in a portfolio.
+   */
   Portfolio rebalancePortfolio(String date, double investmentTotal, double[] percentList);
 }

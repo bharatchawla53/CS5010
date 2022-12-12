@@ -35,5 +35,11 @@ public interface InvestmentModelFlex extends InvestmentModel {
                             double investmentTotal, String[] stockList,
                             double[] percentList);
 
+  /**
+   * Rebalanced an existing portfolio.
+   * @param date when to rebalanced to.
+   * @param investmentTotal amount invested in a portfolio.
+   * @param percentList weights for each stock in a portfolio.
+   */
   void rebalancePortfolio(String date, double investmentTotal, double[] percentList);
 }
