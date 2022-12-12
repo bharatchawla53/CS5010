@@ -1,11 +1,16 @@
 package stockhw7.modelviewcontroller.pannel;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import stockhw7.modelviewcontroller.gui.ExtendedButton;
 

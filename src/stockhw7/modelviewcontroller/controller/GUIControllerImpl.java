@@ -18,9 +18,8 @@ import stockhw7.modelviewcontroller.view.InvestmentViewImpl;
 
 
 /**
- * this is the implementation of the GUI Controller.
- * this will delegate the correct tasks to the model,
- * as given by the GUI view.
+ * this is the implementation of the GUI Controller. this will delegate the correct tasks to the
+ * model, as given by the GUI view.
  */
 public class GUIControllerImpl extends InvestmentControllerImpl
         implements GUIController, ActionListener {
@@ -31,8 +30,9 @@ public class GUIControllerImpl extends InvestmentControllerImpl
 
   /**
    * GUIControllerImpl is the constructor that takes in a GUI View and a model.
+   *
    * @param model this model is the Flexible version
-   * @param view the GUI version of a view
+   * @param view  the GUI version of a view
    */
   public GUIControllerImpl(InvestmentModelFlexImpl model, IGUIView view) {
     super(new InputStreamReader(System.in), System.out);
@@ -78,7 +78,7 @@ public class GUIControllerImpl extends InvestmentControllerImpl
         break;
       case "Rebalance Portfolio":
         view.newRebalanceState();
-      break;
+        break;
       case "ValuePanel":
         valuePanel(input);
         break;

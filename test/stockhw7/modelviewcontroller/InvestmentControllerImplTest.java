@@ -156,8 +156,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[27]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[27]);
     assertEquals("GOOG -- 50.0%", lines[28]);
     assertEquals("AAPL -- 50.0%", lines[29]);
   }
@@ -575,8 +575,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
     assertEquals("GOOG -- 50.0%", lines[30]);
     assertEquals("AAPL -- 50.0%", lines[31]);
   }
@@ -592,8 +592,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
     assertEquals("GOOG -- 50.0%", lines[30]);
     assertEquals("AAPL -- 50.0%", lines[31]);
   }
@@ -609,8 +609,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
     assertEquals("GOOG -- 50.0%", lines[30]);
     assertEquals("AAPL -- 50.0%", lines[31]);
   }
@@ -626,8 +626,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[30]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[30]);
     assertEquals("GOOG -- 50.0%", lines[31]);
     assertEquals("AAPL -- 50.0%", lines[32]);
   }
@@ -643,8 +643,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[30]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[30]);
     assertEquals("GOOG -- 50.0%", lines[31]);
     assertEquals("AAPL -- 50.0%", lines[32]);
   }
@@ -660,8 +660,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[30]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[30]);
     assertEquals("GOOG -- 50.0%", lines[31]);
     assertEquals("AAPL -- 50.0%", lines[32]);
   }
@@ -677,8 +677,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[28]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[28]);
     assertEquals("GOOG -- 50.0%", lines[29]);
     assertEquals("AAPL -- 50.0%", lines[30]);
   }
@@ -694,8 +694,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/31/3005 every 30 days in the following ratios:", lines[27]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/31/3005 every 30 days in the following ratios:", lines[27]);
     assertEquals("GOOG -- 50.0%", lines[28]);
     assertEquals("AAPL -- 50.0%", lines[29]);
   }
@@ -711,8 +711,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[29]);
     assertEquals("GOOG -- 50.0%", lines[30]);
     assertEquals("AAPL -- 50.0%", lines[31]);
   }
@@ -728,8 +728,8 @@ public class InvestmentControllerImplTest {
     ctrl.runProgram(new InvestmentModelFlexMock(log, "123"), new InvestmentViewImpl(out));
     assertEquals("ADD PORT MOCK 10.0 123 DOLLAR COST 30 100.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 " +
-            "until 12/1/2022 every 30 days in the following ratios:", lines[31]);
+    assertEquals("Purchasing 100.0 worth of stocks below from 1/3/2022 "
+            + "until 12/1/2022 every 30 days in the following ratios:", lines[31]);
     assertEquals("GOOG -- 50.0%", lines[32]);
     assertEquals("AAPL -- 50.0%", lines[33]);
   }
@@ -745,7 +745,8 @@ public class InvestmentControllerImplTest {
     assertEquals("ADD PORT MOCK 10.0 123 PRINT STOCK REBALANCE PORTFOLIO 12/7/2022 2000.0PRINT "
             + "STOCK REBALANCE PORTFOLIO 0/0/0 50.0", log.toString());
     String[] lines = out.toString().split("\n");
-    assertEquals("Rebalancing 2000.0 worth of stocks below from 12/7/2022with following ratios:", lines[21]);
+    assertEquals("Rebalancing 2000.0 worth of stocks below from "
+            + "12/7/2022with following ratios:", lines[21]);
   }
 }
 

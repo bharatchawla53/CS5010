@@ -491,8 +491,8 @@ public class InvestmentModelFlexTest {
             stockList, percentList);
     //ensure print works
     assertEquals("FLEX PORTFOLIO name\n10.0\n"
-                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 12/1/2022, 30 day interval:\n" +
-                    "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 12/1/2022, 30 day interval:\n",
+                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 12/1/2022, 30 day interval:\n"
+                    + "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 12/1/2022, 30 day interval:\n",
             model.printStocks());
     //ensure value and cost basis are what they should be
     assertEquals(120.00, model.getCostBasis(2022, 1, 4), 0.01);
@@ -508,8 +508,8 @@ public class InvestmentModelFlexTest {
             stockList, percentList);
     //ensure print works
     assertEquals("FLEX PORTFOLIO name\n10.0\n"
-                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 12/1/2022, 30 day interval:\n" +
-                    "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 12/1/2022, 30 day interval:\n",
+                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 12/1/2022, 30 day interval:\n"
+                    + "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 12/1/2022, 30 day interval:\n",
             model.printStocks());
     //ensure value and cost basis are what they should be
     assertEquals(240.00, model.getCostBasis(2022, 2, 4), 0.01);
@@ -528,8 +528,8 @@ public class InvestmentModelFlexTest {
             stockList, percentList);
     //ensure print works
     assertEquals("FLEX PORTFOLIO name\n10.0\n"
-                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 2/1/2022, 30 day interval:\n" +
-                    "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 2/1/2022, 30 day interval:\n",
+                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 2/1/2022, 30 day interval:\n"
+                    + "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 2/1/2022, 30 day interval:\n",
             model.printStocks());
     //ensure value and cost basis are what they should be
     assertEquals(120.00, model.getCostBasis(2022, 2, 4), 0.01);
@@ -545,8 +545,8 @@ public class InvestmentModelFlexTest {
             stockList, percentList);
     //ensure print works
     assertEquals("FLEX PORTFOLIO name\n10.0\n"
-                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 12/1/3005, 30 day interval:\n" +
-                    "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 12/1/3005, 30 day interval:\n",
+                    + "DOLLAR COST: 0.5, 100.0, AAPL, 1/3/2022, 12/1/3005, 30 day interval:\n"
+                    + "DOLLAR COST: 0.5, 100.0, GOOG, 1/3/2022, 12/1/3005, 30 day interval:\n",
             model.printStocks());
     //ensure value and cost basis are what they should be
     assertEquals(120.00, model.getCostBasis(2022, 1, 4), 0.01);

@@ -21,8 +21,8 @@ import stockhw7.resources.IndicesImpl;
 //TODO split up dollar cost function
 
 /**
- * This class represents the implementation of the controller. This class functions
- * to run the program and orient the view and model to information as necessary.
+ * This class represents the implementation of the controller. This class functions to run the
+ * program and orient the view and model to information as necessary.
  */
 public class InvestmentControllerImpl implements InvestmentController {
   final Readable in;
@@ -712,8 +712,8 @@ public class InvestmentControllerImpl implements InvestmentController {
         }
         worked = true;
       } catch (Exception e) {
-        view.print("Error, start date does not contain data for all stocks in portfolio. Try " +
-                "again. \n\n");
+        view.print("Error, start date does not contain data for all stocks in portfolio. Try "
+                + "again. \n\n");
       }
     }
     //ask for interval of days
@@ -763,9 +763,9 @@ public class InvestmentControllerImpl implements InvestmentController {
     }
     String startDate = "" + month + "/" + day + "/" + year;
     String endDate = "" + endMonth + "/" + endDay + "/" + endYear;
-    view.print("Purchasing " + d + " worth of stocks below from " +
-            startDate + " until " + endDate + " every " + intervalDays + " days in the " +
-            "following ratios:\n");
+    view.print("Purchasing " + d + " worth of stocks below from "
+            + startDate + " until " + endDate + " every " + intervalDays + " days in the "
+            + "following ratios:\n");
     for (int i = 0; i < numStocks; ++i) {
       view.print(stockList[i] + " -- " + percentList[i] + "%\n");
     }
@@ -812,7 +812,8 @@ public class InvestmentControllerImpl implements InvestmentController {
 
     // get weightage percent list from the user and the size should match with
     // number of stocks they have in their portfolio
-    double[] percentList = getWeightList(sc, view, stocksList.size(), stocksList.toArray(String[]::new));
+    double[] percentList = getWeightList(sc, view, stocksList.size(),
+            stocksList.toArray(String[]::new));
 
     String date = "" + month + "/" + day + "/" + year;
     view.print("Rebalancing " + d + " worth of stocks below from "
@@ -856,8 +857,11 @@ public class InvestmentControllerImpl implements InvestmentController {
     stockCounter = 0;
     double totalPercent = 0.0;
     while (stockCounter < numStocks) {
-      view.print("Please enter % weight for " + stockList[stockCounter] + ". You currently have " +
-              String.format("%,.2f", 100 - totalPercent) + " percent remaining \n");
+      view.print("Please enter % weight for "
+              + stockList[stockCounter]
+              + ". You currently have "
+              + String.format("%,.2f", 100 - totalPercent)
+              + " percent remaining \n");
       String nextPercTry = sc.next();
       try {
         double nextPerc = Double.parseDouble(nextPercTry);

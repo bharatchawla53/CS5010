@@ -1,10 +1,21 @@
 package stockhw7.modelviewcontroller.pannel;
 
-import java.awt.*;
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
+/**
+ * Shows the rebalance portfolio panel.
+ */
 public class RebalancePanel extends ModularPanel {
 
   private final JTextArea stockTextArea;
@@ -102,8 +113,8 @@ public class RebalancePanel extends ModularPanel {
   /**
    * adds a given stock value to the list of stocks.
    *
-   * @param stock      the stock to be added
-   * @param stocksList
+   * @param stock      the stock to be added.
+   * @param stocksList stocks in existing portfolio.
    */
   public void addStock(String stock, List<String> stocksList) {
     if (!stockTextArea.getText().equals("")) {

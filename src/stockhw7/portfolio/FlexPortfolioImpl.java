@@ -163,10 +163,10 @@ public class FlexPortfolioImpl implements FlexPortfolio {
         }
         //while new purchase day is within bounds of last purchase day and day of interest
         while ((year > purchaseYear || year == purchaseYear && month > purchaseMonth
-                || year == purchaseYear && month == purchaseMonth && day >= purchaseDay) &&
-                (purchaseEndYear > purchaseYear || purchaseEndYear == purchaseYear &&
-                        purchaseEndMonth > purchaseMonth || purchaseEndYear == purchaseYear &&
-                        purchaseEndMonth == purchaseMonth && purchaseEndDay >= purchaseDay)) {
+                || year == purchaseYear && month == purchaseMonth && day >= purchaseDay)
+                && (purchaseEndYear > purchaseYear || purchaseEndYear == purchaseYear
+                && purchaseEndMonth > purchaseMonth || purchaseEndYear == purchaseYear
+                && purchaseEndMonth == purchaseMonth && purchaseEndDay >= purchaseDay)) {
           //do it again
           try {
             shares = (totalInvestment * percent) / indices
@@ -349,10 +349,10 @@ public class FlexPortfolioImpl implements FlexPortfolio {
         }
         //while new purchase day is within bounds of last purchase day and day of interest
         while ((year > purchaseYear || year == purchaseYear && month > purchaseMonth
-                || year == purchaseYear && month == purchaseMonth && day >= purchaseDay) &&
-                (purchaseEndYear > purchaseYear || purchaseEndYear == purchaseYear &&
-                        purchaseEndMonth > purchaseMonth || purchaseEndYear == purchaseYear &&
-                        purchaseEndMonth == purchaseMonth && purchaseEndDay >= purchaseDay)) {
+                || year == purchaseYear && month == purchaseMonth && day >= purchaseDay)
+                && (purchaseEndYear > purchaseYear || purchaseEndYear == purchaseYear
+                && purchaseEndMonth > purchaseMonth || purchaseEndYear == purchaseYear
+                && purchaseEndMonth == purchaseMonth && purchaseEndDay >= purchaseDay)) {
           //do it again
           total += totalInvestment * percent;
           total += brokerFee;
@@ -479,8 +479,8 @@ public class FlexPortfolioImpl implements FlexPortfolio {
                                    double[] percentList) {
     for (int i = 0; i < stockList.length; ++i) {
       log.add("DOLLAR COST: " + percentList[i] / 100 + ", "
-              + investmentTotal + ", " + stockList[i] +
-              ", " + startDate + ", " + endDate + ", " + intervalDays + " day interval:\n");
+              + investmentTotal + ", " + stockList[i]
+              + ", " + startDate + ", " + endDate + ", " + intervalDays + " day interval:\n");
     }
   }
 
@@ -529,7 +529,8 @@ public class FlexPortfolioImpl implements FlexPortfolio {
       if (stockCost - percentageBasedStockCost < 0) {
         // buy stocks
         double totalSharesToBuy = Math.abs(stockCost - percentageBasedStockCost) / pricePerShare;
-        addStock(new StockImpl(totalSharesToBuy, entry.getKey(), indices.getIndex(entry.getKey()).getIndex()), date);
+        addStock(new StockImpl(totalSharesToBuy, entry.getKey(),
+                indices.getIndex(entry.getKey()).getIndex()), date);
       } else {
         // sell stocks
         double totalSharesToSell = (stockCost - percentageBasedStockCost) / pricePerShare;
@@ -540,7 +541,8 @@ public class FlexPortfolioImpl implements FlexPortfolio {
     return new PortfolioImpl(this.name, stocks);
   }
 
-  private double getPricePerShare(Map<String, Double> newStockPriceMap, Map.Entry<String, Double> entry) {
+  private double getPricePerShare(Map<String, Double> newStockPriceMap,
+                                  Map.Entry<String, Double> entry) {
     double pricePerShare = 0;
     for (Map.Entry<String, Double> entryPrice : newStockPriceMap.entrySet()) {
       if (entry.getKey().equals(entryPrice.getKey())) {
