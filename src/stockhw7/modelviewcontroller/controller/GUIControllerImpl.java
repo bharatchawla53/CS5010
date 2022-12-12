@@ -103,14 +103,15 @@ public class GUIControllerImpl extends InvestmentControllerImpl
       case "RebalancePanel":
         updateStocksList();
         rebalancePanel(e, input);
+        break;
       case "AddAmountPanel":
         test0 = view.findPanel(input);
         //TODO: Deprecate
         break;
       default:
-
         String test = e.getSource().toString();
         int test1 = 0;
+        break;
         //this is where you track down the correct subPanel
     }
   }
